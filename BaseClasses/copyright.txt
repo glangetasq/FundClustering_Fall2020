@@ -1,0 +1,13 @@
+"""
+Copyright:
+    Copyright (C) 2020 Sauma Capital Inc - All Rights Reserved
+    Unauthorized copying of this file, via any medium, is strictly prohibited
+    Proprietary and confidential
+Product: Fund Clustering Framework
+Auther: Kai Fang
+Description: Based class and based implementation of factory design pattern for
+            clustering method, this would cover default cluster defined by client,
+            and also machine learning based clustering method.
+            For two layers clustering method, introduce pipeline structure design pattern
+            to do two step fitting at the same time.
+"""
