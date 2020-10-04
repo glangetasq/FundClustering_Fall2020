@@ -1,13 +1,30 @@
 # Data Helper
 
-import Path
+#import Path
 import pandas as pd
+
+# Temporary path helper
+
+class Path:
+
+    import os
+    _data_path = "/Users/glangetasq/Library/Mobile Documents/com~apple~CloudDocs/Columbia/Classes/Fall_20/DeepLearning/FundClusteringProject/DataSummer"
+    returns = os.path.join(_data_path, 'data_trimmed.csv')
+    sp500 = os.path.join(_data_path, 'sp500.csv')
+    tickers = os.path.join(_data_path, 'Tickers.csv')
+    nameticker = os.path.join(_data_path, 'nameticker.xlsx')
+    holding_asset = os.path.join(_data_path, 'Summary_Updated.csv')
+    mrnstar = os.path.join(_data_path, 'Summary_Updated.csv')
+
 
 class DataHelper:
 
     def get_returns(clustering_year):
 
         returns = pd.read_csv(Path.returns)
+        returns = returns.set_index('date')
+        returns.index = pd.to_datetime(returns.index)
+        returns = returns.astype(float)
 
         return returns[returns.index.year == clustering_year]
 
@@ -41,6 +58,6 @@ class DataHelper:
         fund_mrnstar = pd.read_csv(Path.mrnstar)
 
         fund_mrnstar = fund_mrnstar[['crsp_fundno', 'caldt', 'lipper_class_name']]
-        fund_mrnstar.caldt = pd.to_datetime(fnd_mornstar.caldt, format='%Y%m%d')
+        fund_mrnstar.caldt = pd.to_datetime(fund_mrnstar.caldt, format='%Y%m%d')
 
         return fund_mrnstar[(fund_mrnstar.caldt.dt.year == (clustering_year)) & (fund_mrnstar.caldt.dt.month == 12)]

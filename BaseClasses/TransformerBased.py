@@ -1,7 +1,7 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 
-class TransformerBased(BaseEstimator, TransformerMixin):  
-    """Transformer based class to be define for each unsupervised learning processing, this define the 
+class TransformerBased(BaseEstimator, TransformerMixin):
+    """Transformer based class to be define for each unsupervised learning processing, this define the
     required method that you need to define for the model in order to pass the model into the pipeline
     docs: 1) https://towardsdatascience.com/pipelines-custom-transformers-in-scikit-learn-the-step-by-step-guide-with-python-code-4a7d9b068156
           2) https://towardsdatascience.com/custom-transformers-and-ml-data-pipelines-with-python-20ea2a7adb65
@@ -14,16 +14,14 @@ class TransformerBased(BaseEstimator, TransformerMixin):
         initialize the Estimator based on arguments
         """
         pass
-    
+
     def fit(self, **kwargs):
         """
         Implement you model here for the estimators, please try to generate private method and modularize the model setup if
-        the model is complicate
+        the model is complicated
 
         """
         raise NotImplementedError("Subclasses should implement fit")
 
     def transform(self, **kwargs):
         raise NotImplementedError("Subclasses should implement predict")
-
-
