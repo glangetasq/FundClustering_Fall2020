@@ -7,7 +7,8 @@ class TransformerBased(BaseEstimator, TransformerMixin):
           2) https://towardsdatascience.com/custom-transformers-and-ml-data-pipelines-with-python-20ea2a7adb65
     related reading: estimator
     docs: http://danielhnyk.cz/creating-your-own-estimator-scikit-learn/
-    https://gist.github.com/amberjrivera/8c5c145516f5a2e894681e16a8095b5c"""
+    https://gist.github.com/amberjrivera/8c5c145516f5a2e894681e16a8095b5c
+    """
 
     def __init__(self, **kwargs):
         """

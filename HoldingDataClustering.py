@@ -35,9 +35,7 @@ class HoldingDataKMeanClustering(FundClusterBased):
 
     def _set_up_features(self, **kwargs):
 
-        from Tools import normal_standardization
-
-        features = pd.DataFrame( index = self.data.returns.columns)
+        features = pd.DataFrame( index = self.data.returns.columns )
         funds = set(self.data.holding_asset.crsp_fundno.values)
 
         for index in features.index:
@@ -53,12 +51,15 @@ class HoldingDataKMeanClustering(FundClusterBased):
         self.data.returns = self.data.returns[self.features.index]
         self.data.cumul_returns = self.data.cumul_returns[self.features.index]
 
-        self.features_nostd = self.features.copy()
-        self.features = Tools.normal_standardization(self.features)
-        self.features = np.round(self.features, 4)
+        return self.features
 
-        return self.features, self.features_nostd
+    @property
+    def normalized_features(self):
 
+        norm_features = Tools.normal_standardization(self.features)
+        norm_features = np.round(norm_features, 4)
+
+        return norm_features
 
     def cluster_method(self):
         """This provide identifier of the clustering strategy that you are implementing."""
@@ -129,8 +130,8 @@ class HoldingDataKMeanClustering(FundClusterBased):
         identical_asset = kwargs.get('identical_asset', 3)
         argsort = kwargs.get('argsort', False)
 
-        k = Tools.silhouette(self.features, log)
-        h_clustering = sklearn_cluster.AgglomerativeClustering(n_clusters=k, linkage='ward').fit(self.features)
+        k = Tools.silhouette(self.normalized_features, log)
+        h_clustering = sklearn_cluster.AgglomerativeClustering(n_clusters=k, linkage='ward').fit(self.normalized_features)
         cluster_label = h_clustering.labels_
         print('Best number of clusters for hierarchical clustering is', k)
 
@@ -140,14 +141,14 @@ class HoldingDataKMeanClustering(FundClusterBased):
         print('Starting searching and grouping outliers')
         #Look for the outliers
         while length1 != length2:
-            cluster_center_init = Tools.get_new_center(self.features_nostd, cluster_label, k)
+            cluster_center_init = Tools.get_new_center(self.features, cluster_label, k)
             length1 = k = len(cluster_center_init)
-            clustering = sklearn_cluster.KMeans(n_clusters=k, init=cluster_center_init, n_init=1).fit(self.features_nostd)
+            clustering = sklearn_cluster.KMeans(n_clusters=k, init=cluster_center_init, n_init=1).fit(self.features)
             cluster_label = clustering.labels_
 
-            cluster_center_init = Tools.get_new_center(self.features_nostd, cluster_label, k)
+            cluster_center_init = Tools.get_new_center(self.features, cluster_label, k)
             length2 = k = len(cluster_center_init)
-            clustering = sklearn_cluster.KMeans(n_clusters=k, init=cluster_center_init, n_init=1).fit(self.features_nostd)
+            clustering = sklearn_cluster.KMeans(n_clusters=k, init=cluster_center_init, n_init=1).fit(self.features)
             cluster_label = clustering.labels_
             if log:
                 log.dump("Description", f"split outliers: {length1} | {length2}")
@@ -159,16 +160,16 @@ class HoldingDataKMeanClustering(FundClusterBased):
         length1 = -1
         length2 = -2
         while length1 != length2:
-            new_cluster_center_init = Tools.merge_cluster(self.features_nostd, cluster_label, k, identical_asset, argsort)
+            new_cluster_center_init = Tools.merge_cluster(self.features, cluster_label, k, identical_asset, argsort)
             new_cluster_center_init = new_cluster_center_init[~np.isnan(new_cluster_center_init).any(axis=1)]
             length1 = k = len(new_cluster_center_init)
-            clustering = sklearn_cluster.KMeans(n_clusters=k, init=new_cluster_center_init, n_init=1).fit(self.features_nostd)
+            clustering = sklearn_cluster.KMeans(n_clusters=k, init=new_cluster_center_init, n_init=1).fit(self.features)
             cluster_label = clustering.labels_
 
-            new_cluster_center_init = Tools.merge_cluster(self.features_nostd, cluster_label, k, identical_asset, argsort)
+            new_cluster_center_init = Tools.merge_cluster(self.features, cluster_label, k, identical_asset, argsort)
             new_cluster_center_init = new_cluster_center_init[~np.isnan(new_cluster_center_init).any(axis=1)]
             length2 = k = len(new_cluster_center_init)
-            clustering = sklearn_cluster.KMeans(n_clusters=k, init=new_cluster_center_init, n_init=1).fit(self.features_nostd)
+            clustering = sklearn_cluster.KMeans(n_clusters=k, init=new_cluster_center_init, n_init=1).fit(self.features)
             cluster_label = clustering.labels_
             if log:
                 log.dump("Description", f"Converge centers: {length1} | {length2}")
@@ -176,14 +177,14 @@ class HoldingDataKMeanClustering(FundClusterBased):
         print('Merging finished. No more centroids could be merged cross different clusters according to the given criteria.')
 
         print('Start to merge outlier clusters.')
-        cluster_label = Tools.merge_outlier(cluster_label, self.features_nostd, log)
+        cluster_label = Tools.merge_outlier(cluster_label, self.features, log)
         self.label = cluster_label
         k = len(np.unique(cluster_label))
         self.k = k
         print('The final clusters are', k)
 
         if log:
-            Tools.cluster_holding_asset_distribution_boxplot(self.features_nostd, cluster_label, k, self.asset_type)
+            Tools.cluster_holding_asset_distribution_boxplot(self.features, cluster_label, k, self.asset_type)
 
         # return cluster_label
 

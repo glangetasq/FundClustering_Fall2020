@@ -1,7 +1,3 @@
-# Temporary
-from .DataHelper import Path
-
-__all__ = ['DataHelper', 'DataHolder']
+__all__ = ['DataHelper']
 
 from .DataHelper import DataHelper
-from .DataHolder import DataHolder
