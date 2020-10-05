@@ -26,7 +26,8 @@ class DataCache:
         # Holding asset of each mutual fund
         holding_asset = reader.get_holding_asset()
         self.holding_asset = holding_asset[(holding_asset.caldt.dt.year == (clustering_year)) & (holding_asset.caldt.dt.month == 12)]
-
+        self.asset_type = list(self.holding_asset.columns)[2:]
+        
         # Morningstar category of each mutual fund
         fund_mrnstar = reader.get_fund_mrnstar()
         self.fund_mrnstar = fund_mrnstar[(fund_mrnstar.caldt.dt.year == (clustering_year)) & (fund_mrnstar.caldt.dt.month == 12)]

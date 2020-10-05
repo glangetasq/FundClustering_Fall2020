@@ -15,43 +15,14 @@ class HoldingDataKMeanClustering(FundClusterBased):
 
         super().__init__("HoldgingData_KMean_Clustering")
 
-        self.status = "Needs to load data."
+        self.hadBeenFit = False
 
     def set_up(self, **kwargs):
         """Function to setup any private variable for the allocator"""
 
         self.asset_type = list(self.data.holding_asset.columns)[2:]
-        self.features = None
-        self.features_nostd = None
         self.label = None
         self.k = None
-
-        # set up the features
-        self._set_up_features(**kwargs)
-
-
-        self.status = "Needs to be fit."
-
-
-    def _set_up_features(self, **kwargs):
-
-        features = pd.DataFrame( index = self.data.returns.columns )
-        funds = set(self.data.holding_asset.crsp_fundno.values)
-
-        for index in features.index:
-            if int(index) in funds:
-                for a in self.asset_type:
-                    features.loc[index, a] = self.data.holding_asset[self.data.holding_asset.crsp_fundno == int(index)][a].values[0]
-            else:
-                for a in self.asset_type:
-                    features.loc[index, a] = np.NaN
-
-        features.dropna(axis=0, inplace=True)
-        self.features = features
-        self.data.returns = self.data.returns[self.features.index]
-        self.data.cumul_returns = self.data.cumul_returns[self.features.index]
-
-        return self.features
 
     @property
     def normalized_features(self):
@@ -76,14 +47,17 @@ class HoldingDataKMeanClustering(FundClusterBased):
                 bool
                 True if the strategy need to run fit to be ready for prediction, otherwise No
         """
-        return self.status == "Has been fit."
+        return self.hasBeenFit
 
-    def load_raw_data(self, clustering_year, source_type, **kwargs):
+    def load_raw_data(self, clustering_year, source_type='DataHelper', **kwargs):
         """Function to load raw data from source, should be able to support
         reading data from flat file or sql database. Please just implement the one using flat file now,
         later we would provide the sql python package that we would want to utilize for the database task
 
         Parameters:
+            clustering_year: int
+                year of data
+                TODO: change the parameter so it allow custom clustering windows
             source_type: str
                 flat file type or sql, if it is flat file, file directory or
                 path need to be passed in as argument or in the setup function
@@ -91,16 +65,15 @@ class HoldingDataKMeanClustering(FundClusterBased):
                 please avoid any hard coded name in the class, and set global variable to define those file name
         """
 
-        self.clustering_year = clustering_year
+        if source_type == 'DataHelper':
+            self.data = DataHelper.get_data_cache(clustering_year)
 
-        data = DataHolder()
-        data.returns = DataHelper.get_returns(clustering_year=self.clustering_year)
-        data.cumul_returns = DataHelper.get_cumul_returns(clustering_year=self.clustering_year)
-        data.holding_asset = DataHelper.get_holding_asset(clustering_year=self.clustering_year)
-        data.mrnstar = DataHelper.get_mrnstar_class(clustering_year=self.clustering_year)
+            # Processing data for this model
+            processor = DataHelper.get_data_processor()
+            self.features = processor.holding_asset_pivot(self.data)
+        else:
+            raise ValueError(f"The type of source '{source_type}' is not supported at the moment.")
 
-        self.data = data
-        self.status = "Needs to be set up."
 
     def set_hyper_parameter(self, **kwargs):
         """Function to re_config any hyper parameters that you need for your model,
@@ -122,73 +95,87 @@ class HoldingDataKMeanClustering(FundClusterBased):
         so that we could seprate the business logics with the machine learning model maintaining logics, and those model could be reused
         somewhere else too.
 
+        Kwargs:
+            X : data as a DataCache instance. If not given, load_raw_data needs to be called beforehand.
+
         TODO: Could modularize even more this function.
         """
 
         # kwargs
         log = kwargs.get('log', None)
+        verbose = kwargs.get('verbose', True)
         identical_asset = kwargs.get('identical_asset', 3)
         argsort = kwargs.get('argsort', False)
 
-        k = Tools.silhouette(self.normalized_features, log)
-        h_clustering = sklearn_cluster.AgglomerativeClustering(n_clusters=k, linkage='ward').fit(self.normalized_features)
+        # features
+        if 'X' in kwargs:
+            features = kwargs.get('X')
+            normalized_features = Tools.normal_standardization(self.features)
+            normalized_features = np.round(normalized_features, 4)
+        else:
+            # TODO: error if load_raw_data has not been called before
+            features = self.features
+            #normalized_features = self.normalized_features
+            normalized_features = Tools.normal_standardization(features)
+            normalized_features = np.round(normalized_features, 4)
+
+        k = Tools.silhouette(normalized_features, log)
+        h_clustering = sklearn_cluster.AgglomerativeClustering(n_clusters=k, linkage='ward').fit(normalized_features)
         cluster_label = h_clustering.labels_
-        print('Best number of clusters for hierarchical clustering is', k)
+        if verbose: print('Best number of clusters for hierarchical clustering is', k)
 
         #Screen out the outliers
         length1 = -1
         length2 = -2
-        print('Starting searching and grouping outliers')
+        if verbose: print('Starting searching and grouping outliers')
         #Look for the outliers
         while length1 != length2:
-            cluster_center_init = Tools.get_new_center(self.features, cluster_label, k)
+            cluster_center_init = Tools.get_new_center(features, cluster_label, k)
             length1 = k = len(cluster_center_init)
-            clustering = sklearn_cluster.KMeans(n_clusters=k, init=cluster_center_init, n_init=1).fit(self.features)
+            clustering = sklearn_cluster.KMeans(n_clusters=k, init=cluster_center_init, n_init=1).fit(features)
             cluster_label = clustering.labels_
 
-            cluster_center_init = Tools.get_new_center(self.features, cluster_label, k)
+            cluster_center_init = Tools.get_new_center(features, cluster_label, k)
             length2 = k = len(cluster_center_init)
-            clustering = sklearn_cluster.KMeans(n_clusters=k, init=cluster_center_init, n_init=1).fit(self.features)
+            clustering = sklearn_cluster.KMeans(n_clusters=k, init=cluster_center_init, n_init=1).fit(features)
             cluster_label = clustering.labels_
             if log:
                 log.dump("Description", f"split outliers: {length1} | {length2}")
 
-        print('Split finished. No more outliers could be found in the cluster according to the given criteria.')
+        if verbose: print('Split finished. No more outliers could be found in the cluster according to the given criteria.')
 
 
         #Merge cluster centers that are very close
         length1 = -1
         length2 = -2
         while length1 != length2:
-            new_cluster_center_init = Tools.merge_cluster(self.features, cluster_label, k, identical_asset, argsort)
+            new_cluster_center_init = Tools.merge_cluster(features, cluster_label, k, identical_asset, argsort)
             new_cluster_center_init = new_cluster_center_init[~np.isnan(new_cluster_center_init).any(axis=1)]
             length1 = k = len(new_cluster_center_init)
-            clustering = sklearn_cluster.KMeans(n_clusters=k, init=new_cluster_center_init, n_init=1).fit(self.features)
+            clustering = sklearn_cluster.KMeans(n_clusters=k, init=new_cluster_center_init, n_init=1).fit(features)
             cluster_label = clustering.labels_
 
-            new_cluster_center_init = Tools.merge_cluster(self.features, cluster_label, k, identical_asset, argsort)
+            new_cluster_center_init = Tools.merge_cluster(features, cluster_label, k, identical_asset, argsort)
             new_cluster_center_init = new_cluster_center_init[~np.isnan(new_cluster_center_init).any(axis=1)]
             length2 = k = len(new_cluster_center_init)
-            clustering = sklearn_cluster.KMeans(n_clusters=k, init=new_cluster_center_init, n_init=1).fit(self.features)
+            clustering = sklearn_cluster.KMeans(n_clusters=k, init=new_cluster_center_init, n_init=1).fit(features)
             cluster_label = clustering.labels_
             if log:
                 log.dump("Description", f"Converge centers: {length1} | {length2}")
 
-        print('Merging finished. No more centroids could be merged cross different clusters according to the given criteria.')
+        if verbose: print('Merging finished. No more centroids could be merged cross different clusters according to the given criteria.')
 
-        print('Start to merge outlier clusters.')
-        cluster_label = Tools.merge_outlier(cluster_label, self.features, log)
+        if verbose: print('Start to merge outlier clusters.')
+        cluster_label = Tools.merge_outlier(cluster_label, features, log)
         self.label = cluster_label
         k = len(np.unique(cluster_label))
         self.k = k
-        print('The final clusters are', k)
+        if verbose: print(f'There are {k} final clusters')
 
         if log:
-            Tools.cluster_holding_asset_distribution_boxplot(self.features, cluster_label, k, self.asset_type)
+            Tools.cluster_holding_asset_distribution_boxplot(features, cluster_label, k, self.cache.asset_type)
 
-        # return cluster_label
-
-        self.status = "Has been fit."
+        self.hasBeenFit = True
 
         return cluster_label
 
