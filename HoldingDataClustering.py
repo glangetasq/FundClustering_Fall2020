@@ -71,6 +71,8 @@ class HoldingDataKMeanClustering(FundClusterBased):
             # Processing data for this model
             processor = DataHelper.get_data_processor()
             self.features = processor.holding_asset_pivot(self.data)
+            self.data.returns = self.data.returns[self.features.index]
+            self.data.cumul_returns = self.data.cumul_returns[self.features.index]
         else:
             raise ValueError(f"The type of source '{source_type}' is not supported at the moment.")
 
@@ -115,9 +117,8 @@ class HoldingDataKMeanClustering(FundClusterBased):
         else:
             # TODO: error if load_raw_data has not been called before
             features = self.features
-            #normalized_features = self.normalized_features
-            normalized_features = Tools.normal_standardization(features)
-            normalized_features = np.round(normalized_features, 4)
+            normalized_features = self.normalized_features
+
 
         k = Tools.silhouette(normalized_features, log)
         h_clustering = sklearn_cluster.AgglomerativeClustering(n_clusters=k, linkage='ward').fit(normalized_features)
@@ -173,7 +174,7 @@ class HoldingDataKMeanClustering(FundClusterBased):
         if verbose: print(f'There are {k} final clusters')
 
         if log:
-            Tools.cluster_holding_asset_distribution_boxplot(features, cluster_label, k, self.cache.asset_type)
+            Tools.cluster_holding_asset_distribution_boxplot(features, cluster_label, k, self.data.asset_type)
 
         self.hasBeenFit = True
 

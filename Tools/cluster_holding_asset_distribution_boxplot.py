@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 def cluster_holding_asset_distribution_boxplot(asset, label, k, asset_type):
     """

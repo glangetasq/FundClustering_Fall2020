@@ -1,16 +1,30 @@
 from HoldingDataClustering import HoldingDataKMeanClustering
 import time
 
+st = time.time()
+
+class Logger:
+
+    def dump(self, a, *args, **kwargs):
+        print('\t-> LOG:', a)
+        for a in args:
+            print(a)
+        for x in kwargs:
+            print(kwargs[x])
+        print(11*'*')
+
+
+print('** Start')
 model = HoldingDataKMeanClustering()
 
-start_time = time.time()
-
 model.load_raw_data(2019)
+
 model.set_up()
 
-set_up_time = time.time()
-print(f">>> Set up finished in {set_up_time-start_time}.")
+sup = time.time()
 
-model.fit()
+print("** Set up in {}".format(sup-st))
 
-print(f">>> Fit finished in {time.time()-set_up_time}.")
+model.fit(log=Logger())
+
+print("** Fit in {}".format(time.time()-sup))
