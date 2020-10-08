@@ -6,6 +6,9 @@ class DataProcessor:
     Class helping to process the data for the models
     """
 
+    def __init__(self):
+        pass
+
     @staticmethod
     def holding_asset_pivot(data_cache):
         """

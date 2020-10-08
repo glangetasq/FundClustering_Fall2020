@@ -7,7 +7,7 @@ from tslearn.clustering import TimeSeriesKMeans
 from sklearn import cluster
 from sklearn import metrics
 from sklearn.metrics import davies_bouldin_score, pairwise_distances
-from gap_statistic import OptimalK
+# from gap_statistic import OptimalK
 
 import os
 import csv
@@ -30,7 +30,7 @@ from .datasets import load_data
 from .TSClusteringLayer import TSClusteringLayer
 from .TAE import temporal_autoencoder
 from .metrics import *
-from .tsdistances import * 
+from .tsdistances import *
 
 
 class DTC:
@@ -68,8 +68,8 @@ class DTC:
         self.cluster_init = cluster_init
         self.pretrained = False
         self.model = self.autoencoder = self.encoder = self.decoder = None
-    
-    
+
+
     #Autoencoder part
     def initialize_autoencoder(self):
         """
@@ -83,7 +83,7 @@ class DTC:
                                                                             strides=self.strides,
                                                                             pool_size=self.pool_size,
                                                                             n_units=self.n_units)
-        
+
     def load_ae_weights(self, ae_weights_path):
         """
         Load pre-trained weights of AE
@@ -92,7 +92,7 @@ class DTC:
         """
         self.autoencoder.load_weights(ae_weights_path)
         self.pretrained = True
-        
+
     def pretrain(self, X,
                  optimizer='adam',
                  epochs=500,
@@ -119,7 +119,7 @@ class DTC:
         self.autoencoder.save_weights('{}/ae_weights-epoch{}.h5'.format(save_dir, epochs))
         print('Pretrained weights are saved to {}/ae_weights-epoch{}.h5'.format(save_dir, epochs))
         self.pretrained = True
-        
+
     def encode(self, x):
         """
         Encoding function. Extract latent features from hidden layer
@@ -139,8 +139,8 @@ class DTC:
         # Return
             decoded data point
         """
-        return self.decoder.predict(x)  
-    
+        return self.decoder.predict(x)
+
     #Clustering part
     def compile_clustering_model(self, optimizer):
         """
@@ -152,19 +152,19 @@ class DTC:
             final_heatmap_loss_weight (optional): final weight of heatmap loss vs clustering loss (heatmap finetuning)
         """
         clustering_input = Input(shape=(self.features.shape[1], self.features.shape[2]), name='clustering_input')
-        
+
         clustering_layer = TSClusteringLayer(self.n_clusters,
                                              alpha=self.alpha,
                                              dist_metric=self.dist_metric,
                                              name='TSClustering')(clustering_input)
-        
+
         self.model = Model(inputs=clustering_input,
                            outputs=clustering_layer)
         print(self.model.summary())
-        
+
         self.model.compile(loss='kld',
                            optimizer=optimizer)
-    
+
     #Initialize cluster centers
     def init_cluster_weights(self):
         """
@@ -174,7 +174,7 @@ class DTC:
         """
         assert(self.cluster_init in ['hierarchical', 'kmeans'])
         print('Initializing cluster...')
-        
+
         features = self.features
 
         if self.cluster_init == 'hierarchical':
@@ -199,7 +199,7 @@ class DTC:
 
         self.model.get_layer(name='TSClustering').set_weights([cluster_centers])
         print('Done!')
-    
+
     @property
     def cluster_centers_(self):
         """
@@ -372,4 +372,3 @@ class DTC:
         logfile.close()
         print('Saving model to:', save_dir + '/DTC_model_final.h5')
         self.model.save_weights(save_dir + '/DTC_model_final.h5')
-

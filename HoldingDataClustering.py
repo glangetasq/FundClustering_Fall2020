@@ -1,7 +1,7 @@
 """ Implementation of clustering by holding data only """
 
 from BaseClasses import FundClusterBased
-from DataHelper import *
+import DataHelper
 import Tools
 
 import numpy as np

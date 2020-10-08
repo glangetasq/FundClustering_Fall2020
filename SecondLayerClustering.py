@@ -49,7 +49,7 @@ class SecondLayerClustering(FundClusterBased):
         """
         return self.hasBeenFit
 
-    def load_raw_data(self, clustering_year, firstlayer_label, source_type='DataHelper', **kwargs):
+    def load_raw_data(self, clustering_year, first_layer_label, source_type='DataHelper', **kwargs):
         """Function to load raw data from source, should be able to support
         reading data from flat file or sql database. Please just implement the one using flat file now,
         later we would provide the sql python package that we would want to utilize for the database task
@@ -62,9 +62,10 @@ class SecondLayerClustering(FundClusterBased):
         """
 
         self.clustering_year = clustering_year
-        
+
         if source_type == 'DataHelper':
             self.data = DataHelper.get_data_cache(clustering_year)
+            self.first_layer_label = first_layer_label
         else:
             raise ValueError(f"The type of source '{source_type}' is not supported at the moment.")
 
@@ -80,6 +81,7 @@ class SecondLayerClustering(FundClusterBased):
         """Print all the hyper parameters that you set for your model."""
         raise NotImplementedError("Subclasses should implement print_hyper_parameter!")
 
+
     def fit(self, args, **kwargs):
         """Function to execute training either based on the data that you load from file or passed in as argument.
         When X, Y are passed in as argument, would train the model based on the training dataset passed in, and over write
@@ -91,16 +93,12 @@ class SecondLayerClustering(FundClusterBased):
         TODO: Could modularize even more this function.
         """
 
-        
-        from Tools import get_timeseries
-        from Tools import organize_label
-
         subcluster_dict = dict()
-        
+
         for group in range(len(set(self.label))):
 
-            compressed_data, fundnos = get_timeseries.get_timeseries(ret_flag=True, val_flag=True,
-                                                                    ret_data = self.data.returns, 
+            compressed_data, fundnos = Tools.get_timeseries(ret_flag=True, val_flag=True,
+                                                                    ret_data = self.data.returns,
                                                                     feature = self.features,
                                                                     label = self.label, group = self.group)
             self.new_feature = compressed_data
@@ -110,16 +108,16 @@ class SecondLayerClustering(FundClusterBased):
             if compressed_data.shape[0] == 1:
                 subcluster_dict[fundnos[0]] = 0
                 continue
-            
+
             #determine the pool size
             from Tools import isPrime
-            if isPrime.isPrime(compressed_data.shape[1]):
+            if Tools.isPrime(compressed_data.shape[1]):
                 compressed_data = compressed_data[:, :compressed_data.shape[1]-1, :]
             for i in range(10, compressed_data.shape[1]//2):
                 if compressed_data.shape[1]%i == 0:
                     args.pool_size = i
                     break
-            
+
             #initialize the DTC model
             from Tools.dtc import DTC
             args.n_clusters = min(15, sum(self.label==group)//2)
@@ -172,7 +170,7 @@ class SecondLayerClustering(FundClusterBased):
             #Write into the dictionary
             for i in range(len(fundnos)):
                 subcluster_dict[fundnos[i]] = subcluster_label[i]
-       
+
 
         # return subcluster label
 
