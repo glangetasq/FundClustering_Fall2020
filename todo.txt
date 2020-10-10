@@ -2,7 +2,7 @@
     - Two Layer model fit method: use the Pipeline pattern. May need to change how the second layer is coded.
     - Test if full model works. Need to run it on GPU (see collab)
     - Create notebook to show the workflow.
-    - Separate the args parser of the hyper parameter to a specific class and easy initialization. See args method of the Two Layer class
+    - [DONE] Separate the args parser of the hyper parameter to a specific class and easy initialization. See args method of the Two Layer class
     - Once everything is done, configure the FundClusterFactory (add the model to the CLUSTER_CLASS_CONFIG dict)
 - Medium priority:
     - First layer model output method: output result to csv, save model to pickle
