@@ -1,18 +1,16 @@
-    - High priority:
-        - Two Layer model fit method: use the Pipeline pattern. May need to change how the second layer is coded. 
-        - Test if full model works. Need to run it on GPU (see collab)
-        - Create notebook to show the workflow.
-        - Separate the args parser of the hyper parameter to a specific class and easy initialization. See args method of the Two Layer class
-        - Once everything is done, configure the FundClusterFactory (add the model to the CLUSTER_CLASS_CONFIG dict)
-    - Medium priority:
-        - First layer model output method: output result to csv, save model to pickle
-        - Second layer model output method: output result to csv (maybe? It’s the same output than the full model actually…) save model to pickle
-        - Two Layer model output method: output result to csv, save model to pickle
-        - [organization] Separate the Autoencoder classes for the second layer class to its own folder rather than Tools
-        - [organization] Create a metrics folder to measure the layers performance (already metrics.py in tools)
-    - Low priority:
-        - Model summary of each class: save statistics of convergence, statistics to measure the model, hyper parameters of the models. 
-        - Remove some useless self.variable (for instance I think the self.features of the second layer is not used)
-        - Move the ‘iterative kmean’ algorithm in first cluster to a separate model. 
-
-
+- High priority:
+    - Two Layer model fit method: use the Pipeline pattern. May need to change how the second layer is coded.
+    - Test if full model works. Need to run it on GPU (see collab)
+    - Create notebook to show the workflow.
+    - Separate the args parser of the hyper parameter to a specific class and easy initialization. See args method of the Two Layer class
+    - Once everything is done, configure the FundClusterFactory (add the model to the CLUSTER_CLASS_CONFIG dict)
+- Medium priority:
+    - First layer model output method: output result to csv, save model to pickle
+    - Second layer model output method: output result to csv (maybe? It’s the same output than the full model actually…) save model to pickle
+    - Two Layer model output method: output result to csv, save model to pickle
+    - [organization] Separate the Autoencoder classes for the second layer class to its own folder rather than Tools
+    - [organization] Create a metrics folder to measure the layers performance (already metrics.py in tools)
+- Low priority:
+    - Model summary of each class: save statistics of convergence, statistics to measure the model, hyper parameters of the models.
+    - Remove some useless self.variable (for instance I think the self.features of the second layer is not used)
+    - Move the ‘iterative kmean’ algorithm in first cluster to a separate model.
