@@ -1,7 +1,7 @@
 """ Implementation of second layer clustering by return data """
 
 from BaseClasses import FundClusterBased
-from .OneGroupDailyReturnsSubClustering import OneGroupDailyReturnsSubClustering
+from .OneMainClusterDailyReturnsSubClustering import OneMainClusterDailyReturnsSubClustering
 import HyperparametersHelper
 
 class DailyReturnsSubClustering(FundClusterBased):
@@ -10,7 +10,7 @@ class DailyReturnsSubClustering(FundClusterBased):
     def __init__(self):
 
         super().__init__("Daily Returns Sub Clustering")
-        self._one_main_cluster_subclustering = OneGroupDailyReturnsSubClustering()
+        self._one_main_cluster_subclustering = OneMainClusterDailyReturnsSubClustering()
         self.hasBeenFit = False
 
     def set_up(self, feature_first_layer, first_layer_result, **kwargs):

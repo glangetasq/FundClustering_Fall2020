@@ -13,7 +13,7 @@ import pandas as pd
 from sklearn import cluster as sklearn_cluster
 
 
-class OneGroupDailyReturnsSubClustering(FundClusterBased):
+class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
 
     """Clustering algorithm to define the cluster of a specific clustering method used to define cateogry of mutual fund"""
     def __init__(self):
