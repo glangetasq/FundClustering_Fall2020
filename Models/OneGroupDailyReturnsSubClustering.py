@@ -1,7 +1,10 @@
-""" Implementation of second layer clustering by return data """
+""" Implementation of second layer clustering (sub clustering).
+Only for one main cluster
+"""
 
 from BaseClasses import FundClusterBased
 from DataHelper import *
+import HyperparametersHelper
 import Tools
 from time import time
 
@@ -10,7 +13,7 @@ import pandas as pd
 from sklearn import cluster as sklearn_cluster
 
 
-class SecondLayerClustering(FundClusterBased):
+class OneGroupDailyReturnsSubClustering(FundClusterBased):
 
     """Clustering algorithm to define the cluster of a specific clustering method used to define cateogry of mutual fund"""
     def __init__(self):
@@ -19,17 +22,17 @@ class SecondLayerClustering(FundClusterBased):
 
         self.hasBeenFit = False
 
-    def set_up(self, feature_first_layer, first_layer_result, group, **kwargs):
+    def set_up(self, feature_first_layer, first_layer_result, main_cluster, **kwargs):
         """Function to setup any private variable for the allocator"""
 
         self.features = feature_first_layer
         self.label = first_layer_result
         self.k = len(set(self.label))
         self.first_layer_output_csv = None
-        if group >= self.k:
-            raise ValueError('Group out of range')
+        if main_cluster >= self.k:
+            raise ValueError('Main Cluster out of range')
         else:
-            self.group = group
+            self.main_cluster = main_cluster
 
         self.hasBeenFit = False
 
@@ -49,7 +52,7 @@ class SecondLayerClustering(FundClusterBased):
         """
         return self.hasBeenFit
 
-    def load_raw_data(self, clustering_year, first_layer_label, source_type='DataHelper', **kwargs):
+    def load_raw_data(self, clustering_year, first_layer_labels, source_type='DataHelper', **kwargs):
         """Function to load raw data from source, should be able to support
         reading data from flat file or sql database. Please just implement the one using flat file now,
         later we would provide the sql python package that we would want to utilize for the database task
@@ -65,7 +68,7 @@ class SecondLayerClustering(FundClusterBased):
 
         if source_type == 'DataHelper':
             self.data = DataHelper.get_data_cache(clustering_year)
-            self.first_layer_label = first_layer_label
+            self.first_layer_labels = first_layer_labels
         else:
             raise ValueError(f"The type of source '{source_type}' is not supported at the moment.")
 
@@ -82,7 +85,7 @@ class SecondLayerClustering(FundClusterBased):
         raise NotImplementedError("Subclasses should implement print_hyper_parameter!")
 
 
-    def fit(self, args, **kwargs):
+    def fit(self, hyper_parameters=HyperparametersHelper.parse_args(), **kwargs):
         """Function to execute training either based on the data that you load from file or passed in as argument.
         When X, Y are passed in as argument, would train the model based on the training dataset passed in, and over write
         the existing data cached in the strategy obj. If you implement some new machine learning model rather than using
@@ -95,12 +98,12 @@ class SecondLayerClustering(FundClusterBased):
 
         subcluster_dict = dict()
 
-        for group in range(len(set(self.label))):
+        for main_cluster in range(len(set(self.label))):
 
             compressed_data, fundnos = Tools.get_timeseries(ret_flag=True, val_flag=True,
                                                                     ret_data = self.data.returns,
                                                                     feature = self.features,
-                                                                    label = self.label, group = self.group)
+                                                                    label = self.label, main_cluster = self.main_cluster)
             self.new_feature = compressed_data
             self.fundnos = fundnos
 
@@ -114,47 +117,64 @@ class SecondLayerClustering(FundClusterBased):
             if Tools.isPrime(compressed_data.shape[1]):
                 compressed_data = compressed_data[:, :compressed_data.shape[1]-1, :]
             for i in range(10, compressed_data.shape[1]//2):
-                if compressed_data.shape[1]%i == 0:
-                    args.pool_size = i
+                if compressed_data.shape[1] % i == 0:
+                    hyper_parameters.pool_size = i
                     break
 
             #initialize the DTC model
             from Tools.dtc import DTC
-            args.n_clusters = min(15, sum(self.label==group)//2)
-            dtc = DTC(n_clusters=args.n_clusters,
+            hyper_parameters.n_clusters = min(15, sum(self.label==main_cluster)//2)
+            dtc = DTC(n_clusters=hyper_parameters.n_clusters,
                     input_dim=compressed_data.shape[-1],
                     timesteps=compressed_data.shape[1],
-                    n_filters=args.n_filters,
-                    kernel_size=args.kernel_size,
-                    strides=args.strides,
-                    pool_size=args.pool_size,
-                    n_units=args.n_units,
-                    alpha=args.alpha,
-                    dist_metric=args.dist_metric,
-                    cluster_init=args.cluster_init)
+                    n_filters=hyper_parameters.n_filters,
+                    kernel_size=hyper_parameters.kernel_size,
+                    strides=hyper_parameters.strides,
+                    pool_size=hyper_parameters.pool_size,
+                    n_units=hyper_parameters.n_units,
+                    alpha=hyper_parameters.alpha,
+                    dist_metric=hyper_parameters.dist_metric,
+                    cluster_init=hyper_parameters.cluster_init
+                )
 
             #Train autoencoder
             dtc.initialize_autoencoder()
-            if args.ae_weights is None and args.pretrain_epochs > 0:
-                dtc.pretrain(X=compressed_data, optimizer=args.pretrain_optimizer,
-                            epochs=args.pretrain_epochs, batch_size=args.batch_size,
-                            save_dir=args.save_dir)
-            elif args.ae_weights is not None:
-                dtc.load_ae_weights(args.ae_weights)
+            if hyper_parameters.ae_weights is None and hyper_parameters.pretrain_epochs > 0:
+                dtc.pretrain(
+                    X=compressed_data,
+                    optimizer=hyper_parameters.pretrain_optimizer,
+                    epochs=hyper_parameters.pretrain_epochs,
+                    batch_size=hyper_parameters.batch_size,
+                    save_dir=hyper_parameters.save_dir
+                )
+            elif hyper_parameters.ae_weights is not None:
+                dtc.load_ae_weights(hyper_parameters.ae_weights)
 
             #Fetch the compressed data/result from the autoencoder
             secondlayer_features = dtc.encode(compressed_data)
 
             #Compile model
-            dtc.compile_clustering_model(optimizer=args.optimizer)
+            dtc.compile_clustering_model(optimizer=hyper_parameters.optimizer)
 
             #Apply hierarchical clustering to select initial cluster centers used in KMeans
             dtc.init_cluster_weights()
 
             #Train clustering algorithm by using KL divergence as loss
             t0 = time()
-            dtc.fit(secondlayer_features, None, None, None, args.epochs, args.eval_epochs, args.save_epochs, args.batch_size,
-                    args.tol, args.patience, args.save_dir)
+            dtc.fit(
+                secondlayer_features,
+                None,
+                None,
+                None,
+                hyper_parameters.epochs,
+                hyper_parameters.eval_epochs,
+                hyper_parameters.save_epochs,
+                hyper_parameters.batch_size,
+                hyper_parameters.tol,
+                hyper_parameters.patience,
+                hyper_parameters.save_dir
+            )
+
             print('Training time: ', (time() - t0))
 
             #Get the clustering result

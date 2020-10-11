@@ -1,6 +1,7 @@
 from BaseClasses import MultipleLayerModelBased
-from HoldingDataClustering import HoldingDataKMeanClustering
-from SecondLayerClustering import SecondLayerClustering
+from .HoldingDataMainClustering import HoldingDataMainClustering
+from .DailyReturnsSubClustering import DailyReturnsSubClustering
+
 
 rmtree = lambda : None # from shutil import rmtree
 mkdtemp = lambda : None# from tempfile import mkdtemp
@@ -22,14 +23,14 @@ class TwoLayerFundClustering(MultipleLayerModelBased):
             a customized class inherit from BaseEstimator, based on the model you have, the estimator could be transformer or estimator,
             and based on the machine model, estimator could be classifer or regressor, check the next class defintion for more detail
         """
-        holding_asset_clustering = ('holding_asset_clustering', HoldingDataKMeanClustering())
-        autoencoder_clustering = ('autoencoder_clustering', SecondLayerClustering())
+        holding_asset_clustering = ('holding_asset_clustering', HoldingDataMainClustering())
+        autoencoder_clustering = ('autoencoder_clustering', DailyReturnsSubClustering())
 
         # When trying to use the Pipeline, say error: models need to be Transformers?
         #super().__init__([], cached)
 
-        self.first_layer = HoldingDataKMeanClustering()
-        self.second_layer = SecondLayerClustering()
+        self.first_layer = HoldingDataMainClustering()
+        self.second_layer = DailyReturnsSubClustering()
         self.clustering_year = clustering_year
 
     def remove_cache(self):
@@ -50,24 +51,22 @@ class TwoLayerFundClustering(MultipleLayerModelBased):
         self.first_layer.set_up()
         first_layer_labels = self.first_layer.fit()
 
-        # Second layer for each group
-        features_first_layer = self.first_layer.features
-        cluster_subcluster_dict = dict()
-
-        import HyperparametersHelper
-        args = kwargs('args', HyperparametersHelper.parse_prm())
+        # Second layer
         self.second_layer.load_raw_data(self.clustering_year, first_layer_labels)
+        self.second_layer.set_up(self.first_layer.features, first_layer_labels)
+        second_layer_labels = self.second_layer.fit()
 
-        for main_cluster in range(len(set(first_layer_labels))):
+        keys, values = second_layer_labels.keys(), second_layer_labels.values()
+        main_clusters = [ x for x, y in values ]
+        sub_clusters = [ y for x, y in values ]
 
-            self.second_layer.set_up(features_first_layer, first_layer_labels, main_cluster)
-            second_layer_result = self.second_layer.fit(args)
+        second_layer_labels = pd.DataFrame(
+            columns=keys,
+            data=[main_clusters, sub_clusters],
+            index=['Main cluster', 'Sub cluster']
+        )
 
-            for fund_no, sub_cluster in second_layer_result:
-                cluster_subcluster_dict[fund_no] = (main_cluster, sub_cluster)
-
-
-        return cluster_subcluster_dict
+        return second_layer_labels.T # Transpose so that index=ticker, columns=clusters
 
 
     def predict(self, **kwargs):

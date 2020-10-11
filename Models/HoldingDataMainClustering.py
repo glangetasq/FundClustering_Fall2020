@@ -1,4 +1,4 @@
-""" Implementation of clustering by holding data only """
+""" Implementation of first layer clustering (main cluster) """
 
 from BaseClasses import FundClusterBased
 import DataHelper
@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from sklearn import cluster as sklearn_cluster
 
-class HoldingDataKMeanClustering(FundClusterBased):
+class HoldingMainClustering(FundClusterBased):
 
     """Clustering algorithm to define the cluster of a specific clustering method used to define cateogry of mutual fund"""
     def __init__(self):
