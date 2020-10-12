@@ -64,6 +64,8 @@ class HoldingMainClustering(FundClusterBased):
                 If it is sql, connection need to be extablished in setup function
                 please avoid any hard coded name in the class, and set global variable to define those file name
         """
+        
+        self.clustering_year = clustering_year
 
         if source_type == 'DataHelper':
             self.data = DataHelper.get_data_cache(clustering_year)
@@ -209,4 +211,22 @@ class HoldingMainClustering(FundClusterBased):
             output_cluster: bool
                 output cluster for each fund
         """
-        raise NotImplementedError("Subclasses should implement output_result")
+        if self.hasBeenFit == False:
+            print('Please fit the model!')
+            return 0
+
+        output_cluster = kwargs.get('output_cluster', False)
+        
+        if output_cluster == True:
+
+            loc = kwargs.get('loc', None)
+
+            from Tools import output_result
+
+            output = output_result.output_result_firstlayer(self.clustering_year, self.label, self.features,
+                                                            self.data.fund_mrnstar, self.data.cumul_returns, self.data.returns,
+                                                            self.asset_type, self.data.fundno_ticker, 
+                                                            save_result=True, loc = loc)
+            return output
+        
+        
