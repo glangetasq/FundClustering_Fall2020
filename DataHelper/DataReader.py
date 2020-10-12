@@ -56,3 +56,16 @@ class DataReader:
         fund_mrnstar.caldt = pd.to_datetime(fund_mrnstar.caldt, format='%Y%m%d')
 
         return fund_mrnstar
+   
+
+    @staticmethod
+    def get_fundno_ticker():
+
+        ticker_data = pd.read_csv(Path.tickers)
+        fundno_ticker = {}
+        for i in range(ticker_data.shape[0]):
+            if pd.isnull(ticker_data.ticker[i]):
+                continue
+            fundno_ticker[ticker_data.crsp_fundno[i]] = ticker_data.ticker[i]
+
+        return fundno_ticker
