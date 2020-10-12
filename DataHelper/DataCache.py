@@ -31,3 +31,7 @@ class DataCache:
         # Morningstar category of each mutual fund
         fund_mrnstar = reader.get_fund_mrnstar()
         self.fund_mrnstar = fund_mrnstar[(fund_mrnstar.caldt.dt.year == (clustering_year)) & (fund_mrnstar.caldt.dt.month == 12)]
+        
+        # Fund number and ticker of each mutual fund
+        self.fundno_ticker = reader.get_fundno_ticker()
+        
