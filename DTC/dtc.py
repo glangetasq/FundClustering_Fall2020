@@ -284,8 +284,10 @@ class DTC:
         if not self.pretrained:
             print('Autoencoder was not pre-trained!')
 
+        """ Ignore logging file for now """
+
         # Logging file
-        logfile = open(save_dir + '/dtc_log.csv', 'w')
+        # logfile = open(save_dir + '/dtc_log.csv', 'w')
         fieldnames = ['epoch', 'T', 'L', 'Lr', 'Lc']
         if X_val is not None:
             fieldnames += ['L_val', 'Lr_val', 'Lc_val']
@@ -293,8 +295,8 @@ class DTC:
             fieldnames += ['acc', 'pur', 'nmi', 'ari']
         if y_val is not None:
             fieldnames += ['acc_val', 'pur_val', 'nmi_val', 'ari_val']
-        logwriter = csv.DictWriter(logfile, fieldnames)
-        logwriter.writeheader()
+        # logwriter = csv.DictWriter(logfile, fieldnames)
+        # logwriter.writeheader()
 
         y_pred_last = None
         patience_cnt = 0
@@ -344,7 +346,7 @@ class DTC:
                     print('[Val] - Acc={:f}, Pur={:f}, NMI={:f}, ARI={:f}'.format(logdict['acc_val'], logdict['pur_val'],
                                                                                   logdict['nmi_val'], logdict['ari_val']))
 
-                logwriter.writerow(logdict)
+                # logwriter.writerow(logdict)
 
                 # check stop criterion
                 if y_pred_last is not None:
@@ -355,20 +357,20 @@ class DTC:
                     print('Assignment changes {} < {} tolerance threshold. Patience: {}/{}.'.format(assignment_changes, tol, patience_cnt, patience))
                     if patience_cnt >= patience:
                         print('Reached max patience. Stopping training.')
-                        logfile.close()
+                        # logfile.close()
                         break
                 else:
                     patience_cnt = 0
 
             # Save intermediate model and plots
             if epoch % save_epochs == 0:
-                self.model.save_weights(save_dir + '/DTC_model_' + str(epoch) + '.h5')
+                # self.model.save_weights(save_dir + '/DTC_model_' + str(epoch) + '.h5')
                 print('Saved model to:', save_dir + '/DTC_model_' + str(epoch) + '.h5')
 
             # Train for one epoch
             self.model.fit(X_train, p, epochs=1, batch_size=batch_size, verbose=False)
 
         # Save the final model
-        logfile.close()
+        # logfile.close()
         print('Saving model to:', save_dir + '/DTC_model_final.h5')
-        self.model.save_weights(save_dir + '/DTC_model_final.h5')
+        # self.model.save_weights(save_dir + '/DTC_model_final.h5')
