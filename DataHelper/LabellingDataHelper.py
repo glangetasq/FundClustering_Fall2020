@@ -2,6 +2,7 @@
 import os
 import numpy as np
 import pandas as pd
+from Tools import get_features
 
 data_path = "~/Desktop/Columbia/E4742 Deep Learning/FundClustering_Fall2020/Summer20Project/Final delivery/Clustering Model/Data"
  
@@ -41,7 +42,21 @@ def LabellingDataHelper(year):
     df_year = df[df['year']==year]
     df_year.drop('year',axis=1,inplace=True)
     df_year.dropna(axis=0, inplace=True)
+    
+    ### Feature generation
+    sp500 = pd.read_csv(data_path+'/sp500.csv')
+    sp500.date = pd.to_datetime(sp500.date)
+    market = sp500['return'][sp500.date.dt.year==year]
+    
+    features = pd.DataFrame(index=data.columns)
+    features['annual_ret'] = ((data+1).prod(axis=0)-1)
+    features['pos_days'] = (data>0).sum(axis=0)
+    features['zero_days'] = (data==0).sum(axis=0)
+    features['vol'] = data.std(axis=0)
+    features['max_dd'] = data.apply(lambda x:get_features.maxdd(x), axis = 0)
+    features['beta'] = data.apply(lambda x:get_features.beta(x,market), axis = 0)  
+    
 
-    return df_year      # This is not standardized 
+    return df_year, features      # This is not standardized 
 
 
