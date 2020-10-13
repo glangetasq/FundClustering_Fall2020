@@ -17,7 +17,7 @@ class DailyReturnsSubClustering(FundClusterBased):
         """Function to setup any private variable for the allocator"""
 
         self._feature_first_layer = feature_first_layer
-        self._first_layer_result = first_layer_result
+        self._first_layer_labels = first_layer_result
         self._set_up_kwargs = kwargs
 
 
@@ -85,7 +85,7 @@ class DailyReturnsSubClustering(FundClusterBased):
         features_first_layer = self._feature_first_layer
         cluster_subcluster_dict = dict()
 
-        for main_cluster in range(len(set(first_layer_labels))):
+        for main_cluster in range(len(set(self._first_layer_labels))):
 
             self.second_layer.set_up(
                 self._features_first_layer,
