@@ -16,7 +16,7 @@ class DailyReturnsSubClustering(FundClusterBased):
     def set_up(self, feature_first_layer, first_layer_result, **kwargs):
         """Function to setup any private variable for the allocator"""
 
-        self._feature_first_layer = feature_first_layer
+        self._features_first_layer = feature_first_layer
         self._first_layer_labels = first_layer_result
         self._set_up_kwargs = kwargs
 
@@ -82,7 +82,7 @@ class DailyReturnsSubClustering(FundClusterBased):
         TODO: Could modularize even more this function.
         """
 
-        features_first_layer = self._feature_first_layer
+        features_first_layer = self._features_first_layer
         cluster_subcluster_dict = dict()
 
         for main_cluster in range(len(set(self._first_layer_labels))):
