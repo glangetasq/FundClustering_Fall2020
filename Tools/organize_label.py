@@ -1,4 +1,4 @@
-""" Helper functions for second layer clustering """
+""" Result output helper functions for second layer clustering main class """
 
 import numpy as np
 import matplotlib.pyplot as plt
