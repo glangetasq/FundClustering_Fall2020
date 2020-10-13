@@ -56,6 +56,7 @@ class TwoLayerFundClustering(MultipleLayerModelBased):
         self.second_layer.set_up(self.first_layer.features, first_layer_labels)
         second_layer_labels = self.second_layer.fit()
 
+        """
         keys, values = second_layer_labels.keys(), second_layer_labels.values()
         main_clusters = [ x for x, y in values ]
         sub_clusters = [ y for x, y in values ]
@@ -67,7 +68,8 @@ class TwoLayerFundClustering(MultipleLayerModelBased):
         )
 
         return second_layer_labels.T # Transpose so that index=ticker, columns=clusters
-
+        """
+        return second_layer_labels
 
     def predict(self, **kwargs):
         """Run prediction after fitting the model, should throw error message when the model did not run fit yet.

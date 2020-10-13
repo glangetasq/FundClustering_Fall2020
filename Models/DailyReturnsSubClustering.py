@@ -87,7 +87,7 @@ class DailyReturnsSubClustering(FundClusterBased):
 
         for main_cluster in range(len(set(self._first_layer_labels))):
 
-            self.second_layer.set_up(
+            self._one_main_cluster_subclustering.set_up(
                 self._features_first_layer,
                 self._first_layer_labels,
                 main_cluster,
