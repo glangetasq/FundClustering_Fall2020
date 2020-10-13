@@ -8,7 +8,7 @@ data_path = "~/Desktop/Columbia/E4742 Deep Learning/FundClustering_Fall2020/Summ
 
 def LabellingDataHelper(year):
 
-    asset = pd.read_csv(data_path+"/asset_data_all.csv")
+    asset = pd.read_csv(data_path+"/Summary_Updated.csv")
     df = asset[asset['summary_period2']=='AQ'] #only picking out annual data
     df['caldt'] = pd.to_datetime(df['caldt'], format='%Y%m%d')
     df['year'] = pd.DatetimeIndex(df['caldt']).year
