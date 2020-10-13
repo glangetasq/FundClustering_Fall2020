@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from sklearn import cluster as sklearn_cluster
 
-class HoldingMainClustering(FundClusterBased):
+class HoldingDataMainClustering(FundClusterBased):
 
     """Clustering algorithm to define the cluster of a specific clustering method used to define cateogry of mutual fund"""
     def __init__(self):
@@ -64,7 +64,7 @@ class HoldingMainClustering(FundClusterBased):
                 If it is sql, connection need to be extablished in setup function
                 please avoid any hard coded name in the class, and set global variable to define those file name
         """
-        
+
         self.clustering_year = clustering_year
 
         if source_type == 'DataHelper':
@@ -216,7 +216,7 @@ class HoldingMainClustering(FundClusterBased):
             return 0
 
         output_cluster = kwargs.get('output_cluster', False)
-        
+
         if output_cluster == True:
 
             loc = kwargs.get('loc', None)
@@ -225,8 +225,6 @@ class HoldingMainClustering(FundClusterBased):
 
             output = output_result.output_result_firstlayer(self.clustering_year, self.label, self.features,
                                                             self.data.fund_mrnstar, self.data.cumul_returns, self.data.returns,
-                                                            self.asset_type, self.data.fundno_ticker, 
+                                                            self.asset_type, self.data.fundno_ticker,
                                                             save_result=True, loc = loc)
             return output
-        
-        

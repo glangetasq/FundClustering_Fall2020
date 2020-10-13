@@ -146,6 +146,11 @@ def __make_parser():
     return parser
 
 
+def default_prm():
+    parser = __make_parser()
+    return parser.parse_args(args=[])
+
+
 def parse_prm():
     parser = __make_parser()
     return parser.parse_args()
