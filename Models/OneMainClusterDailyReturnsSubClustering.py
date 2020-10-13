@@ -122,7 +122,7 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
                     break
 
             #initialize the DTC model
-            from Tools.dtc import DTC
+            from DTC.dtc import DTC
             hyper_parameters.n_clusters = min(15, sum(self.label==main_cluster)//2)
             dtc = DTC(n_clusters=hyper_parameters.n_clusters,
                     input_dim=compressed_data.shape[-1],
@@ -178,9 +178,10 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
             print('Training time: ', (time() - t0))
 
             #Get the clustering result
+            from Tools import organize_label
             pred_p = dtc.model.predict(secondlayer_features)
             subcluster_label = pred_p.argmax(axis=1)
-            subcluster_label = organize_label.organize_label(subcluster_label)
+            subcluster_label = organize_label(subcluster_label)
             self.subcluster_label = subcluster_label
             self.subcluster_k = len(set(subcluster_label))
 
