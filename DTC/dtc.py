@@ -24,7 +24,7 @@ import keras.backend as K
 from sklearn.cluster import AgglomerativeClustering, KMeans
 
 # Dataset helper function
-from datasets import load_data
+# from datasets import load_data
 
 # DTC components
 from TSClusteringLayer import TSClusteringLayer
