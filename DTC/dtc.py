@@ -116,7 +116,7 @@ class DTC:
         t0 = time()
         self.autoencoder.fit(X, X, batch_size=batch_size, epochs=epochs, verbose=verbose)
         print('Pretraining time: ', time() - t0)
-        self.autoencoder.save_weights('{}/ae_weights-epoch{}.h5'.format(save_dir, epochs))
+        # self.autoencoder.save_weights('{}/ae_weights-epoch{}.h5'.format(save_dir, epochs))
         print('Pretrained weights are saved to {}/ae_weights-epoch{}.h5'.format(save_dir, epochs))
         self.pretrained = True
 

@@ -27,7 +27,7 @@ class TwoLayerFundClustering(MultipleLayerModelBased):
         autoencoder_clustering = ('autoencoder_clustering', DailyReturnsSubClustering())
 
         # When trying to use the Pipeline, say error: models need to be Transformers?
-        #super().__init__([], cached)
+        # super().__init__([], cached)
 
         self.first_layer = HoldingDataMainClustering()
         self.second_layer = DailyReturnsSubClustering()
