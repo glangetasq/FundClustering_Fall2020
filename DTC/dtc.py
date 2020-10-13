@@ -27,10 +27,10 @@ from sklearn.cluster import AgglomerativeClustering, KMeans
 # from datasets import load_data
 
 # DTC components
-from TSClusteringLayer import TSClusteringLayer
-from TAE import temporal_autoencoder
-from metrics import *
-from tsdistances import *
+from .TSClusteringLayer import TSClusteringLayer
+from .TAE import temporal_autoencoder
+from .metrics import *
+from .tsdistances import *
 
 
 class DTC:
