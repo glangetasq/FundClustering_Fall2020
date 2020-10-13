@@ -82,7 +82,7 @@ class DailyReturnsSubClustering(FundClusterBased):
         TODO: Could modularize even more this function.
         """
 
-        features_first_layer = self.first_layer.features
+        features_first_layer = self._feature_first_layer
         cluster_subcluster_dict = dict()
 
         for main_cluster in range(len(set(first_layer_labels))):
