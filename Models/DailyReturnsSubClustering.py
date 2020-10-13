@@ -91,7 +91,7 @@ class DailyReturnsSubClustering(FundClusterBased):
                 self._features_first_layer,
                 self._first_layer_labels,
                 main_cluster,
-                self._set_up_kwargs
+                **self._set_up_kwargs
             )
 
             second_layer_result = self._one_main_cluster_subclustering.fit(
