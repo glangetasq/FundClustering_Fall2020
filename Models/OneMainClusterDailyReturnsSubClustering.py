@@ -123,6 +123,7 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
         #initialize the DTC model
         from DTC.dtc import DTC
         hyper_parameters.n_clusters = min(15, sum(self.label==self.main_cluster)//2)
+        print('N clusters in DTC for', self.main_cluster, 'is', hyper_parameters.n_clusters)
         dtc = DTC(n_clusters=hyper_parameters.n_clusters,
                 input_dim=compressed_data.shape[-1],
                 timesteps=compressed_data.shape[1],
