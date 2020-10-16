@@ -108,10 +108,11 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
         #Check if the sample is bigger than 1
         if compressed_data.shape[0] == 1:
             subcluster_dict[fundnos[0]] = 0
-            continue
+            print("There was a continue before")
+            return subcluster_dict
 
         #determine the pool size
-        from Tools import isPrime
+        import Tools
         if Tools.isPrime(compressed_data.shape[1]):
             compressed_data = compressed_data[:, :compressed_data.shape[1]-1, :]
         for i in range(10, compressed_data.shape[1]//2):
