@@ -94,9 +94,14 @@ class DailyReturnsSubClustering(FundClusterBased):
                 **self._set_up_kwargs
             )
 
-            second_layer_result = self._one_main_cluster_subclustering.fit(
-                hyper_parameters
-            )
+            try:
+                second_layer_result = self._one_main_cluster_subclustering.fit(
+                    hyper_parameters
+                )
+            except:
+                print(25*"[]")
+                print('Error one subclustering for', main_cluster)
+                print(25*"[]")
 
             for fund_no, sub_cluster in second_layer_result:
                 cluster_subcluster_dict[fund_no] = (main_cluster, sub_cluster)
