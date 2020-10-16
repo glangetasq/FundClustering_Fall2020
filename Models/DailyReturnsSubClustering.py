@@ -103,7 +103,7 @@ class DailyReturnsSubClustering(FundClusterBased):
 
         self.hasBeenFit = True
 
-        return subcluster_dict
+        return cluster_subcluster_dict
 
 
     def predict(self, **kwargs):
