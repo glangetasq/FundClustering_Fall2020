@@ -98,6 +98,7 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
 
         subcluster_dict = dict()
 
+        import Tools
         compressed_data, fundnos = Tools.get_timeseries(ret_flag=True, val_flag=True,
                                                                 ret_data = self.data.returns,
                                                                 feature = self.features,
