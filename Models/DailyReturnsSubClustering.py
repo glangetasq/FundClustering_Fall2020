@@ -103,7 +103,7 @@ class DailyReturnsSubClustering(FundClusterBased):
                 print('Error one subclustering for', main_cluster)
                 print(25*"[]")
 
-            for fund_no, sub_cluster in second_layer_result:
+            for fund_no, sub_cluster in second_layer_result.items():
                 cluster_subcluster_dict[fund_no] = (main_cluster, sub_cluster)
 
         self.hasBeenFit = True
