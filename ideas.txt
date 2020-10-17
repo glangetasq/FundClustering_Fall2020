@@ -1,0 +1,6 @@
+
+Observation for 2018 results:
+  - The number of funds in the main clusters differ greatly: one main cluster
+has only one fund, while another has more than 5,600 funds!
+  - Idea to fix that: subclusterize a lot more main clusters with a lot of funds,
+(and maybe not subclusterize main cluster with sub 10 funds?)
