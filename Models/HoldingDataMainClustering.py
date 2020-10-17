@@ -216,6 +216,12 @@ class HoldingDataMainClustering(FundClusterBased):
             return 0
 
         output_cluster = kwargs.get('output_cluster', False)
+        output_model = kwargs.get('output_model', False)
+
+        if output_model == True:
+            loc = kwargs.get('loc', None)
+            from Tools import save_model
+            save_model.output_model(self, f'first_layer_model_{self.clustering_year}', loc)
 
         if output_cluster == True:
 

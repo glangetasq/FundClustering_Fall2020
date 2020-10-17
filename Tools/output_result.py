@@ -26,7 +26,7 @@ def output_result_firstlayer(clustering_year, label, features, mrnstar_data, cum
     if save_result == True and loc:
         df.to_csv(f'{loc}/cluster_result_{clustering_year}.csv', index=False)
     
-    print('Sucessfully saved the clustering output!')
+    print('Successfully saved the clustering output!')
 
     return df
 

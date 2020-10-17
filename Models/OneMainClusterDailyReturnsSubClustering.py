@@ -226,4 +226,10 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
             output_cluster: bool
                 output cluster for each fund
         """
-        raise NotImplementedError("Subclasses should implement output_result")
+
+        output_model = kwargs.get('output_model', False)
+
+        if output_model == True:
+            loc = kwargs.get('loc', None)
+            from Tools import save_model
+            save_model.output_model(self, f'main_cluster_{self.main_cluster}_model_{self.clustering_year}', loc)
