@@ -25,12 +25,49 @@ def output_result_firstlayer(clustering_year, label, features, mrnstar_data, cum
 
     if save_result == True and loc:
         df.to_csv(f'{loc}/cluster_result_{clustering_year}.csv', index=False)
-    
-    print('Successfully saved the clustering output!')
+        print('Successfully saved the clustering output!')
 
     return df
 
 
-def output_result_secondlayer():
-    # will update later
-    pass
+def output_result_secondlayer(clustering_year, subcluster_dict, save_result=False, loc=None):
+    """ output result helper function for second layer clustering """
+
+    df = pd.DataFrame.from_dict(subcluster_dict, orient='index', columns=['Cluster', 'Subcluster'])
+    df = df.reset_index().rename(columns={"index": "Fund.No"})
+
+    if save_result == True and loc:
+        df.to_csv(f'{loc}/cluster_result_withsub_simple_{clustering_year}.csv', index=False)
+        print('Successfully saved the subclustering output!')
+
+    return df
+
+
+def output_result_one_main_cluster(clustering_year, main_cluster, subcluster_dict, save_result=False, loc=None):
+    """ output result helper function for one main cluster """
+
+    df = pd.DataFrame.from_dict(subcluster_dict, orient='index', columns=['Subcluster'])
+    df = df.reset_index().rename(columns={"index": "Fund.No"})
+
+    if save_result == True and loc:
+        df.to_csv(f'{loc}/cluster_{main_cluster}_result_withsub_simple_{clustering_year}.csv', index=False)
+        print(f'Successfully saved the subclustering {main_cluster} output!')
+
+    return df
+
+
+def output_result_two_layer(clustering_year, first_layer_result, subcluster_dict, first_layer_label, save_result=False, loc=None):
+    """ output result helper function for two layer clustering """
+
+    df = first_layer_result
+    if len(subcluster_dict) != len(first_layer_label):
+        raise ValueError('The subclustering for each cluster is not finished.')
+    df.insert(int(np.where(df.columns == 'Cluster')[0][0] + 1), 'Subcluster', np.ones(len(df)))
+    df['Subcluster'] = df['Fund.No'].apply(lambda x: subcluster_dict[str(x)])
+
+    if save_result == True and loc:
+        df.to_csv(f'{loc}/cluster_result_withsub_{clustering_year}.csv', index=False)
+        print('Successfully saved the clustering and subclustering output!')
+
+    return df
+

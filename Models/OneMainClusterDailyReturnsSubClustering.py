@@ -197,6 +197,7 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
         # return subcluster label
 
         self.hasBeenFit = True
+        self.subcluster_dict = subcluster_dict
 
         return subcluster_dict
 
@@ -228,8 +229,16 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
         """
 
         output_model = kwargs.get('output_model', False)
+        output_cluster = kwargs.get('output_cluster', False)
+        loc = kwargs.get('loc', None)
+        save_result = kwargs.get('save_result', True)
 
         if output_model == True:
-            loc = kwargs.get('loc', None)
             from Tools import save_model
             save_model.output_model(self, f'main_cluster_{self.main_cluster}_model_{self.clustering_year}', loc)
+
+        if output_cluster == True:
+            from Tools import output_result
+            output = output_result.output_result_one_main_cluster(self.clustering_year, self.main_cluster,
+                                                                  self.subcluster_dict, save_result, loc)
+            return output
