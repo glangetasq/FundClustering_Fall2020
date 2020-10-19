@@ -56,6 +56,7 @@ class DailyReturnsSubClustering(FundClusterBased):
             source_type,
             **kwargs
         )
+        self.clustering_year = clustering_year
 
 
     def set_hyper_parameter(self, **kwargs):
@@ -107,6 +108,7 @@ class DailyReturnsSubClustering(FundClusterBased):
                 cluster_subcluster_dict[fund_no] = (main_cluster, sub_cluster)
 
         self.hasBeenFit = True
+        self.cluster_subcluster_dict = cluster_subcluster_dict
 
         return cluster_subcluster_dict
 
@@ -139,9 +141,22 @@ class DailyReturnsSubClustering(FundClusterBased):
             output_cluster: bool
                 output cluster for each fund
         """
+
+        if self.hasBeenFit == False:
+            print('Please fit the model!')
+            return 0
+
         output_model = kwargs.get('output_model', False)
+        output_cluster = kwargs.get('output_cluster', False)
+        loc = kwargs.get('loc', None)
+        save_result = kwargs.get('save_result', True)
 
         if output_model == True:
-            loc = kwargs.get('loc', None)
             from Tools import save_model
             save_model.output_model(self, f'second_layer_model_{self.clustering_year}', loc)
+
+        if output_cluster == True:
+            from Tools import output_result
+            output = output_result.output_result_secondlayer(self.clustering_year, self.cluster_subcluster_dict,
+                                                             save_result, loc)
+            return output

@@ -108,8 +108,18 @@ class TwoLayerFundClustering(MultipleLayerModelBased):
                 output optimal portfolio generated
         """
         output_model = kwargs.get('output_model', False)
+        output_portfolio = kwargs.get('output_portfolio', False)
+        loc = kwargs.get('loc', None)
+        save_result = kwargs.get('save_result', True)
 
         if output_model == True:
-            loc = kwargs.get('loc', None)
             from Tools import save_model
             save_model.output_model(self, f'two_layer_model_{self.clustering_year}', loc)
+
+        if output_portfolio == True:
+            from Tools import output_result
+            first_layer_result = self.first_layer.output_result(output_cluster=True, save_result=False)
+            output = output_result.output_result_two_layer(self.clustering_year, first_layer_result,
+                                                           self.second_layer.cluster_subcluster_dict,
+                                                           self.first_layer.label, save_result, loc)
+            return output
