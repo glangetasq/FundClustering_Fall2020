@@ -65,10 +65,12 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
         """
 
         self.clustering_year = clustering_year
+        self.first_layer_labels = first_layer_labels
 
         if source_type == 'DataHelper':
             self.data = DataHelper.get_data_cache(clustering_year)
-            self.first_layer_labels = first_layer_labels
+        elif source_type == 'CustomCache':
+            self.data = kwargs.get('cache')
         else:
             raise ValueError(f"The type of source '{source_type}' is not supported at the moment.")
 

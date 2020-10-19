@@ -69,14 +69,16 @@ class HoldingDataMainClustering(FundClusterBased):
 
         if source_type == 'DataHelper':
             self.data = DataHelper.get_data_cache(clustering_year)
-
-            # Processing data for this model
-            processor = DataHelper.get_data_processor()
-            self.features = processor.holding_asset_pivot(self.data)
-            self.data.returns = self.data.returns[self.features.index]
-            self.data.cumul_returns = self.data.cumul_returns[self.features.index]
+        elif source_type == 'CustomCache':
+            self.data = kwargs.get('cache')
         else:
             raise ValueError(f"The type of source '{source_type}' is not supported at the moment.")
+
+        # Processing data for this layer
+        processor = DataHelper.get_data_processor()
+        self.features = processor.holding_asset_pivot(self.data)
+        self.data.returns = self.data.returns[self.features.index]
+        self.data.cumul_returns = self.data.cumul_returns[self.features.index]
 
 
     def set_hyper_parameter(self, **kwargs):

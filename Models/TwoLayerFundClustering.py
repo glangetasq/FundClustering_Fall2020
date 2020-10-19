@@ -39,20 +39,31 @@ class TwoLayerFundClustering(MultipleLayerModelBased):
             rmtree(self.cachedir)
 
 
-    def fit(self, **kwargs):
+    def fit(self, source_type='DataHelper', **kwargs):
         """Fit the pipeline based on the parameters
         Parameters:
             X: df/np.array/any customized type, but you need to make sure that all estimator could handle this data type
                 independent variable, possibly you could use data_hlper class you define for this purpose
         """
 
+        cache = kwargs.get('cache', None)
+        if source_type == 'CustomCache' and not cache:
+            raise ValueError("Expected cache when using the Custom Cache source type.")
+
         # First layer
-        self.first_layer.load_raw_data(self.clustering_year)
+        self.first_layer.load_raw_data(self.clustering_year,
+            source_type=source_type,
+            cache=cache
+        )
         self.first_layer.set_up()
         first_layer_labels = self.first_layer.fit()
 
         # Second layer
-        self.second_layer.load_raw_data(self.clustering_year, first_layer_labels)
+        self.second_layer.load_raw_data(self.clustering_year,
+            first_layer_labels,
+            source_type=source_type,
+            cache=cache
+        )
         self.second_layer.set_up(self.first_layer.features, first_layer_labels)
         second_layer_labels = self.second_layer.fit()
 
