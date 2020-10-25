@@ -8,13 +8,13 @@ import pandas as pd
 
 # Local imports
 from BaseClasses import FundClusterVisualizationHelperBased
-from DataHelper import LabellingDataHelper
+from DataHelper.LabelingDataHelper import LabelingDataHelper
 from Models.HoldingDataMainClustering import HoldingMainClustering
-from Tools import labelling
+from Tools import Labeling
 
 
-class FirstLayerLabelling(FundClusterVisualizationHelperBased):
-    """ Cluster level labelling & result visualization """
+class FirstLayerLabeling(FundClusterVisualizationHelperBased):
+    """ Cluster level labeling & result visualization """
 
     def __init__(self, cluster_method):
         """Init function to link the helper to a specific fund clustering strategy obj,
@@ -53,7 +53,7 @@ class FirstLayerLabelling(FundClusterVisualizationHelperBased):
         # df is the processed assets holding for all funds and for all the years covered
         # df_year is the processed assets holding for all funds in a specific year
         # feature_nostd is the features for all funds and for all the years covered
-        self.df, self.df_year, self.feature_nostd = LabellingDataHelper.LabellingDataHelper(self.clustering_year)
+        self.df, self.df_year, self.feature_nostd = LabelingDataHelper(self.clustering_year)
 
         self._set_up = True
         self.characteristics = False
@@ -66,7 +66,7 @@ class FirstLayerLabelling(FundClusterVisualizationHelperBased):
         """Generate lable information for each fund, and return the cluster label
         for each fund, and also the charatersitics of each fund
 
-        output: the fund labelling returned by the first layer clustering (without subclusters)
+        output: the fund labeling returned by the first layer clustering (without subclusters)
         """
 
         if self._set_up == False:
@@ -106,7 +106,7 @@ class FirstLayerLabelling(FundClusterVisualizationHelperBased):
         summary_cluster['No. of funds'] = self.label['Cluster'].value_counts()
 
         # Adding cluster descriptions based on investment focus
-        summary_cluster = labelling.asset_focus_description(summary_cluster)
+        summary_cluster = Labeling.asset_focus_description(summary_cluster)
 
         return summary_cluster
 
@@ -147,17 +147,17 @@ class FirstLayerLabelling(FundClusterVisualizationHelperBased):
         summary_cluster['No. of funds'] = self.label['Cluster'].value_counts()
 
         # Adding cluster descriptions based on investment focus
-        summary_cluster = labelling.asset_focus_description(summary_cluster)
+        summary_cluster = Labeling.asset_focus_description(summary_cluster)
 
         # Adding risk & return profile
-        summary_cluster = labelling.risk_return_profile(summary_cluster, self.label, self.feature_nostd, subcluster=False)
+        summary_cluster = Labeling.risk_return_profile(summary_cluster, self.label, self.feature_nostd, subcluster=False)
 
         # Adding the most frequent Morningstar category & Category (labels provided in crsp data file):
         morningstar = list(); cluster_category = list()
 
         for pairs in list(np.unique(summary_cluster.index)):
             cluster = pairs[0]
-            a,b = labelling.fund_categories(self.label, cluster)
+            a,b = Labeling.fund_categories(self.label, cluster)
             morningstar.append(a.index[0])
             cluster_category.append(b.index[0])
 
@@ -203,7 +203,7 @@ class FirstLayerLabelling(FundClusterVisualizationHelperBased):
 
         # show the pieplot of asset allocation of the cluster if required
         if pieplot == True:
-            labelling.pie_chart(self.label, self.df_year, cluster_name)
+            Labeling.pie_chart(self.label, self.df_year, cluster_name)
 
         return cluster
 
