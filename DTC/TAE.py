@@ -4,10 +4,12 @@ Temporal Autoencoder (TAE)
 @author Florent Forest (FlorentF9)
 """
 
+# Keras imports
 from keras.models import Model, Sequential
-from keras.layers import Input, Conv1D, LeakyReLU, MaxPool1D, LSTM, Bidirectional, TimeDistributed, Dense, Reshape
+from keras.layers import Input, Conv1D, LeakyReLU, MaxPool1D, LSTM, 
+from keras.layers import Bidirectional, TimeDistributed, Dense, Reshape
 from keras.layers import UpSampling2D, Conv2DTranspose
-
+# --------------------- #
 
 def temporal_autoencoder_v2(input_dim, timesteps, n_filters=50, kernel_size=10, strides=1, pool_size=10, n_units=[50, 1]):
     """

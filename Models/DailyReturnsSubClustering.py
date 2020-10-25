@@ -1,8 +1,10 @@
 """ Implementation of second layer clustering by return data """
 
+# Local imports
 from BaseClasses import FundClusterBased
-from .OneMainClusterDailyReturnsSubClustering import OneMainClusterDailyReturnsSubClustering
 import HyperparametersHelper
+from .OneMainClusterDailyReturnsSubClustering import OneMainClusterDailyReturnsSubClustering
+
 
 class DailyReturnsSubClustering(FundClusterBased):
 

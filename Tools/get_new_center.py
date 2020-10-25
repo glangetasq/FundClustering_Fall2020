@@ -2,7 +2,16 @@ import numpy as np
 
 def get_new_center(feature, label, k):
     """
-    TODO: Docstring of this Function
+    Give new centers of a KMean result.
+
+    Find new centers out of clusters that are too disparate.
+
+    TODO: hard-coded parameters. Put them in config file.
+
+    Input:
+        feature: pd.DataFrame of the features in the KMean algorithm
+        label: current clusters of the funds.
+        k: current number of clusters in the KMean algorithm.
     """
 
     cluster_center_init = []

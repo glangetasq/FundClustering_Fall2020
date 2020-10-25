@@ -1,7 +1,9 @@
 """ Check if a number is prime """
 
+import math
+
+
 def isPrime(n):
-    import math
     if n > 1:
         if n == 2:
             return True

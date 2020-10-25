@@ -1,32 +1,28 @@
 #DTC Model -- first train the autoencoder to then train the clustering model
 
-import numpy as np
-import pandas as pd
-import tslearn
-from tslearn.clustering import TimeSeriesKMeans
-from sklearn import cluster
-from sklearn import metrics
-from sklearn.metrics import davies_bouldin_score, pairwise_distances
+import argparse # For input parsing
+import csv # For writing log files
 # from gap_statistic import OptimalK
-
-import os
-import csv
-import argparse
-from time import time
-
-# Keras
+# Keras imports
 from keras.models import Model
 from keras.layers import Input, Dense, Reshape, UpSampling2D, Conv2DTranspose, GlobalAveragePooling1D, Softmax
 from keras.losses import kullback_leibler_divergence
 import keras.backend as K
-
-# scikit-learn
+# --------------------- #
+import numpy as np
+import os
+import pandas as pd
+# Sklearn imports
+from sklearn import cluster, metrics
 from sklearn.cluster import AgglomerativeClustering, KMeans
+from sklearn.metrics import davies_bouldin_score, pairwise_distances
+# --------------------- #
+from time import time
+import tslearn
+from tslearn.clustering import TimeSeriesKMeans
 
-# Dataset helper function
-# from datasets import load_data
 
-# DTC components
+# Local imports
 from .TSClusteringLayer import TSClusteringLayer
 from .TAE import temporal_autoencoder
 from .metrics import *
