@@ -97,9 +97,11 @@ def fund_categories(df, cluster, subcluster=None, col_names = ['Mstar Category',
     taking a look at the most popular Morningstar Category and Cluster Category. """
     
     if subcluster == None: 
+        df = df.reset_index()
         df = df.set_index(['Cluster'])
         temp = df[df.index.isin([cluster], level=0)]
     else: 
+        df = df.reset_index()
         df = df.set_index(['Cluster','Subcluster'])
         temp = df.loc[(cluster, subcluster)]
     
@@ -121,7 +123,7 @@ def pie_chart(labels, df, cluster, subcluster = None, plot=True):
                2) pie chart of the asset allocation'''
     
     if subcluster: 
-        funds = set(labels.loc[(cluster,subcluster)]['Fund.No']).intersection(set(df.crsp_fundno))
+        funds = set(labels.loc[cluster,subcluster]['Fund.No']).intersection(set(df.crsp_fundno))
     else: 
         funds = set(labels[labels.index.isin([cluster], level=0)]['Fund.No']).intersection(set(df.crsp_fundno))
         
@@ -233,7 +235,7 @@ def risk_return_profile(df, label, features_nostd, subcluster = False):
 
     features_nostd['index'] = features_nostd.index.astype(int)
     if subcluster == True: 
-        label_features_nostd = label.reset_index()[['Cluster','Subcluter','Fund.No']].merge(features_nostd, how='left', left_on = 'Fund.No', right_on = 'index').drop(['index','Fund.No'], axis=1)
+        label_features_nostd = label.reset_index()[['Cluster','Subcluster','Fund.No']].merge(features_nostd, how='left', left_on = 'Fund.No', right_on = 'index').drop(['index','Fund.No'], axis=1)
         label_features_nostd = label_features_nostd.groupby(['Cluster', 'Subcluster']).median()
     else:
         label_features_nostd = label.reset_index()[['Cluster','Fund.No']].merge(features_nostd, how='left', left_on = 'Fund.No', right_on = 'index').drop(['index','Fund.No'], axis=1)
