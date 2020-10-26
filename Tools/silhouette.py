@@ -10,8 +10,10 @@ def silhouette(feature, log=None):
     mx = 0
     res = None
 
-    for i in range(2, 30):
-        k=i
+    max_k = min(len(feature)-1, 30)
+
+    for i in range(2, max_k+1):
+        k = i
         clustering = AgglomerativeClustering(n_clusters=k).fit(feature)
         cluster_label = clustering.labels_
         score.append(silhouette_score(feature, cluster_label, metric='euclidean'))
