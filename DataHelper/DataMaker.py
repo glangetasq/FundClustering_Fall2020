@@ -17,8 +17,11 @@ class DataMaker:
         fund_mrnstar_columns = ['crsp_fundno', 'caldt', 'lipper_class_name']
 
         self.holding_asset = pd.DataFrame(columns=holding_asset_columns)
+        self.holding_asset.caldt = pd.to_datetime(self.holding_asset.caldt, format='%Y%m%d')
         self.returns = pd.DataFrame()
+        self.returns.index = pd.to_datetime(self.returns.index)
         self.fund_mrnstar = pd.DataFrame(columns=fund_mrnstar_columns)
+        self.fund_mrnstar.caldt = pd.to_datetime(self.fund_mrnstar.caldt, format='%Y%m%d')
         self.fundno_ticker = pd.DataFrame()
 
         self.fake_data_name = data_name
