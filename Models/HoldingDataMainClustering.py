@@ -125,6 +125,13 @@ class HoldingDataMainClustering(FundClusterBased):
 
 
         k = Tools.silhouette(normalized_features, log)
+        if k == 0:
+            self.label = np.array([])
+            return self.label
+        if k == 1:
+            self.label = np.array([0])
+            return self.label
+        
         h_clustering = sklearn_cluster.AgglomerativeClustering(n_clusters=k, linkage='ward').fit(normalized_features)
         cluster_label = h_clustering.labels_
         if verbose: print('Best number of clusters for hierarchical clustering is', k)

@@ -16,7 +16,7 @@ class NoFundCase(unittest.TestCase):
         self.model.fit(source_type='CustomCache', cache=self.cache)
 
     def test_first_layer_result(self):
-        self.assertEqual(self.model.first_layer.label, np.array([]))
+        self.assertTrue((self.model.first_layer.label == np.array([])).all())
 
     def test_second_layer_result(self):
         self.assertEqual(self.model.second_layer.cluster_subcluster_dict, dict())
@@ -38,10 +38,10 @@ class OneFundCase(unittest.TestCase):
         self.model.fit(source_type='CustomCache', cache=self.cache)
 
     def test_first_layer_result(self):
-        self.assertEqual(self.model.first_layer.label, np.array([0]))
+        self.assertTrue((self.model.first_layer.label == np.array([0])).all())
 
     def test_second_layer_result(self):
-        self.assertEqual(self.model.second_layer.cluster_subcluster_dict, {'0': (0, 0)})
+        self.assertEqual(self.model.second_layer.cluster_subcluster_dict, {0: (0, 0)})
 
 
 
@@ -65,7 +65,7 @@ class TwoFundCase(unittest.TestCase):
         self.model.fit(source_type='CustomCache', cache=self.cache)
 
     def test_first_layer_result(self):
-        self.assertIn(self.model.first_layer.label, [np. array([0, 0]), np.array([0, 1]), np.array([1, 0])])
+        self.assertTrue((self.model.first_layer.label == np.array([0,1])).all())
 
 
 
