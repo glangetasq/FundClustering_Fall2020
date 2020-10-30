@@ -1,6 +1,9 @@
 def silhouette(feature, log=None):
     """
     Silhouette function. TODO: describe function
+    
+    Note that Silhouette Coefficient is only defined 
+        if number of labels is 2 <= n_labels <= n_samples - 1
     """
 
     from sklearn.cluster import AgglomerativeClustering
@@ -15,7 +18,7 @@ def silhouette(feature, log=None):
     if max_k in [0,1,2]:
         return max_k
     else: 
-        for i in range(2, max_k+1):
+        for i in range(2, max_k):
             k = i
             clustering = AgglomerativeClustering(n_clusters=k).fit(feature)
             cluster_label = clustering.labels_

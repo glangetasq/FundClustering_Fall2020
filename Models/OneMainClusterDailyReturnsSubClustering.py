@@ -111,18 +111,25 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
         #Check if the sample is bigger than 1
         if compressed_data.shape[0] == 1:
             subcluster_dict[fundnos[0]] = 0
-            print("There was a continue before")
+            #print("There was a continue before")
             return subcluster_dict
 
         #determine the pool size
         import Tools
         if Tools.isPrime(compressed_data.shape[1]):
             compressed_data = compressed_data[:, :compressed_data.shape[1]-1, :]
-        for i in range(10, compressed_data.shape[1]//2):
-            if compressed_data.shape[1] % i == 0:
-                hyper_parameters.pool_size = i
-                break
+        
+        if compressed_data.shape[1] <= 10:
+            hyper_parameters.pool_size = compressed_data.shape[1]
+        else:
+            for i in range(10, compressed_data.shape[1]//2):
+                if compressed_data.shape[1] % i == 0:
+                    hyper_parameters.pool_size = i
+                    break
 
+
+        print('Timesteps = ', compressed_data.shape[1])
+        print('Pool size = ', hyper_parameters.pool_size)
         #initialize the DTC model
         from DTC.dtc import DTC
         hyper_parameters.n_clusters = min(15, sum(self.label==self.main_cluster)//2)
