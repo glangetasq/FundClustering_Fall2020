@@ -1,4 +1,6 @@
+
 import numpy as np
+
 
 def merge_cluster(feature, label, k, identical_asset=3, argsort=False):
     """

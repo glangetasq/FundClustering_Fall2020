@@ -1,8 +1,9 @@
 
-from Tools import labelling
 import numpy as np
 import pandas as pd
 
+# Local imports
+from Tools import labelling
 
 def output_result_firstlayer(clustering_year, label, features, mrnstar_data, cumul_returns, returns, asset_type, fundno_ticker, save_result = False, loc = None):
     """ output result helper function for first layer clustering """
@@ -10,7 +11,7 @@ def output_result_firstlayer(clustering_year, label, features, mrnstar_data, cum
     fund_ctgy = {mrnstar_data.iloc[j, :]['crsp_fundno']: mrnstar_data.iloc[j, :]['lipper_class_name'] for j in range(len(mrnstar_data))}
     cluster_label = labelling.label_cluster(label, features)
     sharpe_rank, abret_rank = labelling.get_sharpe_ret(cumul_returns, returns, label)
-    df = pd.DataFrame(columns=['Fund.No', 'Ticker', 'Cluster'] + asset_type + ['Mstar Category', 
+    df = pd.DataFrame(columns=['Fund.No', 'Ticker', 'Cluster'] + asset_type + ['Mstar Category',
                             'Cluster Category', 'sharpe_ratio', 'absolute_return', 'absolute_return_val'])
     df['Fund.No'] = np.array(features.index)
     df['Ticker'] = df['Fund.No'].apply(lambda x: fundno_ticker[int(x)])
@@ -70,4 +71,3 @@ def output_result_two_layer(clustering_year, first_layer_result, subcluster_dict
         print('Successfully saved the clustering and subclustering output!')
 
     return df
-

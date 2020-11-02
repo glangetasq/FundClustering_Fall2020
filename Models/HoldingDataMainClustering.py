@@ -1,12 +1,13 @@
 """ Implementation of first layer clustering (main cluster) """
 
-from BaseClasses import FundClusterBased
-import DataHelper
-import Tools
-
 import numpy as np
 import pandas as pd
 from sklearn import cluster as sklearn_cluster
+
+# Local imports
+from BaseClasses import FundClusterBased
+import DataHelper
+import Tools
 
 class HoldingDataMainClustering(FundClusterBased):
 

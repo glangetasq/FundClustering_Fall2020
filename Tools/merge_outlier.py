@@ -1,4 +1,6 @@
+
 import numpy as np
+
 
 def merge_outlier(label, data_nostd, log=None):
     """

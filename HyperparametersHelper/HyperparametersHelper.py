@@ -1,5 +1,5 @@
 # Helper to initialize and set hyperparameters
-import argparse
+import argparse # Command Line argument parsing
 
 def __make_parser():
 

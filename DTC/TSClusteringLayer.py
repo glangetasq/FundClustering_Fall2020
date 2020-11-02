@@ -4,9 +4,10 @@ Time Series Clustering layer
 @author Florent Forest (FlorentF9)
 """
 
-from keras.engine.topology import Layer, InputSpec
+# Keras imports
 import keras.backend as K
-
+from keras.engine.topology import Layer, InputSpec
+# --------------------- #
 
 class TSClusteringLayer(Layer):
     """
@@ -85,4 +86,3 @@ class TSClusteringLayer(Layer):
         config = {'n_clusters': self.n_clusters, 'dist_metric': self.dist_metric}
         base_config = super(TSClusteringLayer, self).get_config()
         return dict(list(base_config.items()) + list(config.items()))
-

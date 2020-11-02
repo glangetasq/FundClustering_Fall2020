@@ -1,25 +1,28 @@
 """ Implementation of result visualization for the first layer clustering """
 
-from BaseClasses import FundClusterVisualizationHelperBased
-from Models.HoldingDataMainClustering import HoldingDataMainClustering
-from Tools import labelling
-import DataHelper
-from DataHelper import LabellingDataHelper
+
 import numpy as np
-import pandas as pd
 import os
+import pandas as pd
 import warnings
+
 warnings.filterwarnings("ignore")
 
+# Local imports
+from BaseClasses import FundClusterVisualizationHelperBased
+from DataHelper.LabelingDataHelper import LabelingDataHelper
+from Models.HoldingDataMainClustering import HoldingDataMainClustering
+from Tools import Labeling
 
-class FirstLayerLabelling(FundClusterVisualizationHelperBased):
-    """ Cluster level labelling & result visualization """
+
+class FirstLayerLabeling(FundClusterVisualizationHelperBased):
+    """ Cluster level labeling & result visualization """
 
     def __init__(self, cluster_method):
-        """Init function to link the helper to a specific fund clustering strategy obj, 
-            or mutliple clustering method, these obj could either be just created and 
+        """Init function to link the helper to a specific fund clustering strategy obj,
+            or mutliple clustering method, these obj could either be just created and
             trained in memory, or load from pickle
-        
+
         Parameters:
             cluster_method: FundClusterBased or derived class obj
                 represent the cluster method that we want to register
@@ -29,10 +32,10 @@ class FirstLayerLabelling(FundClusterVisualizationHelperBased):
 
     def set_up(self, clustering_year, fit = True, file = None):
         """Set up first layer clustering and get data ready for result visualization"""
-        
+
         self.clustering_year = clustering_year
 
-        if fit == True: 
+        if fit == True:
             # Instantiate and do first layer clustering
             first_layer = HoldingDataMainClustering()
             first_layer.load_raw_data(self.clustering_year)
@@ -50,10 +53,10 @@ class FirstLayerLabelling(FundClusterVisualizationHelperBased):
             self.ret_data = first_layer.data.returns
             self.asset_type = first_layer.asset_type
             self.fundno_ticker = first_layer.data.fundno_ticker
-        else: 
+        else:
             # if we don't fit inside set_up, read in the clustering results from a given file
             self.label = pd.read_csv(file)
-            
+
             # Fetch and Processing
             self.data = DataHelper.get_data_cache(clustering_year)
             processor = DataHelper.get_data_processor()
@@ -71,20 +74,20 @@ class FirstLayerLabelling(FundClusterVisualizationHelperBased):
         # df is the processed assets holding for all funds and for all the years covered
         # df_year is the processed assets holding for all funds in a specific year
         # feature_nostd is the features for all funds and for all the years covered
-        self.df, self.df_year, self.feature_nostd = LabellingDataHelper.LabellingDataHelper(self.clustering_year)
-        
+        self.df, self.df_year, self.feature_nostd = LabelingDataHelper(self.clustering_year)
+
         self._set_up = True
         self.characteristics = False
 
         print('Set up done for result visualization')
         return None
 
-    
+
     def get_fund_label(self, loc = 'final_output', save_results = True):
         """Generate lable information for each fund, and return the cluster label
         for each fund, and also the charatersitics of each fund
-        
-        output: the fund labelling returned by the first layer clustering (without subclusters)
+
+        output: the fund labeling returned by the first layer clustering (without subclusters)
         """
 
         if self._set_up == False:
@@ -102,15 +105,15 @@ class FirstLayerLabelling(FundClusterVisualizationHelperBased):
 
 
     def generate_cluster_label(self):
-        """Generate label information for cluster, and print the cluster label name 
+        """Generate label information for cluster, and print the cluster label name
         for each cluster, and also the charatersitics of each label
-        
-        output: cluster summary including: cluster name, 
+
+        output: cluster summary including: cluster name,
                                         number of funds in each cluster,
                                         median asset allocation percentages of each cluster,
                                         cluster description based on investment focus
         """
-        
+
         if self._set_up == False:
             print('Please first set up!')
             return None
@@ -120,20 +123,20 @@ class FirstLayerLabelling(FundClusterVisualizationHelperBased):
 
         # Median of asset allocation percentages of each Cluster
         summary_cluster = merged.groupby('Cluster').median().drop(['Fund.No', 'index'], axis=1)
-        
+
         # Number of funds in each cluster
         summary_cluster['No. of funds'] = self.label['Cluster'].value_counts()
 
         # Adding cluster descriptions based on investment focus
-        summary_cluster = labelling.asset_focus_description(summary_cluster)
-        
+        summary_cluster = Labeling.asset_focus_description(summary_cluster)
+
         return summary_cluster
 
-    
+
 
     def get_fund_list(self, cluster_name):
         """Get funds based on cluster name provide
-        
+
         Parameters:
             cluster_name: str
                 name of the cluster defined in the cluster label
@@ -144,12 +147,12 @@ class FirstLayerLabelling(FundClusterVisualizationHelperBased):
             return None
 
         fund = self.label[self.label['Cluster'] == cluster_name]
-        
+
         return fund
 
 
-    def generate_cluster_characteristics(self): 
-        """ Set-up function for generating cluster characteristics 
+    def generate_cluster_characteristics(self):
+        """ Set-up function for generating cluster characteristics
             must be implemented before get_cluster_characteristics()
         """
 
@@ -158,40 +161,40 @@ class FirstLayerLabelling(FundClusterVisualizationHelperBased):
             return None
 
         merged = self.label.reset_index()[['Cluster','Fund.No']].merge(self.df_year.reset_index(),how='left', left_on = 'Fund.No', right_on = 'crsp_fundno').drop('crsp_fundno', axis=1)
-       
+
         # Median of asset allocation percentages of each Cluster
         summary_cluster = merged.groupby('Cluster').median().drop(['Fund.No', 'index'], axis=1)
-        
+
         # Number of funds in each cluster
         summary_cluster['No. of funds'] = self.label['Cluster'].value_counts()
-        
+
         # Adding cluster descriptions based on investment focus
-        summary_cluster = labelling.asset_focus_description(summary_cluster)
+        summary_cluster = Labeling.asset_focus_description(summary_cluster)
 
         # Adding risk & return profile
-        summary_cluster = labelling.risk_return_profile(summary_cluster, self.label, self.feature_nostd, subcluster=False)
-        
-        # Adding the most frequent Morningstar category & Category (labels provided in crsp data file): 
+        summary_cluster = Labeling.risk_return_profile(summary_cluster, self.label, self.feature_nostd, subcluster=False)
+
+        # Adding the most frequent Morningstar category & Category (labels provided in crsp data file):
         morningstar = list(); cluster_category = list()
 
-        for pairs in list(np.unique(summary_cluster.index)): 
+        for pairs in list(np.unique(summary_cluster.index)):
             cluster = pairs
             a,b = labelling.fund_categories(self.label, cluster)
             morningstar.append(a.index[0])
             cluster_category.append(b.index[0])
-            
+
         summary_cluster['Top Morningstar Category'] = morningstar
         summary_cluster['Top Cluster Category'] = cluster_category
-        
-        # See if these funds are actively managed or not 
-        #           by looking at the degree of change in asset allocation %s over the years. 
+
+        # See if these funds are actively managed or not
+        #           by looking at the degree of change in asset allocation %s over the years.
         # The idea is that we can tell how actively the fund is managed based on how much asset allocation has shifted over the years.
         average_std = self.df.groupby('crsp_fundno').std().mean(axis=1).reset_index()
         temp = merged[['Cluster','Fund.No']].merge(average_std, how='inner',left_on='Fund.No',right_on='crsp_fundno').rename(columns = {0:'allocation_chg_std'})
-        temp = temp.groupby(['Cluster']).mean()['allocation_chg_std']  
+        temp = temp.groupby(['Cluster']).mean()['allocation_chg_std']
         summary_cluster = summary_cluster.merge(temp, how = 'inner', left_on=['Cluster'], right_on=['Cluster'])
         summary_cluster['Active_management'] = labelling.define_levels(summary_cluster['allocation_chg_std'])
-        summary_cluster = summary_cluster[['Cluster Description','Single Asset Focus', 'Multi Asset Focus', 'Shorted Asset', 
+        summary_cluster = summary_cluster[['Cluster Description','Single Asset Focus', 'Multi Asset Focus', 'Shorted Asset',
                            'volatility', 'annual_return', 'max_dd', 'vol_median','return_median', 'max_dd_median',
                            'Top Morningstar Category', 'Top Cluster Category','allocation_chg_std', 'Active_management',
                            'Common Stock', 'Preferred Stock','Convertible Bonds', 'Corporate Bonds', 'Muni Bonds',
@@ -204,42 +207,38 @@ class FirstLayerLabelling(FundClusterVisualizationHelperBased):
 
         return None
 
-    
+
     def get_cluster_characteristics(self, cluster_name, pieplot = False):
         """Get funds characterisitics based on cluster name provide
-        
+
         Parameters:
             cluster_name: str
                 name of the cluster defined in the cluster label
         """
 
-        if self.characteristics == False: 
+        if self.characteristics == False:
             print('Please first generate cluster characteristics!')
             return None
 
         # extract characteristics data for the required cluster
         cluster = self.summary_cluster[self.summary_cluster.index == cluster_name]
-        
+
         # show the pieplot of asset allocation of the cluster if required
         if pieplot == True:
-            labelling.pie_chart(self.label, self.df_year, cluster_name)
+            Labeling.pie_chart(self.label, self.df_year, cluster_name)
 
         return cluster
 
 
     def get_top_funds_in_cluster(self, cluster_name):
-        """Based on fund ranking provided in database, provide the top fund in the cluster, 
+        """Based on fund ranking provided in database, provide the top fund in the cluster,
         this need connection to alternative data project, could just return list of fund for now"""
-        
+
         # just return list of fund for now
         if self._set_up == False:
             print('Please first set up!')
             return None
 
         fund = self.label[self.label['Cluster'] == cluster_name]
-        
+
         return fund
-
-
-
-

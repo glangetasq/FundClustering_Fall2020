@@ -2,15 +2,16 @@
 Only for one main cluster
 """
 
+import numpy as np
+import pandas as pd
+from sklearn import cluster as sklearn_cluster
+from time import time
+
+# Local imports
 from BaseClasses import FundClusterBased
 from DataHelper import *
 import HyperparametersHelper
 import Tools
-from time import time
-
-import numpy as np
-import pandas as pd
-from sklearn import cluster as sklearn_cluster
 
 
 class OneMainClusterDailyReturnsSubClustering(FundClusterBased):

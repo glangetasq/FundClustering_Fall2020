@@ -1,7 +1,8 @@
 """ Result output helper functions for second layer clustering main class """
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
 
 def organize_label(subcluster_label):
     label = subcluster_label
@@ -15,7 +16,7 @@ def organize_label(subcluster_label):
             label = np.where(label==mx, i, label)
             label_set.add(i)
             label_set.remove(mx)
-    
+
     return label
 
 

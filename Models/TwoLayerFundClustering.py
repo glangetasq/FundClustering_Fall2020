@@ -1,10 +1,13 @@
+
+# Local imports
 from BaseClasses import MultipleLayerModelBased
 from .HoldingDataMainClustering import HoldingDataMainClustering
 from .DailyReturnsSubClustering import DailyReturnsSubClustering
 
-
+# Unknows imports.
 rmtree = lambda : None # from shutil import rmtree
 mkdtemp = lambda : None# from tempfile import mkdtemp
+
 
 class TwoLayerFundClustering(MultipleLayerModelBased):
     """Handle the logistics of the pipeline of the two layer fund clustering.

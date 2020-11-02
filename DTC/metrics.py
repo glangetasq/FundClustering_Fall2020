@@ -5,9 +5,11 @@ Performance metric functions
 """
 
 import numpy as np
+# Sklearn imports
 from sklearn import metrics
 from scipy.optimize import linear_sum_assignment
 from sklearn.preprocessing import label_binarize
+# --------------------- #
 
 
 def cluster_acc(y_true, y_pred):
