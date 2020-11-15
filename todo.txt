@@ -1,19 +1,38 @@
-- High priority:
-    - [DONE] Make two classes for the second cluster. One that handles the subclustering for each main cluster,
-            the other handles the subclustering for every main_cluster using the first class.
-    - Two Layer model fit method: use the Pipeline pattern.
-    - Test if full model works. Need to run it on GPU (see collab)
-    - Create notebook to show the workflow.
-    - [DONE] Separate the args parser of the hyper parameter to a specific class and easy initialization. See args method of the Two Layer class
-    - Once everything is done, configure the FundClusterFactory (add the model to the CLUSTER_CLASS_CONFIG dict)
-- Medium priority:
-    - First layer model output method: output result to csv, save model to pickle
-    - Second layer model output method: output result to csv (maybe? It’s the same output than the full model actually…) save model to pickle
-    - Two Layer model output method: output result to csv, save model to pickle
-    - Output of first layer to be 0 to len(current_output). For now I think the clusters can be names 1, 5, 6, 7, 10, which is pointless and mess up the second layer
-    - [organization] Separate the Autoencoder classes for the second layer class to its own folder rather than Tools
-    - [organization] Create a metrics folder to measure the layers performance (already metrics.py in tools)
-- Low priority:
-    - Model summary of each class: save statistics of convergence, statistics to measure the model, hyper parameters of the models.
-    - Remove some useless self.variable (for instance I think the self.features of the second layer is not used)
-    - Move the ‘iterative kmean’ algorithm in first cluster to a separate model.
+- DataReader needs to inherit SQLMixin class.
+- Check is SQL database has same data than csv. If not implement more methods in the DataPreProcessing class
+ - SQL timefra
+- DataPreProcessing using SQL?
+- Change DataCache so it doesn't need to call manually to every functions in the DataPreProcessor:
+    -> preprocessor.fit method (?) and then preprocessor.get_returns() etc?
+    -> Make "fund_mrnstar[(fund_mrnstar.caldt.dt.year == (clustering_year)) & (fund_mrnstar.caldt.dt.month == 12)]"
+        handled by the preprocessor. Generalize so that we can have fund_mrnstar[ t1 < caldt < t2 ]
+
+- Make first layer clustering flexible, so it can handle:
+    1. Other type of static data
+    2. Timeseries data? (how to do that?)
+- Unit testing for each step:
+    1. Check if SQL request return the good result
+    2. Check if SQL preprocessing return the good result
+    3. ?
+- Start thinking about the report?
+
+
+"""
+  We would expect to include lots of features later,
+  and even come up with a multilayer rather than just two layer clustering,
+  how could we handle that.
+  Would some tree based clustering algorithm work here or not?
+"""
+  -> Not at the moment. (Not using pipeline will make implementation of MultiLayer not straightforward)
+  -> Need to standardize the output of each model (list for FirstLayer, dict for SecondLayer right now),
+      so that any layer can use the output of the previous layer in a multilayers scenario
+  ->
+
+
+Questions:
+  - "class DerivedFundClusterStrategySQL(DerivedFundClusterStrategy, SQLHandlerMixin):"
+      What is DerivedFundClusterStrategy
+  - Set up tables vs set up table
+  - Why memory efficient (upload chunk ...) and how many chunks
+  - How to deal with TS input in first layer
+  - What a tree based model mean?

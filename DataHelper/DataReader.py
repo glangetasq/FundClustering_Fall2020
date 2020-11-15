@@ -15,7 +15,7 @@ class Path:
     mrnstar = os.path.join(_data_path, 'Summary_Updated.csv')
 
 
-class DataReader:
+class DataReader    :
 
     def __init__(self):
         pass
@@ -38,7 +38,7 @@ class DataReader:
         holding_asset.caldt = pd.to_datetime(holding_asset.caldt, format='%Y%m%d')
 
         # TODO: separate the reading and preprocessing
-        holding_asset['per_equity'] = holding_asset['per_com'] + holding_asset['per_pref'] + holding_asset['per_eq_oth']
+        holding_asset['per_equity'] = holding_asset['per_com'] + holding_asset['per_pref'] + holding_asset['er_eq_oth']
         holding_asset['per_bond'] = holding_asset['per_conv'] + holding_asset['per_corp'] + holding_asset['per_muni'] + holding_asset['per_govt']
         holding_asset['per_sec'] = holding_asset['per_abs'] + holding_asset['per_mbs'] + holding_asset['per_fi_oth'] + holding_asset['per_oth']
 
@@ -56,7 +56,7 @@ class DataReader:
         fund_mrnstar.caldt = pd.to_datetime(fund_mrnstar.caldt, format='%Y%m%d')
 
         return fund_mrnstar
-   
+
 
     @staticmethod
     def get_fundno_ticker():
