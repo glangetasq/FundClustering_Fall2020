@@ -10,9 +10,9 @@ from sauma.core import Connection
 class SQLDataPreparation(SQLHandlerMixin):
     """Mixin class that you would include in the inheritance hierarchy to migarte all possible operation to SQL
     so as to speed up calculation, you would need to integrate the sauma.core package and utilize the connection obj here"""
-    
+
     def __init__(self):
-        super().__init__(self)
+        super().__init__()
 
     def setup_connection(self, secrets_dir, username = 'fx_admin', password = '#Flexstone2020'):
         """initilize the connection obj here, and use it for any operation"""
@@ -20,12 +20,12 @@ class SQLDataPreparation(SQLHandlerMixin):
         os.environ['SECRETS_DIR'] = self.secrets_dir
         self.conn = Connection(username = username, password = password, schema = '')
         self.conn.connect()
-    
-    
+
+
     def setup_table_template(self):
         """define the table template as local variable in this method for all derived class, and utilize this method to setup tables"""
         raise NotImplementedError("Derived Class need to implement this method")
-    
+
 
     def check_table_exist_or_not(self, schemas, table_name):
         """Please define this method to check whether a table under certain schemas exist or not"""
@@ -51,19 +51,19 @@ class SQLDataPreparation(SQLHandlerMixin):
             self.conn.create_table(json.dumps(template))
             print('Table created successfully\n')
 
-    
+
     def drop_table(self, schemas, table_name):
 
         self.conn.execute('USE ' + schemas + ';')
         sql = "DROP TABLE IF EXISTS " + schemas + "." + table_name + ";"
         self.conn.execute(sql)
-    
+
 
     def chunks_update_table(self, schema, table_name, dataframe, **kwargs):
         """when you have a large dataframe, it mays takes a long time to update the sql table if you upload it at once, you could actually
         divide the table into smaller chunks and upload them piece by piece to speed up the process, as it is more memory efficient and use less cpu,
         try to implement this method here too"""
-        
+
         chunk_size = kwargs.get('chunk_size', None)
         N = dataframe.shape[0]
 
@@ -78,4 +78,3 @@ class SQLDataPreparation(SQLHandlerMixin):
                     index = False,
                     if_exists = 'append'
                     )
-     

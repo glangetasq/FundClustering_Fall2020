@@ -1,4 +1,4 @@
-# __init__.py 
+# __init__.py
 
 from .FundClusterBased import FundClusterBased
 from .FundClusterVisualizationHelperBased import FundClusterVisualizationHelperBased
@@ -9,3 +9,4 @@ from .TransformerBased import TransformerBased
 from .EstimatorBased import EstimatorBased
 from .FirstLayerCluster import FirstLayerCluster
 from .SecondLayerCluster import SecondLayerCluster
+from .SQLHandlerMixin import SQLHandlerMixin

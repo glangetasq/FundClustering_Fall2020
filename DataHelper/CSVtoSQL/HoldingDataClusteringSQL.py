@@ -4,8 +4,6 @@
 # of the table, and use the configuration to update the sql table, please setup your own sql db in your local machine and test based on it
 # The following show some function that you need to define in your derived strategy class
 
-
-from DataHelper.CSVtoSQL import SQLDataPreparation
 import os
 import numpy as np
 import pandas as pd
@@ -13,7 +11,8 @@ import json
 from sauma.core import Connection
 
 # Local Imports
-from config import PATHS, TICKER_PATH, RETURNS_PATH, MORNING_STAR_PATH
+from config import PATHS
+from .SQLDataPreparation import SQLDataPreparation
 from .morning_star_formatting_config import mrnstar_formatting_dict, mrnstar_new_name_dict
 
 # Get paths

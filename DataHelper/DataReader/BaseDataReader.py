@@ -2,8 +2,13 @@
 
 class BaseDataReader:
 
-    def __init__(self):
-        pass
+    def __init__(self, reader_type=None):
+        self.reader_type = reader_type
+
+
+    def is_reader_type(self, reader_type):
+        return self.reader_type == reader_type.lower()
+
 
     @staticmethod
     def get_returns():

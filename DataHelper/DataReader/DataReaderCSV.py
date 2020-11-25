@@ -9,7 +9,7 @@ from .BaseDataReader import BaseDataReader
 class DataReaderCSV(BaseDataReader):
 
     def __init__(self):
-        pass
+        super().__init__(reader_type='csv')
 
     @staticmethod
     def get_returns():

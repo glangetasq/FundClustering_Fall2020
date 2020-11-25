@@ -4,11 +4,19 @@ from .DataCache import DataCache
 from .DataMaker import DataMaker
 from .DataPreProcessor import DataPreProcessor
 from .DataProcessor import DataProcessor
-from .DataReader import DataReader
+from .DataReader import *
 
 
-def get_data_reader():
-    return DataReader()
+def get_data_reader(source='sql', username=None, password=None, schema=None):
+
+    if source.lower() == 'csv':
+
+        return DataReaderCSV()
+
+    elif source.lower() == 'sql':
+
+        return DataReaderSQL(username=username, password=password, schema=schema)
+
 
 
 def get_data_preprocessor():

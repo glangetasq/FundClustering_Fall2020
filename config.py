@@ -11,11 +11,21 @@ PATHS = {
     'holding_asset' : os.path.join(_DATA_PATH, 'Summary_Updated.csv'),
 }
 
-
-
-# year min and max (in make_sql_db)
-YEAR_MIN = 2010
-YEAR_MAX = 2020
+SQL_CONFIG = {
+    'database' : 'fund_clustering',
+    'tables' : {
+        'ticker' : 'ticker',
+        'returns' : 'returns',
+        'morningstar' : 'morning_star',
+        'holding_asset' : 'morning_star',
+    }
+    'default_login' : {
+        'username' : 'fx_admin',
+        'password' : '#Flexstone2020',
+        'schema' : '',
+        'secrets_dir' : '/Users/glangetas')
+    }
+}
 
 # Hyperparameters
 
