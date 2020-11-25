@@ -1,21 +1,12 @@
 
 import pandas as pd
 
-# Temporary path helper
-# import Path
-class Path:
-
-    import os
-    _data_path = "/Users/glangetasq/Library/Mobile Documents/com~apple~CloudDocs/Columbia/Classes/Fall_20/DeepLearning/FundClusteringProject/DataSummer"
-    returns = os.path.join(_data_path, 'data_trimmed.csv')
-    sp500 = os.path.join(_data_path, 'sp500.csv')
-    tickers = os.path.join(_data_path, 'Tickers.csv')
-    nameticker = os.path.join(_data_path, 'nameticker.xlsx')
-    holding_asset = os.path.join(_data_path, 'Summary_Updated.csv')
-    mrnstar = os.path.join(_data_path, 'Summary_Updated.csv')
+# Local imports
+from config import PATHS
+from .BaseDataReader import BaseDataReader
 
 
-class DataReader    :
+class DataReaderCSV(BaseDataReader):
 
     def __init__(self):
         pass
@@ -23,7 +14,8 @@ class DataReader    :
     @staticmethod
     def get_returns():
 
-        returns = pd.read_csv(Path.returns)
+        returns_path = PATHS['returns']
+        returns = pd.read_csv(returns_path)
         returns = returns.set_index('date')
         returns.index = pd.to_datetime(returns.index)
         returns = returns.astype(float)
@@ -33,7 +25,8 @@ class DataReader    :
     @staticmethod
     def get_holding_asset():
 
-        holding_asset = pd.read_csv(Path.holding_asset)
+        holding_asset_path = PATHS['holding_asset']
+        holding_asset = pd.read_csv(holding_asset_path)
         holding_asset = holding_asset.iloc[:, [0, 2]+[i for i in range(17, 30)]]
         holding_asset.caldt = pd.to_datetime(holding_asset.caldt, format='%Y%m%d')
 
@@ -51,7 +44,8 @@ class DataReader    :
     @staticmethod
     def get_fund_mrnstar():
 
-        fund_mrnstar = pd.read_csv(Path.mrnstar)
+        fund_mrnstar_path = PATHS['morningstar']
+        fund_mrnstar = pd.read_csv(fund_mrnstar_path)
         fund_mrnstar = fund_mrnstar[['crsp_fundno', 'caldt', 'lipper_class_name']]
         fund_mrnstar.caldt = pd.to_datetime(fund_mrnstar.caldt, format='%Y%m%d')
 
@@ -61,7 +55,8 @@ class DataReader    :
     @staticmethod
     def get_fundno_ticker():
 
-        ticker_data = pd.read_csv(Path.tickers)
+        ticker_path = PATHS['ticker']
+        ticker_data = pd.read_csv(ticker_path)
         fundno_ticker = {}
         for i in range(ticker_data.shape[0]):
             if pd.isnull(ticker_data.ticker[i]):

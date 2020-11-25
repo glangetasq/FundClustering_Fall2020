@@ -13,14 +13,13 @@ import json
 from sauma.core import Connection
 
 # Local Imports
+from config import PATHS, TICKER_PATH, RETURNS_PATH, MORNING_STAR_PATH
 from .morning_star_formatting_config import mrnstar_formatting_dict, mrnstar_new_name_dict
 
-# Configuration
-data_path = "/Users/glangetasq/Library/Mobile Documents/com~apple~CloudDocs/Columbia/Classes/Fall_20/DeepLearning/FundClusteringProject/DataSummer"
-
-ticker_path = os.path.join(data_path, 'Tickers.csv')
-returns_path = os.path.join(data_path, 'data_trimmed.csv')
-morning_star_path = os.path.join(data_path, 'Summary_Updated.csv')
+# Get paths
+TICKER_PATH = PATHS['ticker']
+RETURNS_PATH = PATHS['returns']
+MORNING_STAR_PATH = PATHS['morningstar']
 
 
 class HoldingDataClusteringSQL(SQLDataPreparation):
@@ -87,7 +86,7 @@ class HoldingDataClusteringSQL(SQLDataPreparation):
         self.template_ticker = TEMPLATE_TICKER
         self.template_returns = TEMPLATE_RETURNS
         self.template_morningstar = TEMPLATE_MORNINGSTAR
-    
+
     def setup_tables(self, schema):
         """ setup all table based on the setup_table_Templates """
 
@@ -114,23 +113,23 @@ class HoldingDataClusteringSQL(SQLDataPreparation):
     def update_raw_data(self):
         """assuming that your data source is the csv file containing all the raw data, load the raw data from csv, and update the table
         which you already setup based on your template"""
-        
+
         # update ticker
-        ticker = pd.read_csv(ticker_path)
+        ticker = pd.read_csv(TICKER_PATH)
         columns = ['crsp_fundno', 'ticker']
         ticker = ticker[columns]
         ticker.columns = ['fundNo', 'fundTicker']
         ticker = ticker.drop_duplicates(subset=['fundNo'])
         self.chunks_update_table(self, self.schema, 'ticker', ticker, chunk_size = 100000)
 
-        # update returns 
-        returns = pd.read_csv(returns_path, parse_dates=True)
+        # update returns
+        returns = pd.read_csv(RETURNS_PATH, parse_dates=True)
         returns = pd.wide_to_long(returns, '', i='date', j='fundNo')
         returns.columns = ['r']
         self.chunks_update_table(self, self.schema, 'returns', returns, chunk_size = 100000)
 
         # update morningstar
-        mrnstar = pd.read_csv(morning_star_path)
+        mrnstar = pd.read_csv(MORNING_STAR_PATH)
         for colname in mrnstar:
 
             formatting_function = mrnstar_formatting_dict.get(colname, None)
@@ -141,5 +140,4 @@ class HoldingDataClusteringSQL(SQLDataPreparation):
                 mrnstar = mrnstar.drop(colname, axis=1)
 
         mrnstar = mrnstar.rename(columns=mrnstar_new_name_dict)
-        self.chunks_update_table(self, self.schema, 'morning_star', mrnstar, chunk_size = 100000)
-
+        self.chunks_update_table(self, self.schema, 'morning_star', mrnstar, chunk_size = 10000)

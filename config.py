@@ -1,5 +1,21 @@
-# Configuration of the models
+import os
 
+# PATHS
+
+_DATA_PATH = "/Users/glangetasq/Library/Mobile Documents/com~apple~CloudDocs/Columbia/Classes/Fall_20/DeepLearning/FundClusteringProject/DataSummer"
+
+PATHS = {
+    'ticker' : os.path.join(_DATA_PATH, 'Tickers.csv'),
+    'returns' : os.path.join(_DATA_PATH, 'data_trimmed.csv'),
+    'morningstar' : os.path.join(_DATA_PATH, 'Summary_Updated.csv'),
+    'holding_asset' : os.path.join(_DATA_PATH, 'Summary_Updated.csv'),
+}
+
+
+
+# year min and max (in make_sql_db)
+YEAR_MIN = 2010
+YEAR_MAX = 2020
 
 # Hyperparameters
 
