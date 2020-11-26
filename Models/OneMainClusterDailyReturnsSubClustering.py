@@ -103,7 +103,6 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
 
         subcluster_dict = dict()
 
-        import Tools
         compressed_data, fundnos = Tools.get_timeseries(ret_flag=True, val_flag=True,
                                                                 ret_data = self.data.returns,
                                                                 feature = self.features,
@@ -121,7 +120,7 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
         import Tools
         if Tools.isPrime(compressed_data.shape[1]):
             compressed_data = compressed_data[:, :compressed_data.shape[1]-1, :]
-        
+
         if compressed_data.shape[1] <= 10:
             hyper_parameters.pool_size = compressed_data.shape[1]
         else:
