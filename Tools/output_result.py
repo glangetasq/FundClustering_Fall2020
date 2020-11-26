@@ -57,8 +57,22 @@ def output_result_one_main_cluster(clustering_year, main_cluster, subcluster_dic
     return df
 
 
-def output_result_two_layer(clustering_year, first_layer_result, subcluster_dict, first_layer_label, save_result=False, loc=None):
-    """ output result helper function for two layer clustering """
+def output_result_two_layer(clustering_year, first_layer_result, subcluster_dict, first_layer_label, save_result_method=False, **kwargs):
+    """ output result helper function for two layer clustering
+
+    Input:
+        - clustering_year : int
+        - first_layer_result : result of the first first_layer
+        - subcluster_dict : result of the subclustering
+        - first_layer_label : label of first_layer
+        - save_result_method :
+            * if True : just return the results
+            * if 'csv' : save into a csv file
+            * if 'sql' : save into a SQL table
+    Optional:
+        - loc: path to save csv file
+        - username, password, secrets_dir: log in to connect to SQL. None if not defined
+    """
 
     df = first_layer_result
     if len(subcluster_dict) != len(first_layer_label):
@@ -66,8 +80,24 @@ def output_result_two_layer(clustering_year, first_layer_result, subcluster_dict
     df.insert(int(np.where(df.columns == 'Cluster')[0][0] + 1), 'Subcluster', np.ones(len(df)))
     df['Subcluster'] = df['Fund.No'].apply(lambda x: subcluster_dict[str(x)])
 
-    if save_result == True and loc:
+    if save_result == 'csv':
+
+        loc = kwargs.get('loc', None)
         df.to_csv(f'{loc}/cluster_result_withsub_{clustering_year}.csv', index=False)
-        print('Successfully saved the clustering and subclustering output!')
+
+        print('Successfully saved the clustering and subclustering output in CSV files!')
+
+    elif save_result_method == 'sql':
+
+        username = kwargs.get('username', None)
+        password = kwargs.get('password', None)
+        secrets_dir = kwargs.get('secrets_dir', None)
+
+        df.columns = ['fundNo', 'main_cluster', 'sub_cluster']
+
+        writer = DataHelper.get_data_output_writer(secrets_dir, username, password)
+        writer.update_raw_data(df)
+
+        print('Successfully saved the clustering and subclustering output in the SQL table!')
 
     return df

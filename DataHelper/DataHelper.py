@@ -30,7 +30,7 @@ def get_data_cache(source, clustering_year, username=None, password=None, schema
 
         reader = get_data_reader(source='csv')
         preprocessor = get_data_preprocessor()
-    
+
     elif source.lower() == 'sql':
 
         reader = get_data_reader(source='sql', username=username, password=password, schema=schema)
@@ -45,3 +45,7 @@ def get_data_processor():
 
 def get_data_maker(data_name=''):
     return DataMaker(data_name)
+
+
+def get_data_output_writer(secrets_dir=None, username=None, password=None):
+    return DataOutputWriter(secrets_dir, username, password)

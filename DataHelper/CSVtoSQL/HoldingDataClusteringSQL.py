@@ -12,7 +12,7 @@ from sauma.core import Connection
 
 # Local Imports
 from config import PATHS
-from DataHelper.SQLDataHandler import SQLDataHandler
+from .SQLDataPreparation import SQLDataPreparation
 from .morning_star_formatting_config import mrnstar_formatting_dict, mrnstar_new_name_dict
 
 # Get paths
@@ -21,7 +21,7 @@ RETURNS_PATH = PATHS['returns']
 MORNING_STAR_PATH = PATHS['morningstar']
 
 
-class MakeDatabaseSQL(SQLDataHandler):
+class HoldingDataClusteringSQL(SQLDataPreparation):
     """ Inlcude SQL Operation in first layer fund clustering """
 
     def setup_table_templates(self):
@@ -86,22 +86,22 @@ class MakeDatabaseSQL(SQLDataHandler):
         self.template_returns = TEMPLATE_RETURNS
         self.template_morningstar = TEMPLATE_MORNINGSTAR
 
-    def setup_tables(self, schema='fund_clustering'):
+    def setup_tables(self, schema):
         """ setup all table based on the setup_table_Templates """
 
         self.schema = schema
         self.conn.execute("CREATE DATABASE IF NOT EXISTS " + schema + ";")
         self.conn.execute('USE ' + schema + ';')
 
-        self.drop_table(schema, "ticker")
-        self.drop_table(schema, "returns")
-        self.drop_table(schema, "morning_star")
+        self.drop_table(self, schema, "ticker")
+        self.drop_table(self, schema, "returns")
+        self.drop_table(self, schema, "morning_star")
         self.conn.create_table(json.dumps(self.template_ticker))
         self.conn.create_table(json.dumps(self.template_returns))
         self.conn.create_table(json.dumps(self.template_morningstar))
 
 
-    def __init__(self, secrets_dir=None, username=None, password=None):
+    def __init__(self, secrets_dir, username, password):
         super().__init__()
 
         self.setup_connection(secrets_dir, username, password)
@@ -119,14 +119,13 @@ class MakeDatabaseSQL(SQLDataHandler):
         ticker = ticker[columns]
         ticker.columns = ['fundNo', 'fundTicker']
         ticker = ticker.drop_duplicates(subset=['fundNo'])
-        self.chunks_update_table(self.schema, 'ticker', ticker, chunk_size = 100000)
+        self.chunks_update_table(self, self.schema, 'ticker', ticker, chunk_size = 100000)
 
         # update returns
         returns = pd.read_csv(RETURNS_PATH, parse_dates=True)
         returns = pd.wide_to_long(returns, '', i='date', j='fundNo')
         returns.columns = ['r']
-        returns.reset_index(inplace=True)
-        self.chunks_update_table(self.schema, 'returns', returns, chunk_size = 100000)
+        self.chunks_update_table(self, self.schema, 'returns', returns, chunk_size = 100000)
 
         # update morningstar
         mrnstar = pd.read_csv(MORNING_STAR_PATH)
@@ -140,4 +139,4 @@ class MakeDatabaseSQL(SQLDataHandler):
                 mrnstar = mrnstar.drop(colname, axis=1)
 
         mrnstar = mrnstar.rename(columns=mrnstar_new_name_dict)
-        self.chunks_update_table(self.schema, 'morning_star', mrnstar, chunk_size = 10000)
+        self.chunks_update_table(self, self.schema, 'morning_star', mrnstar, chunk_size = 10000)

@@ -7,7 +7,7 @@ import json
 from sauma.core import Connection
 
 
-class SQLDataHandler(SQLHandlerMixin):
+class SQLDataPreparation(SQLHandlerMixin):
     """Mixin class that you would include in the inheritance hierarchy to migarte all possible operation to SQL
     so as to speed up calculation, you would need to integrate the sauma.core package and utilize the connection obj here"""
 
@@ -65,7 +65,6 @@ class SQLDataHandler(SQLHandlerMixin):
         try to implement this method here too"""
 
         chunk_size = kwargs.get('chunk_size', None)
-        if_exists = kwargs.get('if_exists', 'append')
         N = dataframe.shape[0]
 
         self.conn.execute('USE ' + schema + ';')
@@ -77,5 +76,5 @@ class SQLDataHandler(SQLHandlerMixin):
                     schema = schema,
                     dataframe = df_to_insert,
                     index = False,
-                    if_exists = if_exists
+                    if_exists = 'append'
                     )

@@ -23,7 +23,7 @@ SQL_CONFIG = {
         'username' : 'fx_admin',
         'password' : '#Flexstone2020',
         'schema' : '',
-        'secrets_dir' : '/Users/glangetas'}
+        'secrets_dir' : '/Users/glangetasq'}
 }
 
 # Hyperparameters
