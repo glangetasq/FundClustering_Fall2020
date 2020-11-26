@@ -10,3 +10,4 @@ from .EstimatorBased import EstimatorBased
 from .FirstLayerCluster import FirstLayerCluster
 from .SecondLayerCluster import SecondLayerCluster
 from .SQLHandlerMixin import SQLHandlerMixin
+from .PortfolioMappingStrategyMixin import PortfolioMappingStrategyMixin

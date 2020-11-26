@@ -1,5 +1,6 @@
+import json
 from BaseClasses import PortfolioMappingStrategyMixin
-from DataHelper.CSVtoSQL import SQLDataHandler
+from DataHelper.CSVtoSQL.SQLDataHandler import SQLDataHandler
 from config import SQL_CONFIG
 
 SCHEMA = SQL_CONFIG['database']
@@ -58,12 +59,13 @@ class PortfolioMappingStrategyMixinSQL(SQLDataHandler, PortfolioMappingStrategyM
         self.conn.execute("CREATE DATABASE IF NOT EXISTS " + self.schema + ";")
         self.conn.execute('USE ' + self.schema + ';')
 
-        self.drop_table(self.schema, 'portfolio')
+        self.drop_table(self.schema, "portfolio")
         self.conn.create_table(json.dumps(self.template_portfolio))
 
     def generate_portfolio_tmp_table(self, portfolio):
         """generate a temp table that save the portfolio information"""
-        self.chunks_update_table(self.schema, 'portfolio', portfolio, chunk_size = 100000)
+        self.setup_portfolio_tables()
+        self.chunks_update_table(self.schema, 'portfolio', portfolio, chunk_size=100000, if_exists='replace')
 
     def portfolio_to_sector(self, portfolio, method='SQL'):
         """
@@ -75,8 +77,8 @@ class PortfolioMappingStrategyMixinSQL(SQLDataHandler, PortfolioMappingStrategyM
         SQL: So for this case, you would want to create a temperate table in SQL to strore portfolio info by running generate_portfolio_tmp_table,
         and join it with a table with the cluster mapping to get the mapping"""
         if method == 'SQL':
-            generate_portfolio_tmp_table(portfolio)
-            portfolio_sector = self.conn.get_dataframe_from_sql_query("SELECT * FROM portfolio JOIN sector_map ON fundNo")
+            self.generate_portfolio_tmp_table(portfolio)
+            portfolio_sector = self.conn.get_dataframe_from_sql_query("SELECT * FROM portfolio p JOIN sector_map s ON p.fundNo=s.fundNo")
         elif method == 'InMemory':
             sector_map = self.get_sector_map(method='InMemory')
             portfolio_sector = portfolio
@@ -91,10 +93,10 @@ class PortfolioMappingStrategyMixinSQL(SQLDataHandler, PortfolioMappingStrategyM
         SQL: So for this case, you would want to create a temperate table in SQL to strore portfolio info by running generate_portfolio_tmp_table,
         It could be directly based on the query you have above, but have one more step to do a groupby to generate the aggregate sum of weight for a cluster"""
         if method == 'SQL':
-            generate_portfolio_tmp_table(portfolio)
-            sector_weighting = self.conn.get_dataframe_from_sql_query("SELECT s.sector, SUM(p.weight) FROM portfolio p JOIN sector_map s ON fundNo GROUP BY s.sector")
+            self.generate_portfolio_tmp_table(portfolio)
+            sector_weighting = self.conn.get_dataframe_from_sql_query("SELECT s.sector, SUM(p.weight) FROM portfolio p JOIN sector_map s ON p.fundNo=s.fundNo GROUP BY s.sector")
         elif method == 'InMemory':
-            portfolio_sector = portfolio_to_sector(portfolio, method='InMemory')
+            portfolio_sector = self.portfolio_to_sector(portfolio, method='InMemory')
             sector_weighting = portfolio_sector.groupby('sector').sum()['weight']
         else:
             raise ValueError('Invalid method')
@@ -109,9 +111,17 @@ class PortfolioMappingStrategyMixinSQL(SQLDataHandler, PortfolioMappingStrategyM
         InMemory: do the calculation through python
         SQL:For this one, it is just to load the mapping from sql"""
         if method == 'SQL':
-            sector_map = self.conn.get_dataframe(SCHEMA, 'sector_map')
+            sector_map = self.conn.get_dataframe('sector_map', self.schema)
         elif method == 'InMemory':
-            pass
+            # TODO: Use fund cluster strategy
+            # for test
+            sector_map = {
+                105: (0, 0),
+                2704: (0, 1),
+                2706: (1, 0),
+                2708: (1, 1),
+                2724: (1, 1)
+            }
         else:
             raise ValueError('Invalid method')
         return sector_map

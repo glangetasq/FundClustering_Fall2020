@@ -65,6 +65,7 @@ class SQLDataHandler(SQLHandlerMixin):
         try to implement this method here too"""
 
         chunk_size = kwargs.get('chunk_size', None)
+        if_exists = kwargs.get('if_exists', 'append')
         N = dataframe.shape[0]
 
         self.conn.execute('USE ' + schema + ';')
@@ -76,5 +77,5 @@ class SQLDataHandler(SQLHandlerMixin):
                     schema = schema,
                     dataframe = df_to_insert,
                     index = False,
-                    if_exists = 'append'
+                    if_exists = if_exists
                     )
