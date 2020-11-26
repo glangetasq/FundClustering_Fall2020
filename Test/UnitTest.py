@@ -160,6 +160,19 @@ class MissingDataCase(unittest.TestCase):
         self.assertIsInstance(self.model.second_layer.cluster_subcluster_dict, dict)
 
 
+class SQLDataCase(unittest.TestCase):
+    def setUp(self):
+        clustering_year = 2018
+        self.model = TwoLayerFundClustering(clustering_year)
+        self.model.fit(source_type='sql')
+
+    def test_first_layer_result(self):
+        self.assertIsInstance(self.model.first_layer.label, np.ndarray)
+    
+    def test_second_layer_result(self):
+        self.assertIsInstance(self.model.second_layer.cluster_subcluster_dict, dict)
+
+
 
 if __name__ == '__main__':
     unittest.main()
