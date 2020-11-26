@@ -17,14 +17,13 @@ SQL_CONFIG = {
         'ticker' : 'ticker',
         'returns' : 'returns',
         'morningstar' : 'morning_star',
-        'holding_asset' : 'morning_star',
-    }
+        'holding_asset' : 'morning_star'
+        },
     'default_login' : {
         'username' : 'fx_admin',
         'password' : '#Flexstone2020',
         'schema' : '',
-        'secrets_dir' : '/Users/glangetas')
-    }
+        'secrets_dir' : '/Users/glangetas'}
 }
 
 # Hyperparameters
