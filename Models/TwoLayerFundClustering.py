@@ -56,7 +56,8 @@ class TwoLayerFundClustering(MultipleLayerModelBased):
         # First layer
         self.first_layer.load_raw_data(self.clustering_year,
             source_type=source_type,
-            cache=cache
+            cache=cache,
+            **kwargs
         )
         self.first_layer.set_up()
         first_layer_labels = self.first_layer.fit()
@@ -65,7 +66,8 @@ class TwoLayerFundClustering(MultipleLayerModelBased):
         self.second_layer.load_raw_data(self.clustering_year,
             first_layer_labels,
             source_type=source_type,
-            cache=cache
+            cache=cache,
+            **kwargs
         )
         self.second_layer.set_up(self.first_layer.features, first_layer_labels)
         second_layer_labels = self.second_layer.fit()
