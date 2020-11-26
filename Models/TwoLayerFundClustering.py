@@ -42,7 +42,7 @@ class TwoLayerFundClustering(MultipleLayerModelBased):
             rmtree(self.cachedir)
 
 
-    def fit(self, source_type='DataHelper', **kwargs):
+    def fit(self, source_type, **kwargs):
         """Fit the pipeline based on the parameters
         Parameters:
             X: df/np.array/any customized type, but you need to make sure that all estimator could handle this data type
