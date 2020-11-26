@@ -11,6 +11,7 @@ warnings.filterwarnings("ignore")
 # Local imports
 from BaseClasses import FundClusterVisualizationHelperBased
 from DataHelper.LabelingDataHelper import LabelingDataHelper
+from DataHelper import DataHelper
 from Models.HoldingDataMainClustering import HoldingMainClustering
 from Tools import Labeling
 
@@ -30,14 +31,23 @@ class SubclusterLabeling(FundClusterVisualizationHelperBased):
         self._cluster_method = cluster_method
         self._set_up = False
 
-    def set_up(self, clustering_year, file):
+    def set_up(self, clustering_year, source_type, file, **kwargs):
         """Set up first layer clustering and get data ready for result visualization
             Must read results from file """
 
         self.clustering_year = clustering_year
 
         # Fetch and Processing
-        self.data = DataHelper.get_data_cache(clustering_year)
+        if source_type.lower() == 'csv':
+            self.data = DataHelper.get_data_cache(source='csv', clustering_year=clustering_year)
+        elif source_type.lower() == 'sql':
+            self.password = kwargs.get('password', None)
+            self.username = kwargs.get('username', None)
+            self.schema = kwargs.get('schema', None)
+            self.data = DataHelper.get_data_cache(source='sql', clusting_year=clustering_year, username = self.username, password = self.password, schema = self.schema)
+        else:
+            raise ValueError(f"The type of source '{source_type}' is not supported at the moment.")
+
         processor = DataHelper.get_data_processor()
         self.features = processor.holding_asset_pivot(self.data)
         self.data.returns = self.data.returns[self.features.index]
@@ -228,4 +238,3 @@ class SubclusterLabeling(FundClusterVisualizationHelperBased):
 
         return self.label.loc[cluster_name, subcluster_name]
 
-        return fund

@@ -40,7 +40,7 @@ class DailyReturnsSubClustering(FundClusterBased):
         return self.hasBeenFit
 
 
-    def load_raw_data(self, clustering_year, first_layer_labels, source_type='DataHelper', **kwargs):
+    def load_raw_data(self, clustering_year, first_layer_labels, source_type, **kwargs):
         """Function to load raw data from source, should be able to support
         reading data from flat file or sql database. Please just implement the one using flat file now,
         later we would provide the sql python package that we would want to utilize for the database task

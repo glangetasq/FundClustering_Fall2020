@@ -12,7 +12,7 @@ from sauma.core import Connection
 
 # Local Imports
 from config import PATHS
-from .SQLDataPreparation import SQLDataPreparation
+from .SQLDataHandler import SQLDataHandler
 from .morning_star_formatting_config import mrnstar_formatting_dict, mrnstar_new_name_dict
 
 # Get paths
@@ -21,7 +21,7 @@ RETURNS_PATH = PATHS['returns']
 MORNING_STAR_PATH = PATHS['morningstar']
 
 
-class HoldingDataClusteringSQL(SQLDataPreparation):
+class MakeDatabaseSQL(SQLDataHandler):
     """ Inlcude SQL Operation in first layer fund clustering """
 
     def setup_table_templates(self):

@@ -20,12 +20,22 @@ def get_data_reader(source='sql', username=None, password=None, schema=None):
 
 
 def get_data_preprocessor():
+
     return DataPreProcessor()
 
 
-def get_data_cache(clustering_year):
-    reader = get_data_reader()
-    preprocessor = get_data_preprocessor()
+def get_data_cache(source, clustering_year, username=None, password=None, schema=None):
+
+    if source.lower() == 'csv':
+
+        reader = get_data_reader(source='csv')
+        preprocessor = get_data_preprocessor()
+    
+    elif source.lower() == 'sql':
+
+        reader = get_data_reader(source='sql', username=username, password=password, schema=schema)
+        preprocessor = get_data_preprocessor()
+
     return DataCache(reader, preprocessor, clustering_year)
 
 

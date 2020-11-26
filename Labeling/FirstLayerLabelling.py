@@ -10,6 +10,7 @@ warnings.filterwarnings("ignore")
 
 # Local imports
 from BaseClasses import FundClusterVisualizationHelperBased
+from DataHelper import DataHelper
 from DataHelper.LabelingDataHelper import LabelingDataHelper
 from Models.HoldingDataMainClustering import HoldingDataMainClustering
 from Tools import Labeling
@@ -30,7 +31,7 @@ class FirstLayerLabeling(FundClusterVisualizationHelperBased):
         self._cluster_method = cluster_method
         self._set_up = False
 
-    def set_up(self, clustering_year, fit = True, file = None):
+    def set_up(self, clustering_year, source_type, fit = True, file = None, **kwargs):
         """Set up first layer clustering and get data ready for result visualization"""
 
         self.clustering_year = clustering_year
@@ -56,9 +57,17 @@ class FirstLayerLabeling(FundClusterVisualizationHelperBased):
         else:
             # if we don't fit inside set_up, read in the clustering results from a given file
             self.label = pd.read_csv(file)
-
             # Fetch and Processing
-            self.data = DataHelper.get_data_cache(clustering_year)
+            if source_type.lower() == 'csv':
+                self.data = DataHelper.get_data_cache(source='csv', clustering_year=clustering_year)
+            elif source_type.lower() == 'sql':
+                self.password = kwargs.get('password', None)
+                self.username = kwargs.get('username', None)
+                self.schema = kwargs.get('schema', None)
+                self.data = DataHelper.get_data_cache(source='sql', clusting_year=clustering_year, username = self.username, password = self.password, schema = self.schema)
+            else:
+                raise ValueError(f"The type of source '{source_type}' is not supported at the moment.")
+            
             processor = DataHelper.get_data_processor()
             self.features = processor.holding_asset_pivot(self.data)
             self.data.returns = self.data.returns[self.features.index]

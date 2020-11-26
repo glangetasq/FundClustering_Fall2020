@@ -7,7 +7,7 @@ import json
 from sauma.core import Connection
 
 
-class SQLDataPreparation(SQLHandlerMixin):
+class SQLDataHandler(SQLHandlerMixin):
     """Mixin class that you would include in the inheritance hierarchy to migarte all possible operation to SQL
     so as to speed up calculation, you would need to integrate the sauma.core package and utilize the connection obj here"""
 

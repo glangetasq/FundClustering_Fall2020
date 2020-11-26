@@ -3,6 +3,9 @@
 import numpy as np
 import pandas as pd
 from sklearn import cluster as sklearn_cluster
+import os
+import json
+# from sauma.core import Connection
 
 # Local imports
 from BaseClasses import FundClusterBased
@@ -50,7 +53,7 @@ class HoldingDataMainClustering(FundClusterBased):
         """
         return self.hasBeenFit
 
-    def load_raw_data(self, clustering_year, source_type='DataHelper', **kwargs):
+    def load_raw_data(self, clustering_year, source_type, **kwargs):
         """Function to load raw data from source, should be able to support
         reading data from flat file or sql database. Please just implement the one using flat file now,
         later we would provide the sql python package that we would want to utilize for the database task
@@ -68,10 +71,13 @@ class HoldingDataMainClustering(FundClusterBased):
 
         self.clustering_year = clustering_year
 
-        if source_type == 'DataHelper':
-            self.data = DataHelper.get_data_cache(clustering_year)
-        elif source_type == 'CustomCache':
-            self.data = kwargs.get('cache')
+        if source_type.lower() == 'csv':
+            self.data = DataHelper.get_data_cache(source='csv', clustering_year=clustering_year)
+        elif source_type.lower() == 'sql':
+            self.password = kwargs.get('password', None)
+            self.username = kwargs.get('username', None)
+            self.schema = kwargs.get('schema', None)
+            self.data = DataHelper.get_data_cache(source='sql', clusting_year=clustering_year, username = self.username, password = self.password, schema = self.schema)
         else:
             raise ValueError(f"The type of source '{source_type}' is not supported at the moment.")
 

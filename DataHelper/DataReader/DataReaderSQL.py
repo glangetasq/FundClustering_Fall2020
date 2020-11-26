@@ -40,7 +40,7 @@ class DataReaderSQL(BaseDataReader):
     def _check_if_connected(self):
 
         if not self.c:
-            raise Error("setup_connection of DataReaderSQL before trying to read data.")
+            raise ConnectionError("setup_connection of DataReaderSQL before trying to read data.")
 
 
     def get_returns(self, t_lower=None, t_upper=None):
@@ -76,7 +76,7 @@ class DataReaderSQL(BaseDataReader):
 
         # From flat dataframe to matrix like dataframe
         returns = returns.pivot(index='date', columns='fundNo', values='r')
-        # returns.index = pd.to_datetime(returns.index)
+        returns.index = pd.to_datetime(returns.index)
 
         return returns
 
@@ -183,6 +183,6 @@ class DataReaderSQL(BaseDataReader):
         fundno_ticker = self.c.get_dataframe(table_name, db_name)
 
         # Convert to dict
-        fundno_ticker = pd.Series(fundno_ticker['ticker'].values, index=df['fundNo']).to_dict()
+        fundno_ticker = pd.Series(fundno_ticker['ticker'].values, index=fundno_ticker['fundNo']).to_dict()
 
         return fundno_ticker
