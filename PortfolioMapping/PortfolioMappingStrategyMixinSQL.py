@@ -1,9 +1,11 @@
+import pandas as pd
 import json
 from BaseClasses import PortfolioMappingStrategyMixin
-from DataHelper.CSVtoSQL.SQLDataHandler import SQLDataHandler
+from DataHelper.SQLDataHandler import SQLDataHandler
 from config import SQL_CONFIG
 
 SCHEMA = SQL_CONFIG['database']
+
 
 class PortfolioMappingStrategyMixinSQL(SQLDataHandler, PortfolioMappingStrategyMixin):
     """This is a class that you implement a simple python logics to do portfolio mapping, and
@@ -45,7 +47,7 @@ class PortfolioMappingStrategyMixinSQL(SQLDataHandler, PortfolioMappingStrategyM
             "tableName": "portfolio",
             "schema": "fund_clustering",
             "columns": [{"name": "fundNo", "type": "INTEGER"},
-                        {"name": "weight", "type": "FLOAT", "size": 53}],
+                        {"name": "weight", "type": "FLOAT"}],
             "primaryKey": ["fundNo"],
             "description": 'fund number and weight of a portfolio'
         }
@@ -64,8 +66,16 @@ class PortfolioMappingStrategyMixinSQL(SQLDataHandler, PortfolioMappingStrategyM
 
     def generate_portfolio_tmp_table(self, portfolio):
         """generate a temp table that save the portfolio information"""
-        self.setup_portfolio_tables()
-        self.chunks_update_table(self.schema, 'portfolio', portfolio, chunk_size=100000, if_exists='replace')
+        self.conn.execute('USE ' + self.schema + ';')
+        self.drop_table(self.schema, "portfolio")
+        self.conn.create_table(json.dumps(self.template_portfolio))
+        self.conn.update_table(
+            table_name='portfolio',
+            schema=self.schema,
+            dataframe=portfolio,
+            index=False,
+            if_exists='replace'
+        )
 
     def portfolio_to_sector(self, portfolio, method='SQL'):
         """
@@ -78,11 +88,13 @@ class PortfolioMappingStrategyMixinSQL(SQLDataHandler, PortfolioMappingStrategyM
         and join it with a table with the cluster mapping to get the mapping"""
         if method == 'SQL':
             self.generate_portfolio_tmp_table(portfolio)
-            portfolio_sector = self.conn.get_dataframe_from_sql_query("SELECT * FROM portfolio p JOIN sector_map s ON p.fundNo=s.fundNo")
+            portfolio_sector = self.conn.get_dataframe_from_sql_query("""
+                SELECT p.fundNo, p.weight, c.main_cluster, c.sub_cluster
+                FROM portfolio p LEFT JOIN clustering_output c ON p.fundNo=c.fundNo
+                """)
         elif method == 'InMemory':
             sector_map = self.get_sector_map(method='InMemory')
-            portfolio_sector = portfolio
-            portfolio_sector['sector'] = portfolio_sector['fundno'].apply(lambda x: sector_map.get(x, None))
+            portfolio_sector = pd.merge(portfolio, sector_map, on='fundNo', how='left')
         else:
             raise ValueError('Invalid method')
         return portfolio_sector
@@ -94,10 +106,15 @@ class PortfolioMappingStrategyMixinSQL(SQLDataHandler, PortfolioMappingStrategyM
         It could be directly based on the query you have above, but have one more step to do a groupby to generate the aggregate sum of weight for a cluster"""
         if method == 'SQL':
             self.generate_portfolio_tmp_table(portfolio)
-            sector_weighting = self.conn.get_dataframe_from_sql_query("SELECT s.sector, SUM(p.weight) FROM portfolio p JOIN sector_map s ON p.fundNo=s.fundNo GROUP BY s.sector")
+            sector_weighting = self.conn.get_dataframe_from_sql_query("""
+                SELECT c.main_cluster, c.sub_cluster, SUM(p.weight) AS weight
+                FROM portfolio p LEFT JOIN clustering_output c ON p.fundNo=c.fundNo
+                GROUP BY c.main_cluster, c.sub_cluster
+                """)
         elif method == 'InMemory':
             portfolio_sector = self.portfolio_to_sector(portfolio, method='InMemory')
-            sector_weighting = portfolio_sector.groupby('sector').sum()['weight']
+            sector_weighting = portfolio_sector.groupby(['main_cluster', 'sub_cluster']).sum()['weight']
+            sector_weighting = sector_weighting.reset_index()
         else:
             raise ValueError('Invalid method')
         return sector_weighting
@@ -110,22 +127,10 @@ class PortfolioMappingStrategyMixinSQL(SQLDataHandler, PortfolioMappingStrategyM
         Method could accept two kind of arguments:
         InMemory: do the calculation through python
         SQL:For this one, it is just to load the mapping from sql"""
-        if method == 'SQL':
-            sector_map = self.conn.get_dataframe('sector_map', self.schema)
-        elif method == 'InMemory':
-            # TODO: Use fund cluster strategy
-            # for test
-            sector_map = {
-                105: (0, 0),
-                2704: (0, 1),
-                2706: (1, 0),
-                2708: (1, 1),
-                2724: (1, 1)
-            }
-        else:
-            raise ValueError('Invalid method')
-        return sector_map
 
+        sector_map = self.conn.get_dataframe('clustering_output', self.schema)
+
+        return sector_map
 
     def load_underlying_ts(self, portfolio, method='SQL'):
         """Method could accept two kind of arguments:
@@ -133,7 +138,20 @@ class PortfolioMappingStrategyMixinSQL(SQLDataHandler, PortfolioMappingStrategyM
         SQL: So for this case, you would want to create a temperate table in SQL to strore portfolio info by running generate_portfolio_tmp_table,
         You would need to join table of ts of different fund, or
         filter ts base on fund ticker if you put all timeseries in one table"""
-        pass
+        if method == 'SQL':
+            self.generate_portfolio_tmp_table(portfolio)
+            underlying_ts_weight = self.conn.get_dataframe_from_sql_query("""
+                SELECT p.fundNo AS p_fundNo, p.weight, m.*
+                FROM portfolio p INNER JOIN morning_star m ON p.fundNo=m.fundNo
+                """)
+            underlying_ts_weight.drop('fundNo', axis=1, inplace=True)
+            underlying_ts_weight.rename(columns={'p_fundNo': 'fundNo'}, inplace=True)
+        elif method == 'InMemory':
+            underlying_ts = self.conn.get_dataframe_from_sql_query("SELECT * FROM morning_star")
+            underlying_ts_weight = pd.merge(portfolio, underlying_ts, on='fundNo', how='inner')
+        else:
+            raise ValueError('Invalid method')
+        return underlying_ts_weight
 
     def generate_portfolio_ts(self, portfolio, method='SQL'):
         """Method could accept two kind of arguments:
@@ -141,4 +159,20 @@ class PortfolioMappingStrategyMixinSQL(SQLDataHandler, PortfolioMappingStrategyM
         SQL: So for this case, you would want to create a temperate table in SQL to strore portfolio info by running generate_portfolio_tmp_table,
         you would need to do the query that you have in load_underlying_ts, and do one more step in the query to sum the value
         for all funds to generate the value for the portfolio."""
-        pass
+        if method == 'SQL':
+            underlying_ts_weight = self.load_underlying_ts(portfolio, method='SQL')
+        elif method == 'InMemory':
+            underlying_ts_weight = self.load_underlying_ts(portfolio, method='InMemory')
+        else:
+            raise ValueError('Invalid method')
+
+        columns = ["per_com", "per_pref", "per_conv", "per_corp", "per_muni", "per_govt", "per_oth",
+                   "per_cash", "per_bond", "per_abs", "per_mbs", "per_eq_oth", "per_fi_oth"]
+        portfolio_ts = pd.DataFrame(columns=columns)
+
+        if len(underlying_ts_weight) > 0:
+            grouped = underlying_ts_weight.groupby('date')
+            for column in columns:
+                portfolio_ts[column] = grouped.apply(lambda x: (x[column]*x['weight']).sum())
+
+        return portfolio_ts

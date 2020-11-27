@@ -41,11 +41,13 @@ class DataOutputWriter(SQLDataHandler):
         self.table_name = "clustering_output"
 
         TEMPLATE_OUTPUT = {
-            "table_name": f"{self.table_name}",
+            "tableName": f"{self.table_name}",
             "schema": "fund_clustering",
-            "fundNo": {"type":"INTEGER", "primary_key":True},
-            "main_cluster": {"type":"INT"},
-            "sub_cluster": {"type":"INT"},
+            "columns": [{"name": "fundNo", "type": "INTEGER"},
+                        {"name": "main_cluster", "type": "INTEGER"},
+                        {"name": "sub_cluster", "type": "INTEGER"}],
+            "primaryKey": ["fundNo"],
+            "description": 'fund number and cluster result'
         }
 
         self.template_output = TEMPLATE_OUTPUT
