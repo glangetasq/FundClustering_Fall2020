@@ -8,8 +8,8 @@ import json
 from sauma.core import Connection
 
 # Local Imports
+from Config import SQL
 from .SQLDataHandler import SQLDataHandler
-from DataHelper import templates
 
 
 class DataOutputWriter(SQLDataHandler):
@@ -26,10 +26,10 @@ class DataOutputWriter(SQLDataHandler):
     def setup_table_templates(self):
         """Define the all table template as local variable here, all these table template should be defined as a global variable in a
         python file, and import here for this class to use, please check the sauma.core documentation, the template format should be something like:
-        
+
         """
 
-        self.template_output = templates.TEMPLATE_OUTPUT
+        self.template_output = SQL.templates.OUTPUT
 
 
 
