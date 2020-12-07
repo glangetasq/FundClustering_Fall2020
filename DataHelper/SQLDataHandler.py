@@ -5,11 +5,11 @@ from BaseClasses import SQLHandlerMixin
 import os
 import json
 from sauma.core import Connection
-from config import SQL_CONFIG
+from Config import SQL
 
-DEFAULT_USERNAME = SQL_CONFIG['default_login']['username']
-DEFAULT_PASSWORD = SQL_CONFIG['default_login']['password']
-DEFAULT_SECRETS_DIR = SQL_CONFIG['default_login']['secrets_dir']
+DEFAULT_USERNAME = SQL.login.default_username
+DEFAULT_PASSWORD = SQL.login.default_password
+DEFAULT_SECRETS_DIR = SQL.login.default_secrets_dir
 
 class SQLDataHandler(SQLHandlerMixin):
     """Mixin class that you would include in the inheritance hierarchy to migarte all possible operation to SQL
@@ -20,7 +20,7 @@ class SQLDataHandler(SQLHandlerMixin):
 
     def setup_connection(self, secrets_dir = None, username = None, password = None):
         """initilize the connection obj here, and use it for any operation"""
-        
+
         secrets_dir = secrets_dir if secrets_dir is not None else DEFAULT_SECRETS_DIR
         username = username if username is not None else DEFAULT_USERNAME
         password = password if password is not None else DEFAULT_PASSWORD

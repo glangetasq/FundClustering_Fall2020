@@ -1,9 +1,12 @@
 # Helper to initialize and set hyperparameters
 import argparse # Command Line argument parsing
 
+# Local imports
+from Config import DEFAULT_HYPERPARAMETERS
+
+
 def __make_parser():
 
-    from config import DEFAULT_HYPERPARAMETERS
 
     parser = argparse.ArgumentParser(
         description='train',

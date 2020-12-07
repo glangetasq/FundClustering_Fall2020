@@ -1,38 +1,14 @@
-- DataReader needs to inherit SQLMixin class.
-- Check is SQL database has same data than csv. If not implement more methods in the DataPreProcessing class
- - SQL timefra
-- DataPreProcessing using SQL?
-- Change DataCache so it doesn't need to call manually to every functions in the DataPreProcessor:
-    -> preprocessor.fit method (?) and then preprocessor.get_returns() etc?
-    -> Make "fund_mrnstar[(fund_mrnstar.caldt.dt.year == (clustering_year)) & (fund_mrnstar.caldt.dt.month == 12)]"
-        handled by the preprocessor. Generalize so that we can have fund_mrnstar[ t1 < caldt < t2 ]
+Misconception:
+  - We are currently using holding data as a Timeseries data:
+      this is wrong, we are using December holding data for a given year.
+      this is still static data
 
-- Make first layer clustering flexible, so it can handle:
-    1. Other type of static data
-    2. Timeseries data? (how to do that?)
-- Unit testing for each step:
-    1. Check if SQL request return the good result
-    2. Check if SQL preprocessing return the good result
-    3. ?
-- Start thinking about the report?
+Problem for implementing other algorithms:
+  - We are using KMean, and it cannot handle other distances than euclidian
+  - To use other algorithms than KMean could be tricky as we are both making new
+    clusters (if an outlier is in a cluster) and merging similar clusters into
+    one, based on qualitatitve tests using holding data.
+    Cannot be used for TS holding data or other type of data.
 
 
-"""
-  We would expect to include lots of features later,
-  and even come up with a multilayer rather than just two layer clustering,
-  how could we handle that.
-  Would some tree based clustering algorithm work here or not?
-"""
-  -> Not at the moment. (Not using pipeline will make implementation of MultiLayer not straightforward)
-  -> Need to standardize the output of each model (list for FirstLayer, dict for SecondLayer right now),
-      so that any layer can use the output of the previous layer in a multilayers scenario
-  ->
-
-
-Questions:
-  - "class DerivedFundClusterStrategySQL(DerivedFundClusterStrategy, SQLHandlerMixin):"
-      What is DerivedFundClusterStrategy
-  - Set up tables vs set up table
-  - Why memory efficient (upload chunk ...) and how many chunks
-  - How to deal with TS input in first layer
-  - What a tree based model mean?
+    

@@ -2,7 +2,7 @@
 import pandas as pd
 
 # Local imports
-from config import PATHS
+from Config import DATA_PATHS
 from .BaseDataReader import BaseDataReader
 
 
@@ -14,7 +14,7 @@ class DataReaderCSV(BaseDataReader):
     @staticmethod
     def get_returns():
 
-        returns_path = PATHS['returns']
+        returns_path = DATA_PATHS['returns']
         returns = pd.read_csv(returns_path)
         returns = returns.set_index('date')
         returns.index = pd.to_datetime(returns.index)
@@ -25,7 +25,7 @@ class DataReaderCSV(BaseDataReader):
     @staticmethod
     def get_holding_asset():
 
-        holding_asset_path = PATHS['holding_asset']
+        holding_asset_path = DATA_PATHS['holding_asset']
         holding_asset = pd.read_csv(holding_asset_path)
         holding_asset = holding_asset.iloc[:, [0, 2]+[i for i in range(17, 30)]]
         holding_asset.caldt = pd.to_datetime(holding_asset.caldt, format='%Y%m%d')
@@ -44,7 +44,7 @@ class DataReaderCSV(BaseDataReader):
     @staticmethod
     def get_fund_mrnstar():
 
-        fund_mrnstar_path = PATHS['morningstar']
+        fund_mrnstar_path = DATA_PATHS['morningstar']
         fund_mrnstar = pd.read_csv(fund_mrnstar_path)
         fund_mrnstar = fund_mrnstar[['crsp_fundno', 'caldt', 'lipper_class_name']]
         fund_mrnstar.caldt = pd.to_datetime(fund_mrnstar.caldt, format='%Y%m%d')
@@ -55,7 +55,7 @@ class DataReaderCSV(BaseDataReader):
     @staticmethod
     def get_fundno_ticker():
 
-        ticker_path = PATHS['ticker']
+        ticker_path = DATA_PATHS['ticker']
         ticker_data = pd.read_csv(ticker_path)
         fundno_ticker = {}
         for i in range(ticker_data.shape[0]):

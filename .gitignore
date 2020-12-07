@@ -1,3 +1,9 @@
 .ipynb_checkpoints/
 *.cpython-37.pyc
 *.pyc
+env/
+.DS_Store
+
+
+python-ingestion-package.zip
+python-ingestion-package/*

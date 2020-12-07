@@ -1,0 +1,1516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.1" />
+<title>sauma.core API documentation</title>
+<meta name="description" content="Sauma Core" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sauma.core</code></h1>
+</header>
+<section id="section-intro">
+<p>Sauma Core</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34; Sauma Core &#34;&#34;&#34;
+import os
+import json
+import platform
+import pprint
+import pandas as pd
+from sauma.config import WINDOWS, SECRETS_FILE, DB_META, PRIMARY_KEY
+from sauma.config import HOST, TYPE_MAPPER, SAUMA_KEYWORDS
+from getpass import getpass
+from sqlalchemy import create_engine, inspect, Table
+from sqlalchemy import MetaData
+from sqlalchemy.exc import ProgrammingError
+from sqlalchemy.engine import ResultProxy
+from sqlalchemy.schema import Column
+
+
+class Connection(object):
+    &#34;&#34;&#34;
+    This class defines the various functionality of sauma core
+    &#34;&#34;&#34;
+
+    def __init__(self, username: str = None, password: str = None, schema: str = None) -&gt; &#39;sauma.core.Connection&#39;:
+
+        &#34;&#34;&#34;
+        Initialize the connection to sauma core
+        
+        To read the credentials from a secrets file, set the environment variable SECRETS_DIR 
+        pointing to the directory containing .saumapass file 
+
+        if the environment variable is not set then a default home directory would be assumed
+
+        for a MAC and LINUX system, the default directory is ~/ and for the Windows system
+        C:\\Users\\$user 
+        
+        The format of .saumapass is $username:$password:$schema
+
+        Keyword Args:
+            username (str): the username of the user
+            password (str): the password used for the sauma core system
+            schema (str): the name of the schema to establish connection
+
+        Returns:
+            sauma.core.Connection object
+        &#34;&#34;&#34;
+
+        # get the default path based on the underlying OS
+        default_path = self.__get_default_path()
+
+        path = os.getenv(&#39;SECRETS_DIR&#39;, default_path)
+
+        # check if credentials are stored in the secrets file.
+        # If so retrieve them
+        credentials = self.__get_params_from_secrets(path)
+        if credentials:
+            self.username = credentials[0]
+            self.password = credentials[1]
+            if len(credentials) &gt; 2:
+                self.schema = credentials[2]
+            else:
+                self.schema = &#39;&#39;
+        else:
+            if username:
+                self.username = username
+            else:
+                print(&#34;Enter username: &#34;)
+                self.username = input()
+            if password:
+                self.password = password
+            else:
+                print(&#39;Enter password: &#39;)
+                self.password = getpass()
+            if schema or schema == &#39;&#39;:
+                self.schema = schema
+            else:
+                print(&#39;Enter schema(optional): &#39;)
+                self.schema = input()
+
+        # set the pretty printer with indent = 4
+        self.pp = pprint.PrettyPrinter(indent=4)
+
+        # check if connect has been executed
+        self.__connect = False
+
+        # initialize engine to None
+        self.engine = None
+
+        # initialize inspector to None
+        self.inspector = None
+
+    def connect(self, schema: str = None) -&gt; &#39;sqlalchemy.engine.Connection&#39;:
+        &#34;&#34;&#34;
+        This methods connects with the sauma core.
+        Args:
+            schema: defaults to the schema provided during initialization
+
+        Returns:
+            sqlalchemy.engine.Connection
+        &#34;&#34;&#34;
+
+        # set the default schema
+        if not schema:
+            schema = self.schema
+        path = self.__generate_conn_path(schema)
+        self.engine = create_engine(path)
+
+        # initialize inspector attribute
+        # would be useful with show schemas and show tables
+        self.inspector = inspect(self.engine)
+
+        # mark the connection as true
+        self.__connect = True
+        return self.engine.connect()
+
+    def show_schemas(self) -&gt; None:
+        &#34;&#34;&#34;
+        This method prints all the schemas defined in the system as a list
+        Needs the connection to be initialized before
+        &#34;&#34;&#34;
+        if not self.__connect:
+            raise ProgrammingError(&#39;No connection established! You can establish the connection by calling&#39; + \
+                                   &#39; self.connect()&#39;, None, None)
+        db_list = self.inspector.get_schema_names()
+        self.pp.pprint(db_list)
+
+    def show_tables(self, schema: str) -&gt; None:
+        &#34;&#34;&#34;
+        prints out the names of tables in a given schema
+        &#34;&#34;&#34;
+        if not self.__connect:
+            raise ProgrammingError(&#39;No connection established! You can establish the connection by calling&#39; + \
+                                   &#39; self.connect()&#39;, None, None)
+        tables = self.inspector.get_table_names(schema=schema)
+        self.pp.pprint(tables)
+
+    def get_table(self, table_name: str, schema: str) -&gt; Table:
+        &#34;&#34;&#34;
+        This method queries the database for the table
+
+        Args:
+            table_name: The name of the table
+            schema: Name of the schema
+        Returns:
+            sqlalchemy.Table
+        &#34;&#34;&#34;
+
+        # create the engine
+        uri = self.__generate_conn_path(schema)
+        engine = create_engine(uri)
+
+        # get metadata
+        metadata = MetaData(engine)
+        metadata.reflect(bind=engine)
+
+        if not metadata:
+            raise (ProgrammingError(f&#34;{table_name} does not exist in {schema}&#34;, table_name, schema))
+
+        # get all tables in the metadata
+        tables = metadata.tables
+
+        # dispose off all the connections by engine
+        engine.dispose()
+
+        # check and return if the table exist otherwise raise ProgrammingError
+        if table_name in tables:
+            return tables[table_name]
+
+        raise (ProgrammingError(f&#34;{table_name} does not exist in {schema}&#34;, table_name, schema))
+
+    def execute(self, query: str) -&gt; ResultProxy:
+        &#34;&#34;&#34;
+        This method executes a raw sql query and returns a ResultProxy
+        For more information check 
+        https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.ResultProxy
+
+        Args:
+            query: SQL query to execute
+        Returns:
+            sqlalchemy.engine.ResultProxy
+        &#34;&#34;&#34;
+        return self.engine.execute(query)
+
+    def create_table(self, definition: &#39;JSON&#39;):
+        &#34;&#34;&#34;
+        Input should be a well formatted JSON object as per below:
+
+        1. `table_name`is mandatory keys for the json object
+        2. `schema` name of the schema
+        3. All other columns are considered to be columns in the table and their type 
+        should follow the structure of SQLAlchemy. For further information on typing 
+        https://docs.sqlalchemy.org/en/13/core/type_basics.html
+        Also for quick reference check 
+        https://stackoverflow.com/questions/30137806/where-can-i-find-a-list-of-the-flask-sqlalchemy-column-types-and-options
+        4. The column description should be added as a dictinary. `type` key as shown in the example below is mandatory, all others
+        should be the keywor arguments as used in sqlalchemy types  
+        5. `primary_key` can be a key for a column with a boolean value True
+
+        A sample JSON
+        {
+            &#34;table_name&#34;: &#34;Test&#34;,
+            &#34;schema&#34;: &#34;test_db&#34;,
+            &#34;id&#34;: {
+                    &#34;type&#34;:&#34;INTEGER&#34;, // case insensitive
+                    &#34;primary_key&#34;: True
+                    },
+            &#34;text_col&#34;: {
+                        &#34;type&#34;:&#34;STRING&#34;,
+                        &#34;length&#34;:50
+                        },
+            &#34;int_col&#34;: {
+                    &#34;type&#34;:&#34;INT&#34;
+                    } 
+        }
+
+        Args:
+            definition: A json object
+
+        Returns:
+            None
+
+        Raises:
+            InternalError
+                If table already exists
+        &#34;&#34;&#34;
+        definition_dict = json.loads(definition)
+        schema = definition_dict[&#39;schema&#39;]
+        table_name = definition_dict[&#39;table_name&#39;]
+
+        # drop sauma keywords from defintion_dict
+        definition_dict = self.__remove_keys_from_dict(definition_dict, SAUMA_KEYWORDS)
+
+        # Create a list of sqlalchemy columns
+        columns = []
+        for key in definition_dict.keys():
+
+            # column keyword arguments
+            col_kwargs = definition_dict[key]
+
+            # column type String, Int, etc
+            col = col_kwargs[&#39;type&#39;]
+            primary_key = col_kwargs.get(PRIMARY_KEY, False)
+
+            # column description keyword arguments as dict
+            col_kwargs.pop(&#39;type&#39;)
+
+            if PRIMARY_KEY in col_kwargs:
+                col_kwargs.pop(PRIMARY_KEY)
+
+            # append sqlalchemy columns
+            columns.append(Column(key, TYPE_MAPPER[col.lower()](**col_kwargs), primary_key=primary_key))
+
+        # create engine for table
+        dburi = self.__generate_conn_path(schema)
+        engine = create_engine(dburi)
+
+        # metadata
+        meta = MetaData(engine)
+
+        table = Table(table_name, meta, *columns)
+        table.create()
+
+        # dispose off all the connections in the engine
+        engine.dispose()
+
+    def update_table(self, table_name: str, dataframe: pd.DataFrame,
+                     schema: str = None, **kwargs):
+        &#34;&#34;&#34;
+        This method updates an existing table based on an action
+        For reference https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_sql.html
+
+        Args:
+            table_name: Name of the table to update
+            dataframe: A pandas dataframe 
+            schema: defaults to current schema
+
+        Kwargs:
+            **if_exists**: {‘fail’, ‘replace’, ‘append’}, default ‘fail’
+                How to behave if the table already exists.
+                    fail: Raise a ValueError.
+                    replace: Drop the table before inserting new values.
+                    append: Insert new values to the existing table.
+
+            **index**: bool, default True
+                Write DataFrame index as a column. Uses index_label as the column name in the table.
+
+            **index_label**: str or sequence, default None
+                Column label for index column(s). If None is given (default) and index is True, then the index names
+                are used.A sequence should be given if the DataFrame uses MultiIndex.
+
+            **chunksize**: int, optional
+                Specify the number of rows in each batch to be written at a time. By default, all rows will be written
+                 at once.
+
+            **dtype**: dict or scalar, optional
+                Specifying the datatype for columns. If a dictionary is used, the keys should be the column names and
+                the values should be the SQLAlchemy types or strings for the sqlite3 legacy mode. If a scalar is
+                provided, it will be applied to all columns.
+
+            **method**: {None, ‘multi’, callable}, optional
+                Controls the SQL insertion clause used:
+                    None : Uses standard SQL INSERT clause (one per row).
+                    ‘multi’: Pass multiple values in a single INSERT clause.
+                    callable with signature (pd_table, conn, keys, data_iter).
+                    Details and a sample callable implementation can be found in the section insert method of
+                    pandas documentation.
+
+        Returns:
+            None
+
+        Raises:
+            ValueError
+                if if_exists is &#39;fail&#39; which is default
+        &#34;&#34;&#34;
+        dataframe.to_sql(table_name, self.engine, schema=schema, **kwargs)
+
+    def get_dataframe(self, table_name: str, schema: str, **kwargs) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        For ref:
+        https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql_table.html#pandas.read_sql_table
+        Args:
+            table_name: Name of the table
+            schema: Name of the schema
+        Kwargs:
+            index_col: str or list of str, optional, default: None
+                Column(s) to set as index(MultiIndex).
+
+            coerce_float: bool, default True
+                Attempts to convert values of non-string, non-numeric objects (like decimal.Decimal) to floating point.
+                 Can result in loss of Precision.
+
+            parse_dates: list or dict, default None
+                List of column names to parse as dates.
+
+                Dict of {column_name: format string} where format string is strftime compatible in case of parsing
+                 string times or is one of (D, s, ns, ms, us) in case of parsing integer timestamps.
+
+                Dict of {column_name: arg dict}, where the arg dict corresponds to the keyword arguments of
+                 pandas.to_datetime() Especially useful with databases without native Datetime support, such as SQLite.
+
+            columns: list, default None
+                List of column names to select from SQL table.
+
+            chunksize: int, default None
+                If specified, returns an iterator where chunksize is the number of rows to include in each chunk.
+        Returns:
+            pd.DataFrame
+                A SQL table is returned as two-dimensional data structure with labeled axes.
+        &#34;&#34;&#34;
+        return pd.read_sql_table(table_name, self.engine, schema, **kwargs)
+
+    def get_dataframe_from_sql_query(self, sql, **kwargs):
+        &#34;&#34;&#34;
+        Ref:
+            https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql_query.html#pandas.read_sql_query
+        Args:
+            sql: SQL Query
+        Kwargs:
+            index_col: str or list of strings, optional, default: None
+                Column(s) to set as index(MultiIndex).
+
+            coerce_float: bool, default True
+                Attempts to convert values of non-string, non-numeric objects (like decimal.Decimal) to floating point.
+                 Useful for SQL result sets.
+
+            parse_dates: list or dict, default: None
+                List of column names to parse as dates.
+
+                Dict of {column_name: format string} where format string is strftime compatible in case of parsing
+                 string times, or is one of (D, s, ns, ms, us) in case of parsing integer timestamps.
+
+                Dict of {column_name: arg dict}, where the arg dict corresponds to the keyword arguments of
+                pandas.to_datetime() Especially useful with databases without native Datetime support, such as SQLite.
+
+                chunksize: int, default None
+                    If specified, return an iterator where chunksize is the number of rows to include in each chunk.
+        Returns:
+            DataFrame
+        &#34;&#34;&#34;
+        return pd.read_sql_query(sql, self.engine, **kwargs)
+
+    def close(self):
+        &#34;&#34;&#34;
+        This method closes the connection to sauma core
+        will close all the connections of the connection pool
+        &#34;&#34;&#34;
+        self.engine.dispose()
+
+    def __get_default_path(self):
+        system = platform.system()
+        user = os.getlogin()
+        if system == WINDOWS:
+            default_path = f&#34;C:\\Users\\{user}&#34;
+        else:
+            default_path = f&#34;/home/{user}&#34;
+        return default_path
+
+    def __get_params_from_secrets(self, path):
+
+        # check if the path contains .saumapass file
+        if SECRETS_FILE in os.listdir(path):
+            file_path = os.path.join(path, SECRETS_FILE)
+            with open(file_path, &#39;r&#39;) as f:
+                return tuple(f.read().split(&#39;:&#39;))
+        return
+
+    def __generate_conn_path(self, schema=None):
+        if not schema:
+            schema = &#39;&#39;
+        else:
+            schema = f&#39;/{schema}&#39;
+        return f&#39;{DB_META}://{self.username}:{self.password}@{HOST}{schema}&#39;
+
+    def __remove_keys_from_dict(self, dict_, keys):
+        [dict_.pop(key, None) for key in keys]
+        return dict_
+
+    def __get_engine(self, schema):
+        if schema:
+            dburi = self.__generate_conn_path(schema)
+            engine = create_engine(dburi)
+        else:
+            engine = self.engine
+        return engine</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sauma.core.Connection"><code class="flex name class">
+<span>class <span class="ident">Connection</span></span>
+<span>(</span><span>username: str = None, password: str = None, schema: str = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This class defines the various functionality of sauma core</p>
+<p>Initialize the connection to sauma core</p>
+<p>To read the credentials from a secrets file, set the environment variable SECRETS_DIR
+pointing to the directory containing .saumapass file </p>
+<p>if the environment variable is not set then a default home directory would be assumed</p>
+<p>for a MAC and LINUX system, the default directory is ~/ and for the Windows system
+C:\Users\$user </p>
+<p>The format of .saumapass is $username:$password:$schema</p>
+<p>Keyword Args:
+username (str): the username of the user
+password (str): the password used for the sauma core system
+schema (str): the name of the schema to establish connection</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="sauma.core.Connection" href="#sauma.core.Connection">Connection</a> object</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Connection(object):
+    &#34;&#34;&#34;
+    This class defines the various functionality of sauma core
+    &#34;&#34;&#34;
+
+    def __init__(self, username: str = None, password: str = None, schema: str = None) -&gt; &#39;sauma.core.Connection&#39;:
+
+        &#34;&#34;&#34;
+        Initialize the connection to sauma core
+        
+        To read the credentials from a secrets file, set the environment variable SECRETS_DIR 
+        pointing to the directory containing .saumapass file 
+
+        if the environment variable is not set then a default home directory would be assumed
+
+        for a MAC and LINUX system, the default directory is ~/ and for the Windows system
+        C:\\Users\\$user 
+        
+        The format of .saumapass is $username:$password:$schema
+
+        Keyword Args:
+            username (str): the username of the user
+            password (str): the password used for the sauma core system
+            schema (str): the name of the schema to establish connection
+
+        Returns:
+            sauma.core.Connection object
+        &#34;&#34;&#34;
+
+        # get the default path based on the underlying OS
+        default_path = self.__get_default_path()
+
+        path = os.getenv(&#39;SECRETS_DIR&#39;, default_path)
+
+        # check if credentials are stored in the secrets file.
+        # If so retrieve them
+        credentials = self.__get_params_from_secrets(path)
+        if credentials:
+            self.username = credentials[0]
+            self.password = credentials[1]
+            if len(credentials) &gt; 2:
+                self.schema = credentials[2]
+            else:
+                self.schema = &#39;&#39;
+        else:
+            if username:
+                self.username = username
+            else:
+                print(&#34;Enter username: &#34;)
+                self.username = input()
+            if password:
+                self.password = password
+            else:
+                print(&#39;Enter password: &#39;)
+                self.password = getpass()
+            if schema or schema == &#39;&#39;:
+                self.schema = schema
+            else:
+                print(&#39;Enter schema(optional): &#39;)
+                self.schema = input()
+
+        # set the pretty printer with indent = 4
+        self.pp = pprint.PrettyPrinter(indent=4)
+
+        # check if connect has been executed
+        self.__connect = False
+
+        # initialize engine to None
+        self.engine = None
+
+        # initialize inspector to None
+        self.inspector = None
+
+    def connect(self, schema: str = None) -&gt; &#39;sqlalchemy.engine.Connection&#39;:
+        &#34;&#34;&#34;
+        This methods connects with the sauma core.
+        Args:
+            schema: defaults to the schema provided during initialization
+
+        Returns:
+            sqlalchemy.engine.Connection
+        &#34;&#34;&#34;
+
+        # set the default schema
+        if not schema:
+            schema = self.schema
+        path = self.__generate_conn_path(schema)
+        self.engine = create_engine(path)
+
+        # initialize inspector attribute
+        # would be useful with show schemas and show tables
+        self.inspector = inspect(self.engine)
+
+        # mark the connection as true
+        self.__connect = True
+        return self.engine.connect()
+
+    def show_schemas(self) -&gt; None:
+        &#34;&#34;&#34;
+        This method prints all the schemas defined in the system as a list
+        Needs the connection to be initialized before
+        &#34;&#34;&#34;
+        if not self.__connect:
+            raise ProgrammingError(&#39;No connection established! You can establish the connection by calling&#39; + \
+                                   &#39; self.connect()&#39;, None, None)
+        db_list = self.inspector.get_schema_names()
+        self.pp.pprint(db_list)
+
+    def show_tables(self, schema: str) -&gt; None:
+        &#34;&#34;&#34;
+        prints out the names of tables in a given schema
+        &#34;&#34;&#34;
+        if not self.__connect:
+            raise ProgrammingError(&#39;No connection established! You can establish the connection by calling&#39; + \
+                                   &#39; self.connect()&#39;, None, None)
+        tables = self.inspector.get_table_names(schema=schema)
+        self.pp.pprint(tables)
+
+    def get_table(self, table_name: str, schema: str) -&gt; Table:
+        &#34;&#34;&#34;
+        This method queries the database for the table
+
+        Args:
+            table_name: The name of the table
+            schema: Name of the schema
+        Returns:
+            sqlalchemy.Table
+        &#34;&#34;&#34;
+
+        # create the engine
+        uri = self.__generate_conn_path(schema)
+        engine = create_engine(uri)
+
+        # get metadata
+        metadata = MetaData(engine)
+        metadata.reflect(bind=engine)
+
+        if not metadata:
+            raise (ProgrammingError(f&#34;{table_name} does not exist in {schema}&#34;, table_name, schema))
+
+        # get all tables in the metadata
+        tables = metadata.tables
+
+        # dispose off all the connections by engine
+        engine.dispose()
+
+        # check and return if the table exist otherwise raise ProgrammingError
+        if table_name in tables:
+            return tables[table_name]
+
+        raise (ProgrammingError(f&#34;{table_name} does not exist in {schema}&#34;, table_name, schema))
+
+    def execute(self, query: str) -&gt; ResultProxy:
+        &#34;&#34;&#34;
+        This method executes a raw sql query and returns a ResultProxy
+        For more information check 
+        https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.ResultProxy
+
+        Args:
+            query: SQL query to execute
+        Returns:
+            sqlalchemy.engine.ResultProxy
+        &#34;&#34;&#34;
+        return self.engine.execute(query)
+
+    def create_table(self, definition: &#39;JSON&#39;):
+        &#34;&#34;&#34;
+        Input should be a well formatted JSON object as per below:
+
+        1. `table_name`is mandatory keys for the json object
+        2. `schema` name of the schema
+        3. All other columns are considered to be columns in the table and their type 
+        should follow the structure of SQLAlchemy. For further information on typing 
+        https://docs.sqlalchemy.org/en/13/core/type_basics.html
+        Also for quick reference check 
+        https://stackoverflow.com/questions/30137806/where-can-i-find-a-list-of-the-flask-sqlalchemy-column-types-and-options
+        4. The column description should be added as a dictinary. `type` key as shown in the example below is mandatory, all others
+        should be the keywor arguments as used in sqlalchemy types  
+        5. `primary_key` can be a key for a column with a boolean value True
+
+        A sample JSON
+        {
+            &#34;table_name&#34;: &#34;Test&#34;,
+            &#34;schema&#34;: &#34;test_db&#34;,
+            &#34;id&#34;: {
+                    &#34;type&#34;:&#34;INTEGER&#34;, // case insensitive
+                    &#34;primary_key&#34;: True
+                    },
+            &#34;text_col&#34;: {
+                        &#34;type&#34;:&#34;STRING&#34;,
+                        &#34;length&#34;:50
+                        },
+            &#34;int_col&#34;: {
+                    &#34;type&#34;:&#34;INT&#34;
+                    } 
+        }
+
+        Args:
+            definition: A json object
+
+        Returns:
+            None
+
+        Raises:
+            InternalError
+                If table already exists
+        &#34;&#34;&#34;
+        definition_dict = json.loads(definition)
+        schema = definition_dict[&#39;schema&#39;]
+        table_name = definition_dict[&#39;table_name&#39;]
+
+        # drop sauma keywords from defintion_dict
+        definition_dict = self.__remove_keys_from_dict(definition_dict, SAUMA_KEYWORDS)
+
+        # Create a list of sqlalchemy columns
+        columns = []
+        for key in definition_dict.keys():
+
+            # column keyword arguments
+            col_kwargs = definition_dict[key]
+
+            # column type String, Int, etc
+            col = col_kwargs[&#39;type&#39;]
+            primary_key = col_kwargs.get(PRIMARY_KEY, False)
+
+            # column description keyword arguments as dict
+            col_kwargs.pop(&#39;type&#39;)
+
+            if PRIMARY_KEY in col_kwargs:
+                col_kwargs.pop(PRIMARY_KEY)
+
+            # append sqlalchemy columns
+            columns.append(Column(key, TYPE_MAPPER[col.lower()](**col_kwargs), primary_key=primary_key))
+
+        # create engine for table
+        dburi = self.__generate_conn_path(schema)
+        engine = create_engine(dburi)
+
+        # metadata
+        meta = MetaData(engine)
+
+        table = Table(table_name, meta, *columns)
+        table.create()
+
+        # dispose off all the connections in the engine
+        engine.dispose()
+
+    def update_table(self, table_name: str, dataframe: pd.DataFrame,
+                     schema: str = None, **kwargs):
+        &#34;&#34;&#34;
+        This method updates an existing table based on an action
+        For reference https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_sql.html
+
+        Args:
+            table_name: Name of the table to update
+            dataframe: A pandas dataframe 
+            schema: defaults to current schema
+
+        Kwargs:
+            **if_exists**: {‘fail’, ‘replace’, ‘append’}, default ‘fail’
+                How to behave if the table already exists.
+                    fail: Raise a ValueError.
+                    replace: Drop the table before inserting new values.
+                    append: Insert new values to the existing table.
+
+            **index**: bool, default True
+                Write DataFrame index as a column. Uses index_label as the column name in the table.
+
+            **index_label**: str or sequence, default None
+                Column label for index column(s). If None is given (default) and index is True, then the index names
+                are used.A sequence should be given if the DataFrame uses MultiIndex.
+
+            **chunksize**: int, optional
+                Specify the number of rows in each batch to be written at a time. By default, all rows will be written
+                 at once.
+
+            **dtype**: dict or scalar, optional
+                Specifying the datatype for columns. If a dictionary is used, the keys should be the column names and
+                the values should be the SQLAlchemy types or strings for the sqlite3 legacy mode. If a scalar is
+                provided, it will be applied to all columns.
+
+            **method**: {None, ‘multi’, callable}, optional
+                Controls the SQL insertion clause used:
+                    None : Uses standard SQL INSERT clause (one per row).
+                    ‘multi’: Pass multiple values in a single INSERT clause.
+                    callable with signature (pd_table, conn, keys, data_iter).
+                    Details and a sample callable implementation can be found in the section insert method of
+                    pandas documentation.
+
+        Returns:
+            None
+
+        Raises:
+            ValueError
+                if if_exists is &#39;fail&#39; which is default
+        &#34;&#34;&#34;
+        dataframe.to_sql(table_name, self.engine, schema=schema, **kwargs)
+
+    def get_dataframe(self, table_name: str, schema: str, **kwargs) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        For ref:
+        https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql_table.html#pandas.read_sql_table
+        Args:
+            table_name: Name of the table
+            schema: Name of the schema
+        Kwargs:
+            index_col: str or list of str, optional, default: None
+                Column(s) to set as index(MultiIndex).
+
+            coerce_float: bool, default True
+                Attempts to convert values of non-string, non-numeric objects (like decimal.Decimal) to floating point.
+                 Can result in loss of Precision.
+
+            parse_dates: list or dict, default None
+                List of column names to parse as dates.
+
+                Dict of {column_name: format string} where format string is strftime compatible in case of parsing
+                 string times or is one of (D, s, ns, ms, us) in case of parsing integer timestamps.
+
+                Dict of {column_name: arg dict}, where the arg dict corresponds to the keyword arguments of
+                 pandas.to_datetime() Especially useful with databases without native Datetime support, such as SQLite.
+
+            columns: list, default None
+                List of column names to select from SQL table.
+
+            chunksize: int, default None
+                If specified, returns an iterator where chunksize is the number of rows to include in each chunk.
+        Returns:
+            pd.DataFrame
+                A SQL table is returned as two-dimensional data structure with labeled axes.
+        &#34;&#34;&#34;
+        return pd.read_sql_table(table_name, self.engine, schema, **kwargs)
+
+    def get_dataframe_from_sql_query(self, sql, **kwargs):
+        &#34;&#34;&#34;
+        Ref:
+            https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql_query.html#pandas.read_sql_query
+        Args:
+            sql: SQL Query
+        Kwargs:
+            index_col: str or list of strings, optional, default: None
+                Column(s) to set as index(MultiIndex).
+
+            coerce_float: bool, default True
+                Attempts to convert values of non-string, non-numeric objects (like decimal.Decimal) to floating point.
+                 Useful for SQL result sets.
+
+            parse_dates: list or dict, default: None
+                List of column names to parse as dates.
+
+                Dict of {column_name: format string} where format string is strftime compatible in case of parsing
+                 string times, or is one of (D, s, ns, ms, us) in case of parsing integer timestamps.
+
+                Dict of {column_name: arg dict}, where the arg dict corresponds to the keyword arguments of
+                pandas.to_datetime() Especially useful with databases without native Datetime support, such as SQLite.
+
+                chunksize: int, default None
+                    If specified, return an iterator where chunksize is the number of rows to include in each chunk.
+        Returns:
+            DataFrame
+        &#34;&#34;&#34;
+        return pd.read_sql_query(sql, self.engine, **kwargs)
+
+    def close(self):
+        &#34;&#34;&#34;
+        This method closes the connection to sauma core
+        will close all the connections of the connection pool
+        &#34;&#34;&#34;
+        self.engine.dispose()
+
+    def __get_default_path(self):
+        system = platform.system()
+        user = os.getlogin()
+        if system == WINDOWS:
+            default_path = f&#34;C:\\Users\\{user}&#34;
+        else:
+            default_path = f&#34;/home/{user}&#34;
+        return default_path
+
+    def __get_params_from_secrets(self, path):
+
+        # check if the path contains .saumapass file
+        if SECRETS_FILE in os.listdir(path):
+            file_path = os.path.join(path, SECRETS_FILE)
+            with open(file_path, &#39;r&#39;) as f:
+                return tuple(f.read().split(&#39;:&#39;))
+        return
+
+    def __generate_conn_path(self, schema=None):
+        if not schema:
+            schema = &#39;&#39;
+        else:
+            schema = f&#39;/{schema}&#39;
+        return f&#39;{DB_META}://{self.username}:{self.password}@{HOST}{schema}&#39;
+
+    def __remove_keys_from_dict(self, dict_, keys):
+        [dict_.pop(key, None) for key in keys]
+        return dict_
+
+    def __get_engine(self, schema):
+        if schema:
+            dburi = self.__generate_conn_path(schema)
+            engine = create_engine(dburi)
+        else:
+            engine = self.engine
+        return engine</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sauma.core.Connection.close"><code class="name flex">
+<span>def <span class="ident">close</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This method closes the connection to sauma core
+will close all the connections of the connection pool</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def close(self):
+    &#34;&#34;&#34;
+    This method closes the connection to sauma core
+    will close all the connections of the connection pool
+    &#34;&#34;&#34;
+    self.engine.dispose()</code></pre>
+</details>
+</dd>
+<dt id="sauma.core.Connection.connect"><code class="name flex">
+<span>def <span class="ident">connect</span></span>(<span>self, schema: str = None) -> 'sqlalchemy.engine.Connection'</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This methods connects with the sauma core.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>schema</code></strong></dt>
+<dd>defaults to the schema provided during initialization</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>sqlalchemy.engine.Connection</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def connect(self, schema: str = None) -&gt; &#39;sqlalchemy.engine.Connection&#39;:
+    &#34;&#34;&#34;
+    This methods connects with the sauma core.
+    Args:
+        schema: defaults to the schema provided during initialization
+
+    Returns:
+        sqlalchemy.engine.Connection
+    &#34;&#34;&#34;
+
+    # set the default schema
+    if not schema:
+        schema = self.schema
+    path = self.__generate_conn_path(schema)
+    self.engine = create_engine(path)
+
+    # initialize inspector attribute
+    # would be useful with show schemas and show tables
+    self.inspector = inspect(self.engine)
+
+    # mark the connection as true
+    self.__connect = True
+    return self.engine.connect()</code></pre>
+</details>
+</dd>
+<dt id="sauma.core.Connection.create_table"><code class="name flex">
+<span>def <span class="ident">create_table</span></span>(<span>self, definition: JSON)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Input should be a well formatted JSON object as per below:</p>
+<ol>
+<li><code>table_name</code>is mandatory keys for the json object</li>
+<li><code>schema</code> name of the schema</li>
+<li>All other columns are considered to be columns in the table and their type
+should follow the structure of SQLAlchemy. For further information on typing
+<a href="https://docs.sqlalchemy.org/en/13/core/type_basics.html">https://docs.sqlalchemy.org/en/13/core/type_basics.html</a>
+Also for quick reference check
+<a href="https://stackoverflow.com/questions/30137806/where-can-i-find-a-list-of-the-flask-sqlalchemy-column-types-and-options">https://stackoverflow.com/questions/30137806/where-can-i-find-a-list-of-the-flask-sqlalchemy-column-types-and-options</a></li>
+<li>The column description should be added as a dictinary. <code>type</code> key as shown in the example below is mandatory, all others
+should be the keywor arguments as used in sqlalchemy types
+</li>
+<li><code>primary_key</code> can be a key for a column with a boolean value True</li>
+</ol>
+<p>A sample JSON
+{
+"table_name": "Test",
+"schema": "test_db",
+"id": {
+"type":"INTEGER", // case insensitive
+"primary_key": True
+},
+"text_col": {
+"type":"STRING",
+"length":50
+},
+"int_col": {
+"type":"INT"
+}
+}</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>definition</code></strong></dt>
+<dd>A json object</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>None</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>InternalError</code></dt>
+<dd>If table already exists</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_table(self, definition: &#39;JSON&#39;):
+    &#34;&#34;&#34;
+    Input should be a well formatted JSON object as per below:
+
+    1. `table_name`is mandatory keys for the json object
+    2. `schema` name of the schema
+    3. All other columns are considered to be columns in the table and their type 
+    should follow the structure of SQLAlchemy. For further information on typing 
+    https://docs.sqlalchemy.org/en/13/core/type_basics.html
+    Also for quick reference check 
+    https://stackoverflow.com/questions/30137806/where-can-i-find-a-list-of-the-flask-sqlalchemy-column-types-and-options
+    4. The column description should be added as a dictinary. `type` key as shown in the example below is mandatory, all others
+    should be the keywor arguments as used in sqlalchemy types  
+    5. `primary_key` can be a key for a column with a boolean value True
+
+    A sample JSON
+    {
+        &#34;table_name&#34;: &#34;Test&#34;,
+        &#34;schema&#34;: &#34;test_db&#34;,
+        &#34;id&#34;: {
+                &#34;type&#34;:&#34;INTEGER&#34;, // case insensitive
+                &#34;primary_key&#34;: True
+                },
+        &#34;text_col&#34;: {
+                    &#34;type&#34;:&#34;STRING&#34;,
+                    &#34;length&#34;:50
+                    },
+        &#34;int_col&#34;: {
+                &#34;type&#34;:&#34;INT&#34;
+                } 
+    }
+
+    Args:
+        definition: A json object
+
+    Returns:
+        None
+
+    Raises:
+        InternalError
+            If table already exists
+    &#34;&#34;&#34;
+    definition_dict = json.loads(definition)
+    schema = definition_dict[&#39;schema&#39;]
+    table_name = definition_dict[&#39;table_name&#39;]
+
+    # drop sauma keywords from defintion_dict
+    definition_dict = self.__remove_keys_from_dict(definition_dict, SAUMA_KEYWORDS)
+
+    # Create a list of sqlalchemy columns
+    columns = []
+    for key in definition_dict.keys():
+
+        # column keyword arguments
+        col_kwargs = definition_dict[key]
+
+        # column type String, Int, etc
+        col = col_kwargs[&#39;type&#39;]
+        primary_key = col_kwargs.get(PRIMARY_KEY, False)
+
+        # column description keyword arguments as dict
+        col_kwargs.pop(&#39;type&#39;)
+
+        if PRIMARY_KEY in col_kwargs:
+            col_kwargs.pop(PRIMARY_KEY)
+
+        # append sqlalchemy columns
+        columns.append(Column(key, TYPE_MAPPER[col.lower()](**col_kwargs), primary_key=primary_key))
+
+    # create engine for table
+    dburi = self.__generate_conn_path(schema)
+    engine = create_engine(dburi)
+
+    # metadata
+    meta = MetaData(engine)
+
+    table = Table(table_name, meta, *columns)
+    table.create()
+
+    # dispose off all the connections in the engine
+    engine.dispose()</code></pre>
+</details>
+</dd>
+<dt id="sauma.core.Connection.execute"><code class="name flex">
+<span>def <span class="ident">execute</span></span>(<span>self, query: str) -> sqlalchemy.engine.result.ResultProxy</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This method executes a raw sql query and returns a ResultProxy
+For more information check
+<a href="https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.ResultProxy">https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.ResultProxy</a></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>query</code></strong></dt>
+<dd>SQL query to execute</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>sqlalchemy.engine.ResultProxy</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, query: str) -&gt; ResultProxy:
+    &#34;&#34;&#34;
+    This method executes a raw sql query and returns a ResultProxy
+    For more information check 
+    https://docs.sqlalchemy.org/en/13/core/connections.html#sqlalchemy.engine.ResultProxy
+
+    Args:
+        query: SQL query to execute
+    Returns:
+        sqlalchemy.engine.ResultProxy
+    &#34;&#34;&#34;
+    return self.engine.execute(query)</code></pre>
+</details>
+</dd>
+<dt id="sauma.core.Connection.get_dataframe"><code class="name flex">
+<span>def <span class="ident">get_dataframe</span></span>(<span>self, table_name: str, schema: str, **kwargs) -> pandas.core.frame.DataFrame</span>
+</code></dt>
+<dd>
+<div class="desc"><p>For ref:
+<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql_table.html#pandas.read_sql_table">https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql_table.html#pandas.read_sql_table</a></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>table_name</code></strong></dt>
+<dd>Name of the table</dd>
+<dt><strong><code>schema</code></strong></dt>
+<dd>Name of the schema</dd>
+</dl>
+<h2 id="kwargs">Kwargs</h2>
+<p>index_col: str or list of str, optional, default: None
+Column(s) to set as index(MultiIndex).</p>
+<p>coerce_float: bool, default True
+Attempts to convert values of non-string, non-numeric objects (like decimal.Decimal) to floating point.
+Can result in loss of Precision.</p>
+<p>parse_dates: list or dict, default None
+List of column names to parse as dates.</p>
+<pre><code>Dict of {column_name: format string} where format string is strftime compatible in case of parsing
+ string times or is one of (D, s, ns, ms, us) in case of parsing integer timestamps.
+
+Dict of {column_name: arg dict}, where the arg dict corresponds to the keyword arguments of
+ pandas.to_datetime() Especially useful with databases without native Datetime support, such as SQLite.
+</code></pre>
+<p>columns: list, default None
+List of column names to select from SQL table.</p>
+<p>chunksize: int, default None
+If specified, returns an iterator where chunksize is the number of rows to include in each chunk.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>pd.DataFrame</code></dt>
+<dd>A SQL table is returned as two-dimensional data structure with labeled axes.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_dataframe(self, table_name: str, schema: str, **kwargs) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    For ref:
+    https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql_table.html#pandas.read_sql_table
+    Args:
+        table_name: Name of the table
+        schema: Name of the schema
+    Kwargs:
+        index_col: str or list of str, optional, default: None
+            Column(s) to set as index(MultiIndex).
+
+        coerce_float: bool, default True
+            Attempts to convert values of non-string, non-numeric objects (like decimal.Decimal) to floating point.
+             Can result in loss of Precision.
+
+        parse_dates: list or dict, default None
+            List of column names to parse as dates.
+
+            Dict of {column_name: format string} where format string is strftime compatible in case of parsing
+             string times or is one of (D, s, ns, ms, us) in case of parsing integer timestamps.
+
+            Dict of {column_name: arg dict}, where the arg dict corresponds to the keyword arguments of
+             pandas.to_datetime() Especially useful with databases without native Datetime support, such as SQLite.
+
+        columns: list, default None
+            List of column names to select from SQL table.
+
+        chunksize: int, default None
+            If specified, returns an iterator where chunksize is the number of rows to include in each chunk.
+    Returns:
+        pd.DataFrame
+            A SQL table is returned as two-dimensional data structure with labeled axes.
+    &#34;&#34;&#34;
+    return pd.read_sql_table(table_name, self.engine, schema, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="sauma.core.Connection.get_dataframe_from_sql_query"><code class="name flex">
+<span>def <span class="ident">get_dataframe_from_sql_query</span></span>(<span>self, sql, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><h2 id="ref">Ref</h2>
+<p><a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql_query.html#pandas.read_sql_query">https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql_query.html#pandas.read_sql_query</a></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>sql</code></strong></dt>
+<dd>SQL Query</dd>
+</dl>
+<h2 id="kwargs">Kwargs</h2>
+<p>index_col: str or list of strings, optional, default: None
+Column(s) to set as index(MultiIndex).</p>
+<p>coerce_float: bool, default True
+Attempts to convert values of non-string, non-numeric objects (like decimal.Decimal) to floating point.
+Useful for SQL result sets.</p>
+<p>parse_dates: list or dict, default: None
+List of column names to parse as dates.</p>
+<pre><code>Dict of {column_name: format string} where format string is strftime compatible in case of parsing
+ string times, or is one of (D, s, ns, ms, us) in case of parsing integer timestamps.
+
+Dict of {column_name: arg dict}, where the arg dict corresponds to the keyword arguments of
+pandas.to_datetime() Especially useful with databases without native Datetime support, such as SQLite.
+
+chunksize: int, default None
+    If specified, return an iterator where chunksize is the number of rows to include in each chunk.
+</code></pre>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>DataFrame</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_dataframe_from_sql_query(self, sql, **kwargs):
+    &#34;&#34;&#34;
+    Ref:
+        https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_sql_query.html#pandas.read_sql_query
+    Args:
+        sql: SQL Query
+    Kwargs:
+        index_col: str or list of strings, optional, default: None
+            Column(s) to set as index(MultiIndex).
+
+        coerce_float: bool, default True
+            Attempts to convert values of non-string, non-numeric objects (like decimal.Decimal) to floating point.
+             Useful for SQL result sets.
+
+        parse_dates: list or dict, default: None
+            List of column names to parse as dates.
+
+            Dict of {column_name: format string} where format string is strftime compatible in case of parsing
+             string times, or is one of (D, s, ns, ms, us) in case of parsing integer timestamps.
+
+            Dict of {column_name: arg dict}, where the arg dict corresponds to the keyword arguments of
+            pandas.to_datetime() Especially useful with databases without native Datetime support, such as SQLite.
+
+            chunksize: int, default None
+                If specified, return an iterator where chunksize is the number of rows to include in each chunk.
+    Returns:
+        DataFrame
+    &#34;&#34;&#34;
+    return pd.read_sql_query(sql, self.engine, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="sauma.core.Connection.get_table"><code class="name flex">
+<span>def <span class="ident">get_table</span></span>(<span>self, table_name: str, schema: str) -> sqlalchemy.sql.schema.Table</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This method queries the database for the table</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>table_name</code></strong></dt>
+<dd>The name of the table</dd>
+<dt><strong><code>schema</code></strong></dt>
+<dd>Name of the schema</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>sqlalchemy.Table</code></dt>
+<dd>&nbsp;</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_table(self, table_name: str, schema: str) -&gt; Table:
+    &#34;&#34;&#34;
+    This method queries the database for the table
+
+    Args:
+        table_name: The name of the table
+        schema: Name of the schema
+    Returns:
+        sqlalchemy.Table
+    &#34;&#34;&#34;
+
+    # create the engine
+    uri = self.__generate_conn_path(schema)
+    engine = create_engine(uri)
+
+    # get metadata
+    metadata = MetaData(engine)
+    metadata.reflect(bind=engine)
+
+    if not metadata:
+        raise (ProgrammingError(f&#34;{table_name} does not exist in {schema}&#34;, table_name, schema))
+
+    # get all tables in the metadata
+    tables = metadata.tables
+
+    # dispose off all the connections by engine
+    engine.dispose()
+
+    # check and return if the table exist otherwise raise ProgrammingError
+    if table_name in tables:
+        return tables[table_name]
+
+    raise (ProgrammingError(f&#34;{table_name} does not exist in {schema}&#34;, table_name, schema))</code></pre>
+</details>
+</dd>
+<dt id="sauma.core.Connection.show_schemas"><code class="name flex">
+<span>def <span class="ident">show_schemas</span></span>(<span>self) -> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This method prints all the schemas defined in the system as a list
+Needs the connection to be initialized before</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show_schemas(self) -&gt; None:
+    &#34;&#34;&#34;
+    This method prints all the schemas defined in the system as a list
+    Needs the connection to be initialized before
+    &#34;&#34;&#34;
+    if not self.__connect:
+        raise ProgrammingError(&#39;No connection established! You can establish the connection by calling&#39; + \
+                               &#39; self.connect()&#39;, None, None)
+    db_list = self.inspector.get_schema_names()
+    self.pp.pprint(db_list)</code></pre>
+</details>
+</dd>
+<dt id="sauma.core.Connection.show_tables"><code class="name flex">
+<span>def <span class="ident">show_tables</span></span>(<span>self, schema: str) -> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p>prints out the names of tables in a given schema</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show_tables(self, schema: str) -&gt; None:
+    &#34;&#34;&#34;
+    prints out the names of tables in a given schema
+    &#34;&#34;&#34;
+    if not self.__connect:
+        raise ProgrammingError(&#39;No connection established! You can establish the connection by calling&#39; + \
+                               &#39; self.connect()&#39;, None, None)
+    tables = self.inspector.get_table_names(schema=schema)
+    self.pp.pprint(tables)</code></pre>
+</details>
+</dd>
+<dt id="sauma.core.Connection.update_table"><code class="name flex">
+<span>def <span class="ident">update_table</span></span>(<span>self, table_name: str, dataframe: pandas.core.frame.DataFrame, schema: str = None, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This method updates an existing table based on an action
+For reference <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_sql.html">https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_sql.html</a></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>table_name</code></strong></dt>
+<dd>Name of the table to update</dd>
+<dt><strong><code>dataframe</code></strong></dt>
+<dd>A pandas dataframe </dd>
+<dt><strong><code>schema</code></strong></dt>
+<dd>defaults to current schema</dd>
+</dl>
+<h2 id="kwargs">Kwargs</h2>
+<p><strong>if_exists</strong>: {‘fail’, ‘replace’, ‘append’}, default ‘fail’
+How to behave if the table already exists.
+fail: Raise a ValueError.
+replace: Drop the table before inserting new values.
+append: Insert new values to the existing table.</p>
+<p><strong>index</strong>: bool, default True
+Write DataFrame index as a column. Uses index_label as the column name in the table.</p>
+<p><strong>index_label</strong>: str or sequence, default None
+Column label for index column(s). If None is given (default) and index is True, then the index names
+are used.A sequence should be given if the DataFrame uses MultiIndex.</p>
+<p><strong>chunksize</strong>: int, optional
+Specify the number of rows in each batch to be written at a time. By default, all rows will be written
+at once.</p>
+<p><strong>dtype</strong>: dict or scalar, optional
+Specifying the datatype for columns. If a dictionary is used, the keys should be the column names and
+the values should be the SQLAlchemy types or strings for the sqlite3 legacy mode. If a scalar is
+provided, it will be applied to all columns.</p>
+<p><strong>method</strong>: {None, ‘multi’, callable}, optional
+Controls the SQL insertion clause used:
+None : Uses standard SQL INSERT clause (one per row).
+‘multi’: Pass multiple values in a single INSERT clause.
+callable with signature (pd_table, conn, keys, data_iter).
+Details and a sample callable implementation can be found in the section insert method of
+pandas documentation.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>None</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>if if_exists is 'fail' which is default</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_table(self, table_name: str, dataframe: pd.DataFrame,
+                 schema: str = None, **kwargs):
+    &#34;&#34;&#34;
+    This method updates an existing table based on an action
+    For reference https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_sql.html
+
+    Args:
+        table_name: Name of the table to update
+        dataframe: A pandas dataframe 
+        schema: defaults to current schema
+
+    Kwargs:
+        **if_exists**: {‘fail’, ‘replace’, ‘append’}, default ‘fail’
+            How to behave if the table already exists.
+                fail: Raise a ValueError.
+                replace: Drop the table before inserting new values.
+                append: Insert new values to the existing table.
+
+        **index**: bool, default True
+            Write DataFrame index as a column. Uses index_label as the column name in the table.
+
+        **index_label**: str or sequence, default None
+            Column label for index column(s). If None is given (default) and index is True, then the index names
+            are used.A sequence should be given if the DataFrame uses MultiIndex.
+
+        **chunksize**: int, optional
+            Specify the number of rows in each batch to be written at a time. By default, all rows will be written
+             at once.
+
+        **dtype**: dict or scalar, optional
+            Specifying the datatype for columns. If a dictionary is used, the keys should be the column names and
+            the values should be the SQLAlchemy types or strings for the sqlite3 legacy mode. If a scalar is
+            provided, it will be applied to all columns.
+
+        **method**: {None, ‘multi’, callable}, optional
+            Controls the SQL insertion clause used:
+                None : Uses standard SQL INSERT clause (one per row).
+                ‘multi’: Pass multiple values in a single INSERT clause.
+                callable with signature (pd_table, conn, keys, data_iter).
+                Details and a sample callable implementation can be found in the section insert method of
+                pandas documentation.
+
+    Returns:
+        None
+
+    Raises:
+        ValueError
+            if if_exists is &#39;fail&#39; which is default
+    &#34;&#34;&#34;
+    dataframe.to_sql(table_name, self.engine, schema=schema, **kwargs)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sauma.core.Connection" href="#sauma.core.Connection">Connection</a></code></h4>
+<ul class="">
+<li><code><a title="sauma.core.Connection.close" href="#sauma.core.Connection.close">close</a></code></li>
+<li><code><a title="sauma.core.Connection.connect" href="#sauma.core.Connection.connect">connect</a></code></li>
+<li><code><a title="sauma.core.Connection.create_table" href="#sauma.core.Connection.create_table">create_table</a></code></li>
+<li><code><a title="sauma.core.Connection.execute" href="#sauma.core.Connection.execute">execute</a></code></li>
+<li><code><a title="sauma.core.Connection.get_dataframe" href="#sauma.core.Connection.get_dataframe">get_dataframe</a></code></li>
+<li><code><a title="sauma.core.Connection.get_dataframe_from_sql_query" href="#sauma.core.Connection.get_dataframe_from_sql_query">get_dataframe_from_sql_query</a></code></li>
+<li><code><a title="sauma.core.Connection.get_table" href="#sauma.core.Connection.get_table">get_table</a></code></li>
+<li><code><a title="sauma.core.Connection.show_schemas" href="#sauma.core.Connection.show_schemas">show_schemas</a></code></li>
+<li><code><a title="sauma.core.Connection.show_tables" href="#sauma.core.Connection.show_tables">show_tables</a></code></li>
+<li><code><a title="sauma.core.Connection.update_table" href="#sauma.core.Connection.update_table">update_table</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
