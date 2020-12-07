@@ -14,6 +14,7 @@ from sauma.core import Connection
 from config import PATHS
 from DataHelper.SQLDataHandler import SQLDataHandler
 from .morning_star_formatting_config import mrnstar_formatting_dict, mrnstar_new_name_dict
+from DataHelper import templates
 
 # Get paths
 TICKER_PATH = PATHS['ticker']
@@ -26,65 +27,12 @@ class MakeDatabaseSQL(SQLDataHandler):
 
     def setup_table_templates(self):
         """Define the all table template as local variable here, all these table template should be defined as a global variable in a
-        python file, and import here for this class to use, please check the sauma.core documentation, the template format should be something like:
-        {
-            "tableName": "Test",
-            "schema": "test_db",
-            "primaryKey":["id"],
-            "columns": [{"name": "id",       "type":"INTEGER"},                           // case insensitive
-                        {"name": "text_col", "type":"STRING", "size":50},
-                        {"name": "int_col",  "type":"INT"}
-            ],
-            "primaryKey":["id"],
-            "description": 'sample table to know about the format'
-        }
+        python file, and import here for this class to use, please check the sauma.core documentation
         """
 
-        TEMPLATE_TICKER = {
-            "tableName": "ticker",
-            "schema": "fund_clustering",
-            "columns": [{"name": "fundNo", "type": "INTEGER"},
-                        {"name": "fundTicker", "type": "STRING", "size": 10}],
-            "primaryKey": ["fundNo"],
-            "description": 'fund number and ticker'
-        }
-
-        TEMPLATE_RETURNS = {
-            "tableName": "returns",
-            "schema": "fund_clustering",
-            "columns": [{"name": "fundNo", "type": "INTEGER"},
-                        {"name": "date", "type": "DATE"},
-                        {"name": "r", "type": "FLOAT", "size": 53}],
-            "primaryKey": ["fundNo", "date"],
-            "description": 'fund returns'
-        }
-
-        TEMPLATE_MORNINGSTAR = {
-            "tableName": "morning_star",
-            "schema": "fund_clustering",
-            "columns": [{"name": "fundNo", "type": "INTEGER"},
-                        {"name": "date", "type": "DATE"},
-                        {"name": "per_com", "type": "FLOAT", "size": 53},
-                        {"name": "per_pref", "type": "FLOAT", "size": 53},
-                        {"name": "per_conv", "type": "FLOAT", "size": 53},
-                        {"name": "per_corp", "type": "FLOAT", "size": 53},
-                        {"name": "per_muni", "type": "FLOAT", "size": 53},
-                        {"name": "per_govt", "type": "FLOAT", "size": 53},
-                        {"name": "per_oth", "type": "FLOAT", "size": 53},
-                        {"name": "per_cash", "type": "FLOAT", "size": 53},
-                        {"name": "per_bond", "type": "FLOAT", "size": 53},
-                        {"name": "per_abs", "type": "FLOAT", "size": 53},
-                        {"name": "per_mbs", "type": "FLOAT", "size": 53},
-                        {"name": "per_eq_oth", "type": "FLOAT", "size": 53},
-                        {"name": "per_fi_oth", "type": "FLOAT", "size": 53},
-                        {"name": "lipper_class_name", "type": "STRING", "size": 50}],
-            "primaryKey": ["fundNo", "date"],
-            "description": 'morningstar data for each fund'
-        }
-
-        self.template_ticker = TEMPLATE_TICKER
-        self.template_returns = TEMPLATE_RETURNS
-        self.template_morningstar = TEMPLATE_MORNINGSTAR
+        self.template_ticker = templates.TEMPLATE_TICKER
+        self.template_returns = templates.TEMPLATE_RETURNS
+        self.template_morningstar = templates.TEMPLATE_MORNINGSTAR
 
     def setup_tables(self, schema='fund_clustering'):
         """ setup all table based on the setup_table_Templates """

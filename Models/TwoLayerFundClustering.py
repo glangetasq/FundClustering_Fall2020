@@ -42,33 +42,40 @@ class TwoLayerFundClustering(MultipleLayerModelBased):
             rmtree(self.cachedir)
 
 
-    def fit(self, source_type, **kwargs):
+    def load_raw_data(self, source_type, **kwargs):
+        """Function to load raw data from source, should be able to support reading data from flat file or sql database. 
+        Parameters:
+            source_type: str
+                flat file type or sql, if it is flat file, file directory or
+                path need to be passed in as argument or in the setup function
+                If it is sql, connection need to be extablished in setup function
+                please avoid any hard coded name in the class, and set global variable to define those file name
+        """
+        cache = kwargs.get('cache', None)
+        if source_type == 'CustomCache' and not cache:
+            raise ValueError("Expected cache when using the Custom Cache source type.")
+        
+        # only need to load data for the first layer
+        self.first_layer.load_raw_data(self.clustering_year,
+            source_type=source_type,
+            cache=cache,
+            **kwargs
+        )
+
+
+    def fit(self, **kwargs):
         """Fit the pipeline based on the parameters
         Parameters:
             X: df/np.array/any customized type, but you need to make sure that all estimator could handle this data type
                 independent variable, possibly you could use data_hlper class you define for this purpose
         """
 
-        cache = kwargs.get('cache', None)
-        if source_type == 'CustomCache' and not cache:
-            raise ValueError("Expected cache when using the Custom Cache source type.")
-
         # First layer
-        self.first_layer.load_raw_data(self.clustering_year,
-            source_type=source_type,
-            cache=cache,
-            **kwargs
-        )
         self.first_layer.set_up()
         first_layer_labels = self.first_layer.fit()
+        self.first_layer_labels = first_layer_labels
 
         # Second layer
-        self.second_layer.load_raw_data(self.clustering_year,
-            first_layer_labels,
-            source_type=source_type,
-            cache=cache,
-            **kwargs
-        )
         self.second_layer.set_up(self.first_layer.features, first_layer_labels)
         second_layer_labels = self.second_layer.fit()
 

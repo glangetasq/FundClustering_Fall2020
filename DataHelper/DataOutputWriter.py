@@ -9,6 +9,7 @@ from sauma.core import Connection
 
 # Local Imports
 from .SQLDataHandler import SQLDataHandler
+from DataHelper import templates
 
 
 class DataOutputWriter(SQLDataHandler):
@@ -25,32 +26,10 @@ class DataOutputWriter(SQLDataHandler):
     def setup_table_templates(self):
         """Define the all table template as local variable here, all these table template should be defined as a global variable in a
         python file, and import here for this class to use, please check the sauma.core documentation, the template format should be something like:
-        {
-            "tableName": "Test",
-            "schema": "test_db",
-            "primaryKey":["id"],
-            "columns": [{"name": "id",       "type":"INTEGER"},                           // case insensitive
-                        {"name": "text_col", "type":"STRING", "size":50},
-                        {"name": "int_col",  "type":"INT"}
-            ],
-            "primaryKey":["id"],
-            "description": 'sample table to know about the format'
-        }
+        
         """
 
-        self.table_name = "clustering_output"
-
-        TEMPLATE_OUTPUT = {
-            "tableName": f"{self.table_name}",
-            "schema": "fund_clustering",
-            "columns": [{"name": "fundNo", "type": "INTEGER"},
-                        {"name": "main_cluster", "type": "INTEGER"},
-                        {"name": "sub_cluster", "type": "INTEGER"}],
-            "primaryKey": ["fundNo"],
-            "description": 'fund number and cluster result'
-        }
-
-        self.template_output = TEMPLATE_OUTPUT
+        self.template_output = templates.TEMPLATE_OUTPUT
 
 
 
