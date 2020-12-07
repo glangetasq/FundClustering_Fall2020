@@ -1,0 +1,32 @@
+{
+    "table_name": "Test",
+    "schema": "morning_star",
+    "id": {
+            "type":"INTEGER",
+            "primary_key": true
+            },
+    "text_col": {
+                "type":"STRING",
+                "length":50
+                },
+    "int_col": {
+            "type":"INT"
+            },
+    "float_col_1": {
+        "type": "FLOAT"
+    },
+    "float_col_2": {
+        "type": "FLOAT"
+    },
+    "id_2": {
+        "type":"STRING",
+        "length": 50,
+        "primary_key":true
+    },
+    "date_col": {
+        "type": "Date"
+    },
+    "datetime_col": {
+        "type": "datetime"
+    }
+}

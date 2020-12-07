@@ -11,14 +11,14 @@ import json
 from sauma.core import Connection
 
 # Local Imports
-from config import PATHS
+from Config import DATA_PATHS
 from .SQLDataPreparation import SQLDataPreparation
 from .morning_star_formatting_config import mrnstar_formatting_dict, mrnstar_new_name_dict
 
 # Get paths
-TICKER_PATH = PATHS['ticker']
-RETURNS_PATH = PATHS['returns']
-MORNING_STAR_PATH = PATHS['morningstar']
+TICKER_PATH = DATA_PATHS['ticker']
+RETURNS_PATH = DATA_PATHS['returns']
+MORNING_STAR_PATH = DATA_PATHS['morningstar']
 
 
 class HoldingDataClusteringSQL(SQLDataPreparation):

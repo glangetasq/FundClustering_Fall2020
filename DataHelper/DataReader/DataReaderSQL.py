@@ -5,7 +5,7 @@ from sqlalchemy import select
 
 
 # Local imports
-from config import SQL_CONFIG
+from Config import SQL
 from .BaseDataReader import BaseDataReader
 
 class DataReaderSQL(BaseDataReader):
@@ -27,10 +27,10 @@ class DataReaderSQL(BaseDataReader):
         """
 
         default_login = SQL_CONFIG['default_login']
-        username = username if username is not None else default_login['username']
-        password = password if password is not None else default_login['password']
-        schema = schema if schema is not None else default_login['schema']
-        secrets_dir = secrets_dir if secrets_dir is not None else default_login['secrets_dir']
+        username = username if username is not None else SQL.login.default_username
+        password = password if password is not None else SQL.login.default_password
+        schema = schema if schema is not None else SQL.login.default_schema
+        secrets_dir = secrets_dir if secrets_dir is not None else SQL.login.default_secrets_dir
 
         os.environ['SECRETS_DIR'] = secrets_dir
         self.c = Connection(username = username, password = password, schema = '')
@@ -57,8 +57,8 @@ class DataReaderSQL(BaseDataReader):
         self._check_if_connected()
 
 
-        db_name = SQL_CONFIG['database']
-        table_name = SQL_CONFIG['tables']['returns']
+        db_name = SQL.login.default_db
+        table_name = SQL.STRUCTURE[db_name]['returns']
         table = self.c.get_table(table_name, db_name)
 
         # Use database
@@ -95,8 +95,8 @@ class DataReaderSQL(BaseDataReader):
 
         self._check_if_connected()
 
-        db_name = SQL_CONFIG['database']
-        table_name = SQL_CONFIG['tables']['holding_asset']
+        db_name = SQL.login.default_db
+        table_name = SQL.STRUCTURE[db_name]['holding_asset']
         table = self.c.get_table(table_name, db_name)
 
         # Use database
@@ -140,8 +140,8 @@ class DataReaderSQL(BaseDataReader):
 
         self._check_if_connected()
 
-        db_name = SQL_CONFIG['database']
-        table_name = SQL_CONFIG['tables']['morningstar']
+        db_name = SQL.login.default_db
+        table_name = SQL.STRUCTURE[db_name]['morningstar']
         table = self.c.get_table(table_name, db_name)
 
         # Use database
@@ -178,8 +178,8 @@ class DataReaderSQL(BaseDataReader):
 
         self._check_if_connected()
 
-        db_name = SQL_CONFIG['database']
-        table_name = SQL_CONFIG['tables']['morningstar']
+        db_name = SQL.login.default_db
+        table_name = SQL.STRUCTURE[db_name]['morningstar']
         fundno_ticker = self.c.get_dataframe(table_name, db_name)
 
         # Convert to dict

@@ -11,14 +11,14 @@ import json
 from sauma.core import Connection
 
 # Local Imports
-from config import PATHS
+from Config import DATA_PATHS
 from DataHelper.CSVtoSQL.SQLDataHandler import SQLDataHandler
 from Models import HoldingDataMainClustering
 
 # Get paths
-TICKER_PATH = PATHS['ticker']
-RETURNS_PATH = PATHS['returns']
-MORNING_STAR_PATH = PATHS['morningstar']
+TICKER_PATH = DATA_PATHS['ticker']
+RETURNS_PATH = DATA_PATHS['returns']
+MORNING_STAR_PATH = DATA_PATHS['morningstar']
 
 
 class HoldingDataMainClusteringSQL(HoldingDataMainClustering, SQLDataHandler):
@@ -43,13 +43,13 @@ class HoldingDataMainClusteringSQL(HoldingDataMainClustering, SQLDataHandler):
                         {"name": "Cluster Category", "type": "STRING", "size": 50},
                         {"name": "sharpe_ratio", "type": "STRING", "size": 50},
                         {"name": "absolute_return", "type": "STRING", "size": 10},
-                        {"name": "absolute_return_val", "type": "FLOAT"}],                      
+                        {"name": "absolute_return_val", "type": "FLOAT"}],
             "primaryKey": ["Fund.No"],
             "description": 'Main cluster results'
         }
 
         self.template_results= TEMPLATE_RESULTS
- 
+
 
     def setup_tables(self, schema):
         """ setup all table based on the setup_table_Templates """
