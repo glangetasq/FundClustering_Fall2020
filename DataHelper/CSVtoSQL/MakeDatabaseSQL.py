@@ -11,14 +11,14 @@ import json
 from sauma.core import Connection
 
 # Local Imports
-from Config import DATA_PATHS, SQL
+import Config
 from DataHelper.SQLDataHandler import SQLDataHandler
 from .morning_star_formatting_config import mrnstar_formatting_dict, mrnstar_new_name_dict
 
 # Get paths
-TICKER_PATH = DATA_PATHS['ticker']
-RETURNS_PATH = DATA_PATHS['returns']
-MORNING_STAR_PATH = DATA_PATHS['morningstar']
+TICKER_PATH = Config.DATA_PATHS['ticker']
+RETURNS_PATH = Config.DATA_PATHS['returns']
+MORNING_STAR_PATH = Config.DATA_PATHS['morningstar']
 
 
 class MakeDatabaseSQL(SQLDataHandler):
@@ -29,9 +29,9 @@ class MakeDatabaseSQL(SQLDataHandler):
         python file, and import here for this class to use, please check the sauma.core documentation
         """
 
-        self.template_ticker = SQL.templates.TICKER
-        self.template_returns = SQL.templates.RETURNS
-        self.template_morningstar = SQL.templates.MORNINGSTAR
+        self.template_ticker = Config.SQL.templates.TICKER
+        self.template_returns = Config.SQL.templates.RETURNS
+        self.template_morningstar = Config.SQL.templates.MORNINGSTAR
 
     def setup_tables(self, schema='fund_clustering'):
         """ setup all table based on the setup_table_Templates """

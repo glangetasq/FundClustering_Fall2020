@@ -8,7 +8,7 @@ import json
 from sauma.core import Connection
 
 # Local Imports
-from Config import SQL
+import Config
 from .SQLDataHandler import SQLDataHandler
 
 
@@ -29,7 +29,7 @@ class DataOutputWriter(SQLDataHandler):
 
         """
 
-        self.template_output = SQL.templates.OUTPUT
+        self.template_output = Config.SQL.templates.OUTPUT
 
 
 
