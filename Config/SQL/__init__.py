@@ -2,8 +2,7 @@
 
 __all__ = [
     'login',
-    'requests',
-    'templates',
+    'structure'
 ]
 
 from .structure import *
