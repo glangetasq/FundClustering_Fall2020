@@ -1,7 +1,7 @@
 """Template and Request of the clustering_output table"""
 
 TEMPLATE = {
-    "tableName": "clustering_output",
+    "table_name": "clustering_output",
     "schema": "fund_clustering",
     "columns": [
         {"name": "fundNo", "type": "INTEGER"},

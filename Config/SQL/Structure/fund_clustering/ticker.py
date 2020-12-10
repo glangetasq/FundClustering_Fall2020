@@ -1,14 +1,13 @@
 """Template and Request of the ticker table"""
 
 TEMPLATE = {
-    "tableName": "ticker",
+    "table_name": "ticker",
     "schema": "fund_clustering",
-    "columns": [
-        {"name": "fundNo", "type": "INTEGER"},
-        {"name": "fundTicker", "type": "STRING", "size": 10}
-    ],
-    "primaryKey": ["fundNo"],
-    "description": 'fund number and ticker'
+    "fundNo": {"type": "INT", "primary_key": True},
+    "ticker": {"type": "STRING", "length": 10},
 }
 
-REQUEST = 'lmao'
+REQUEST = """
+    SELECT *
+    FROM ticker
+"""

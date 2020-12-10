@@ -1,4 +1,11 @@
 
+
+
+# date boundary for data
+TMIN = '2012-01-01'
+TMAX = '2012-12-31'
+
+
 # Hyperparameters
 
 DEFAULT_HYPERPARAMETERS = {

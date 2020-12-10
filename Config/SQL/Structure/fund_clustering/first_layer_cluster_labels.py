@@ -1,7 +1,7 @@
 """Template and Request of the first_layer_cluster_labels table"""
 
 TEMPLATE = {
-    "tableName": "firstlayer_cluster_labels",
+    "table_name": "firstlayer_cluster_labels",
     "schema": "fund_clustering",
     "columns": [
         {"name": "Fund.No", "type": "INTEGER"},

@@ -1,7 +1,10 @@
 """Template and Request of the returns table"""
 
+from Config import TMIN, TMAX
+
+
 TEMPLATE = {
-    "tableName": "returns",
+    "table_name": "returns",
     "schema": "fund_clustering",
     "columns": [
         {"name": "fundNo", "type": "INTEGER"},
@@ -12,4 +15,9 @@ TEMPLATE = {
     "description": 'fund returns'
 }
 
-REQUEST = 'lmao'
+REQUEST = f"""
+    SELECT *
+    FROM returns
+    WHERE date >= '{TMIN}'
+    AND date <= '{TMAX}'
+"""

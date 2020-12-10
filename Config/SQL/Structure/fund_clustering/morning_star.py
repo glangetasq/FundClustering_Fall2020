@@ -1,5 +1,8 @@
 """Template and Request of the morningstar table"""
 
+from Config import TMIN, TMAX
+
+
 TEMPLATE = {
     "tableName": "morning_star",
     "schema": "fund_clustering",
@@ -26,4 +29,17 @@ TEMPLATE = {
 }
 
 
-REQUEST = 'lmao'
+REQUEST = f"""
+    SELECT
+        fundNo,
+        date,
+        per_cash as cash,
+        per_com + per_pref + per_eq_oth as equity,
+        per_conv + per_corp + per_muni + per_govt as bond,
+        per_abs + per_mbs + per_fi_oth + per_oth as sec,
+        lipper_class_name
+    FROM morning_star
+    WHERE
+        date >= '{TMIN}'
+    AND date <= '{TMAX}'
+"""
