@@ -4,6 +4,7 @@ from .DataCache import DataCache
 from .DataMaker import DataMaker
 from .DataPreProcessor import DataPreProcessor
 from .DataProcessor import DataProcessor
+from .DataWriter import DataWriter
 from .DataReader import *
 
 
@@ -41,6 +42,10 @@ def get_data_cache(source, clustering_year, username=None, password=None, schema
 
 def get_data_processor():
     return DataProcessor()
+
+
+def get_data_writer(**kwargs):
+    return DataWriter(**kwargs)
 
 
 def get_data_maker(data_name=''):

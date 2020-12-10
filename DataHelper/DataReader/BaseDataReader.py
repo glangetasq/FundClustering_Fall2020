@@ -4,6 +4,7 @@ class BaseDataReader:
 
     def __init__(self, reader_type=None):
         self.reader_type = reader_type
+        self.dataframes = dict()
 
 
     def is_reader_type(self, reader_type):

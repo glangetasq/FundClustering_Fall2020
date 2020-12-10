@@ -22,14 +22,10 @@ def get_sql_structure_from_folder(structure_path):
     databases = [ os.path.basename(dir) for dir in databases if os.path.isdir(dir) ]
 
     structure = dict()
-    templates = dict()
-    requests = dict()
 
     for db in databases:
 
         structure[db] = dict()
-        templates[db] = dict()
-        requests[db] = dict()
 
         # Get all the tables from structure_path/db/
         tables = glob.glob(os.path.join(structure_path, db, '*.py'))
@@ -44,9 +40,9 @@ def get_sql_structure_from_folder(structure_path):
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
 
-            structure[db][table_name] = table_name
-            templates[db][table_name] = module.TEMPLATE
-            requests[db][table_name] = module.REQUEST
+            structure[db][table_name] = dict()
+            structure[db][table_name]['template'] = module.TEMPLATE
+            structure[db][table_name]['request'] = module.REQUEST
 
 
-    return structure, templates, requests
+    return structure
