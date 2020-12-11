@@ -64,14 +64,6 @@ class DataReaderSQL(BaseDataReader):
             raise ConnectionError("setup_connection of DataReaderSQL before trying to read data.")
 
 
-    def _insert_new_dataframe(self, db_name, table_name, df):
-
-        if not db_name in self.dataframes:
-            self.dataframes[db_name] = dict()
-
-        self.dataframes[db_name][table_name] = df
-
-
     def load_table(self, db_name, table_name, parse_dates=[]):
 
         # Load only once
@@ -86,14 +78,6 @@ class DataReaderSQL(BaseDataReader):
             df = self.c.get_dataframe_from_sql_query(request, parse_dates=parse_dates)
 
             self._insert_new_dataframe(db_name, table_name, df)
-
-
-    def get_dataframe(self, db_name, table_name):
-
-        if db_name in self.dataframes and table_name in self.dataframes[db_name]:
-            return self.dataframes[db_name][table_name]
-        else:
-            raise ValueError(f"Tried to access {table_name} in the {db_name} database, before loading it.")
 
 
     def get_returns(self, t_lower=None, t_upper=None):
