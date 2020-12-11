@@ -10,48 +10,27 @@ import Config
 from .BaseDataReader import BaseDataReader
 
 class DataReaderSQL(BaseDataReader):
-    """
-    Read and save any table from SQL using the requests in the Config
 
-    It uses a Singleton Design Pattern: only one instance (at most)
-        can exist in the system.
-    Potential Problem: if we need several DataReaderSQL for different TMIN, TMAX
-        this class will need to be adjusted.
-    """
+    def __init__(self, username, password, schema):
 
-    __instance = None
+        super().__init__(reader_type='sql')
+        self.c = None
 
 
-    def __init__(self):
-        raise RuntimeError('Call instance() instead')
-
-
-    @classmethod
-    def instance(cls, **kwargs):
-
-        if cls.__instance is None:
-            cls.__instance = cls.__new__(cls)
-            super(cls, cls.__instance).__init__(reader_type='sql')
-            cls.__instance.c = None
-            cls.__instance.setup_connection(**kwargs)
-
-        return cls.__instance
-
-
-    def setup_connection(self, **kwargs):
+    def setup_connection(self, username=None, password=None, schema=None, secrets_dir=None):
         """initilize the connection obj here, and use it for any operation
 
         Optional Inputs :
-            - username : str, use default username if not defined
-            - password : str, use default password if not defined
-            - schema : str, use default schema if not defined
-            - screts_dir : str, use default secrets_dir if not defined
+            - username : str, use default username if None
+            - password : str, use default password if None
+            - schema : str, use default schema if None
+            - screts_dir : str, use default secrets_dir if None
         """
 
-        username = kwargs.get('username', Config.SQL.login.default_username)
-        password = kwargs.get('password', Config.SQL.login.default_password)
-        schema = kwargs.get('schema', Config.SQL.login.default_schema)
-        secrets_dir = kwargs.get('secrets_dir', Config.SQL.login.default_secrets_dir)
+        username = username if username is not None else Config.SQL.login.default_username
+        password = password if password is not None else Config.SQL.login.default_password
+        schema = schema if schema is not None else Config.SQL.login.default_schema
+        secrets_dir = secrets_dir if secrets_dir is not None else Config.SQL.login.default_secrets_dir
 
         os.environ['SECRETS_DIR'] = secrets_dir
         self.c = Connection(username = username, password = password, schema = '')
@@ -62,22 +41,6 @@ class DataReaderSQL(BaseDataReader):
 
         if not self.c:
             raise ConnectionError("setup_connection of DataReaderSQL before trying to read data.")
-
-
-    def load_table(self, db_name, table_name, parse_dates=[]):
-
-        # Load only once
-        if not(db_name in self.dataframes and table_name in self.dataframes[db_name]):
-
-            self._check_if_connected()
-
-            request = Config.SQL.STRUCTURE[db_name][table_name]['request']
-            parse_dates = Config.SQL.STRUCTURE[db_name][table_name].get('parse_dates', [])
-
-            self.c.execute(f"USE {db_name}")
-            df = self.c.get_dataframe_from_sql_query(request, parse_dates=parse_dates)
-
-            self._insert_new_dataframe(db_name, table_name, df)
 
 
     def get_returns(self, t_lower=None, t_upper=None):
@@ -94,8 +57,8 @@ class DataReaderSQL(BaseDataReader):
         self._check_if_connected()
 
 
-        db_name = Config.SQL.login.default_db
-        table_name = 'returns'
+        db_name = SQL.login.default_db
+        table_name = SQL.STRUCTURE[db_name]['returns']
         table = self.c.get_table(table_name, db_name)
 
         # Use database
@@ -108,9 +71,14 @@ class DataReaderSQL(BaseDataReader):
         if t_upper:
             sql = sql.where(table.c.date <= t_upper)
 
-        print(sql)
+        # Get the returns we are interested in
+        returns = self.c.get_dataframe_from_sql_query(sql, parse_dates=['date'])
 
-        return None
+        # From flat dataframe to matrix like dataframe
+        returns = returns.pivot(index='date', columns='fundNo', values='r')
+        returns.index = pd.to_datetime(returns.index)
+
+        return returns
 
 
     def get_holding_asset(self, year, month=12, day=None):
@@ -210,8 +178,8 @@ class DataReaderSQL(BaseDataReader):
 
         self._check_if_connected()
 
-        db_name = SQL.login.default_db
-        table_name = SQL.STRUCTURE[db_name]['morningstar']
+        db_name = Config.SQL.login.default_db
+        table_name = Config.SQL.STRUCTURE[db_name]['morning_star']
         fundno_ticker = self.c.get_dataframe(table_name, db_name)
 
         # Convert to dict
