@@ -3,13 +3,9 @@
 TEMPLATE = {
     "table_name": "clustering_output",
     "schema": "fund_clustering",
-    "columns": [
-        {"name": "fundNo", "type": "INTEGER"},
-        {"name": "main_cluster", "type": "INTEGER"},
-        {"name": "sub_cluster", "type": "INTEGER"}
-    ],
-    "primaryKey": ["fundNo"],
-    "description": 'fund number and cluster result'
+    "fundNo": {"type": "INT", "primary_key": True},
+    "main_cluster": {"type": "INT"},
+    "sub_cluster": {"type": "INT"},
 }
 
 REQUEST = 'lmao'

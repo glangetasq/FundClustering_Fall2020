@@ -4,28 +4,25 @@ from Config import TMIN, TMAX
 
 
 TEMPLATE = {
-    "tableName": "morning_star",
+    "table_name": "morning_star",
     "schema": "fund_clustering",
-    "columns": [
-        {"name": "fundNo", "type": "INTEGER"},
-        {"name": "date", "type": "DATE"},
-        {"name": "per_com", "type": "FLOAT", "size": 53},
-        {"name": "per_pref", "type": "FLOAT", "size": 53},
-        {"name": "per_conv", "type": "FLOAT", "size": 53},
-        {"name": "per_corp", "type": "FLOAT", "size": 53},
-        {"name": "per_muni", "type": "FLOAT", "size": 53},
-        {"name": "per_govt", "type": "FLOAT", "size": 53},
-        {"name": "per_oth", "type": "FLOAT", "size": 53},
-        {"name": "per_cash", "type": "FLOAT", "size": 53},
-        {"name": "per_bond", "type": "FLOAT", "size": 53},
-        {"name": "per_abs", "type": "FLOAT", "size": 53},
-        {"name": "per_mbs", "type": "FLOAT", "size": 53},
-        {"name": "per_eq_oth", "type": "FLOAT", "size": 53},
-        {"name": "per_fi_oth", "type": "FLOAT", "size": 53},
-        {"name": "lipper_class_name", "type": "STRING", "size": 50}
-    ],
-    "primaryKey": ["fundNo", "date"],
-    "description": 'morningstar data for each fund'
+    # columns
+    "fundNo": {"type": "INT", "primary_key": True},
+    "date": {"type": "DATE", "primary_key": True},
+    "per_com": {"type": "FLOAT"},
+    "per_pref": {"type": "FLOAT"},
+    "per_conv": {"type": "FLOAT"},
+    "per_corp": {"type": "FLOAT"},
+    "per_muni": {"type": "FLOAT"},
+    "per_govt": {"type": "FLOAT"},
+    "per_oth": {"type": "FLOAT"},
+    "per_cash": {"type": "FLOAT"},
+    "per_bond": {"type": "FLOAT"},
+    "per_abs": {"type": "FLOAT"},
+    "per_mbs": {"type": "FLOAT"},
+    "per_eq_oth": {"type": "FLOAT"},
+    "per_fi_oth": {"type": "FLOAT"},
+    "lipper_class_name": {"type": "STRING", "length": 50}
 }
 
 

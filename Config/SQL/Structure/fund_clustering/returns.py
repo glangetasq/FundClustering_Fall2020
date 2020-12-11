@@ -6,13 +6,9 @@ from Config import TMIN, TMAX
 TEMPLATE = {
     "table_name": "returns",
     "schema": "fund_clustering",
-    "columns": [
-        {"name": "fundNo", "type": "INTEGER"},
-        {"name": "date", "type": "DATE"},
-        {"name": "r", "type": "FLOAT", "size": 53}
-    ],
-    "primaryKey": ["fundNo", "date"],
-    "description": 'fund returns'
+    "fundNo": {"type": "INTEGER", 'primary_key': True},
+    "date": {"type": "DATE", 'primary_key': True},
+    "r": {"type": "FLOAT"},
 }
 
 REQUEST = f"""
