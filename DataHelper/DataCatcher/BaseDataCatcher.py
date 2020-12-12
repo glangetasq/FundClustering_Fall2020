@@ -7,6 +7,7 @@ class BaseDataCatcher:
 
     def __init__(self, reader):
 
+        self._iterator = None
         self.reader = reader
         self.data = list() # self.data[k] = data for (k+1)th layer
 
@@ -30,3 +31,21 @@ class BaseDataCatcher:
 
         # Merge past cluster layer results to features of next layer
         self.data[k].join(clusters)
+
+
+    def _pack_data(self):
+        # Must be an iterator
+        raise NotImplementedError("DataCatcher subclasses must implement _pack_data.")
+
+
+    def unpack_data(self, keys):
+        """
+        The iterator (implemented by children classes) yields the data for each layer in succesion
+        """
+
+        if self._iterator is None:
+            self._iterator = self._pack_data()
+
+        data_dict = next(self._iterator)
+
+        return tuple(data_dict.get(k, None) for k in keys)

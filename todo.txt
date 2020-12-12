@@ -1,14 +1,15 @@
-Misconception:
-  - We are currently using holding data as a Timeseries data:
-      this is wrong, we are using December holding data for a given year.
-      this is still static data
+Data component revamp:
 
-Problem for implementing other algorithms:
-  - We are using KMean, and it cannot handle other distances than euclidian
-  - To use other algorithms than KMean could be tricky as we are both making new
-    clusters (if an outlier is in a cluster) and merging similar clusters into
-    one, based on qualitatitve tests using holding data.
-    Cannot be used for TS holding data or other type of data.
+  - Make the DataCatcher work with second layer, and TwoLayer models
+  - Revamp the DataMaker
+  - Delete old DataClasses (PreProcessor, Processor, Old Data Reader, DataCache)
+  - Change DataOutputWriter (either inherit from Writer, but anyways change how it's handle in Tools and models)
+  - DataCatcher with CSV
+  - DataMaker with test
 
 
-    
+Final Submission:
+  - Workflow if want to add more data (Config + Catcher)
+  - Diagram for classes relationship (Blue: class_name, Black:What the class do, Arrow:relationship (inheritance or use))
+  - Document future enhancement (New Model, Pipelin, MultiLayer, New data)
+  -

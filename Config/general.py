@@ -2,8 +2,9 @@
 
 
 # date boundary for data
-TMIN = '2012-01-01'
-TMAX = '2012-12-31'
+CLUSTERING_YEAR = 2012
+TMIN = f'{CLUSTERING_YEAR}-01-01'
+TMAX = f'{CLUSTERING_YEAR}-12-31'
 
 
 # Hyperparameters

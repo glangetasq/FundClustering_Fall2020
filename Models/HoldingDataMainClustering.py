@@ -9,6 +9,7 @@ import json
 
 # Local imports
 from BaseClasses import FundClusterBased
+import Config
 import DataHelper
 import Tools
 
@@ -23,8 +24,7 @@ class HoldingDataMainClustering(FundClusterBased):
 
     def set_up(self, **kwargs):
         """Function to setup any private variable for the allocator"""
-
-        self.asset_type = list(self.data.holding_asset.columns)[2:]
+        
         self.label = None
         self.k = None
 
@@ -53,7 +53,7 @@ class HoldingDataMainClustering(FundClusterBased):
         """
         return self.hasBeenFit
 
-    def load_raw_data(self, clustering_year, source_type, **kwargs):
+    def load_raw_data(self, catcher):
         """Function to load raw data from source, should be able to support
         reading data from flat file or sql database. Please just implement the one using flat file now,
         later we would provide the sql python package that we would want to utilize for the database task
@@ -69,23 +69,28 @@ class HoldingDataMainClustering(FundClusterBased):
                 please avoid any hard coded name in the class, and set global variable to define those file name
         """
 
-        self.clustering_year = clustering_year
+        _DATA_NEEDS = [
+            'features', 'returns', 'cumul_returns', 'asset_type', 'fund_mrnstar', 'fundNo_ticker'
+        ]
 
-        if source_type.lower() == 'csv':
-            self.data = DataHelper.get_data_cache(source='csv', clustering_year=clustering_year)
-        elif source_type.lower() == 'sql':
-            self.password = kwargs.get('password', None)
-            self.username = kwargs.get('username', None)
-            self.schema = kwargs.get('schema', None)
-            self.data = DataHelper.get_data_cache(source='sql', clusting_year=clustering_year, username = self.username, password = self.password, schema = self.schema)
-        else:
-            raise ValueError(f"The type of source '{source_type}' is not supported at the moment.")
+        feat, ret, c_ret, asset_type, mrnstar, fundNo_ticker = catcher.unpack_data(keys=_DATA_NEEDS)
 
-        # Processing data for this layer
-        processor = DataHelper.get_data_processor()
-        self.features = processor.holding_asset_pivot(self.data)
-        self.data.returns = self.data.returns[self.features.index]
-        self.data.cumul_returns = self.data.cumul_returns[self.features.index]
+        self.features = feat
+
+        """
+        TODO: remove the use of these dataframes from this class, as they should
+        only be used in other components / layers
+        """
+
+        self.extra_data = {
+            'returns': ret,
+            'cumul_returns': c_ret,
+            'asset_type': asset_type,
+            'fund_mrnstar': mrnstar,
+            'fundNo_ticker': fundNo_ticker,
+        }
+
+        self.clustering_year = Config.CLUSTERING_YEAR
 
 
     def set_hyper_parameter(self, **kwargs):
@@ -123,12 +128,11 @@ class HoldingDataMainClustering(FundClusterBased):
         # features
         if 'X' in kwargs:
             features = kwargs.get('X')
-            normalized_features = Tools.normal_standardization(self.features)
+            normalized_features = Tools.normal_standardization(features)
             normalized_features = np.round(normalized_features, 4)
         else:
-            # TODO: error if load_raw_data has not been called before
-            features = self.features
-            normalized_features = self.normalized_features
+            normalized_features = Tools.normal_standardization(self.features)
+            normalized_features = np.round(norm_features, 4)
 
 
         k = Tools.silhouette(normalized_features, log)
@@ -192,7 +196,8 @@ class HoldingDataMainClustering(FundClusterBased):
         if verbose: print(f'There are {k} final clusters')
 
         if log:
-            Tools.cluster_holding_asset_distribution_boxplot(features, cluster_label, k, self.data.asset_type)
+            asset_type = self.extra_data['asset_type']
+            Tools.cluster_holding_asset_distribution_boxplot(features, cluster_label, k, asset_type)
 
         self.hasBeenFit = True
 
@@ -242,8 +247,24 @@ class HoldingDataMainClustering(FundClusterBased):
 
         if output_cluster == True:
             from Tools import output_result
-            output = output_result.output_result_firstlayer(self.clustering_year, self.label, self.features,
-                                                            self.data.fund_mrnstar, self.data.cumul_returns,
-                                                            self.data.returns, self.asset_type, self.data.fundno_ticker,
-                                                            save_result, loc)
+
+            fund_mrnstar = self.extra_data['fund_mrnstar']
+            cumul_returns = self.extra_data['cumul_returns']
+            returns = self.extra_data['returns']
+            asset_type = self.extra_data['asset_type']
+            fundno_ticker = self.extra_data['fundNo_ticker']
+
+            output = output_result.output_result_firstlayer(
+                self.clustering_year,
+                self.label,
+                self.features,
+                fund_mrnstar,
+                cumul_returns,
+                returns,
+                asset_type,
+                fundNo_ticker,
+                save_result,
+                loc,
+            )
+
             return output
