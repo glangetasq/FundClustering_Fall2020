@@ -6,8 +6,9 @@ from sqlalchemy import select
 
 
 # Local imports
-import Config
+from Config import *
 from .BaseDataReader import BaseDataReader
+import Config.SQL as SQL
 
 class DataReaderSQL(BaseDataReader):
 
@@ -27,10 +28,10 @@ class DataReaderSQL(BaseDataReader):
             - screts_dir : str, use default secrets_dir if None
         """
 
-        username = username if username is not None else Config.SQL.login.default_username
-        password = password if password is not None else Config.SQL.login.default_password
-        schema = schema if schema is not None else Config.SQL.login.default_schema
-        secrets_dir = secrets_dir if secrets_dir is not None else Config.SQL.login.default_secrets_dir
+        username = username if username is not None else SQL.login.default_username
+        password = password if password is not None else SQL.login.default_password
+        schema = schema if schema is not None else SQL.login.default_schema
+        secrets_dir = secrets_dir if secrets_dir is not None else SQL.login.default_secrets_dir
 
         os.environ['SECRETS_DIR'] = secrets_dir
         self.c = Connection(username = username, password = password, schema = '')
@@ -178,8 +179,8 @@ class DataReaderSQL(BaseDataReader):
 
         self._check_if_connected()
 
-        db_name = Config.SQL.login.default_db
-        table_name = Config.SQL.STRUCTURE[db_name]['morning_star']
+        db_name = SQL.login.default_db
+        table_name = SQL.STRUCTURE[db_name]['morning_star']
         fundno_ticker = self.c.get_dataframe(table_name, db_name)
 
         # Convert to dict

@@ -6,6 +6,7 @@ from .DataPreProcessor import DataPreProcessor
 from .DataProcessor import DataProcessor
 from .DataWriter import DataWriter
 from .DataReader import *
+from .DataOutputWriter import DataOutputWriter
 
 
 def get_data_reader(source='sql', username=None, password=None, schema=None):
