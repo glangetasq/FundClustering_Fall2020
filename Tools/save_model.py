@@ -3,10 +3,10 @@ import os
 import pickle
 
 
-def output_model(model, filename, loc=None):
-    if not loc:
-        loc = "OutputResults/OutputModels"
+def save_model(sv_mdl, path, model):
 
-    with open(f'{loc}/{filename}.pickle', 'wb') as f:
-        pickle.dump(model, f)
-        print(f'Successfully saved the model to {loc}/{filename}.pickle!')
+    if sv_mdl:
+        if path:
+            pickle.dump(model, path)
+        else:
+            raise ValueError("Should define path when trying to save model to pickle.")

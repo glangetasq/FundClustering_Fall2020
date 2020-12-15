@@ -1,11 +1,12 @@
 Data component revamp:
 
   - [DONE] Make the DataCatcher work with second layer, and TwoLayer models
-  - Revamp the DataMaker
-  - Delete old DataClasses (PreProcessor, Processor, Old Data Reader, DataCache)
-  - Change DataOutputWriter (either inherit from Writer, but anyways change how it's handle in Tools and models)
+  - [DONE] Change DataOutputWriter (either inherit from Writer, but anyways change how it's handle in Tools and models)
   - DataCatcher with CSV
+  - [DONE] Delete old DataClasses (PreProcessor, Processor, Old Data Reader, DataCache)
+  - Revamp the DataMaker
   - DataMaker with test
+  - Labelling part with new Data component
 
 
 Final Submission:

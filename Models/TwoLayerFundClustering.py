@@ -3,6 +3,8 @@
 from BaseClasses import MultipleLayerModelBased
 from .HoldingDataMainClustering import HoldingDataMainClustering
 from .DailyReturnsSubClustering import DailyReturnsSubClustering
+import Tools
+
 
 # Unknows imports.
 rmtree = lambda : None # from shutil import rmtree
@@ -96,44 +98,33 @@ class TwoLayerFundClustering(MultipleLayerModelBased):
         """
         raise NotImplementedError("Subclasses should implement model_summary")
 
-    def output_result(self, **kwargs):
+    def output_result(self, save_model=False, path=None, output_clusters=False, writer=None, **kwargs):
         """Function to output the model, could use pickle to cached the obj that
         has been trained, so that you could load the obj later directly later, and you could also use this function
         to output the optimal portfolio, please use arguments to config what you want to output
 
         Parameters:
-            output_model: bool
-                output model to pickle container
-            output_result_method:
-                * if True : return results dataframe
-                * if 'csv' : save results into csv files (one for each layer) and return results dataframe
-                * if 'sql' : save results into sql table and return results dataframe
-                * if None : do nothing
+            save_model: bool
+                save the model as a pickle to loc
+            path: str
+                path to save the model, raise Error if not defined and if save_model is True
+            output_cluster: bool
+                output the final clusters to a DataWriter
+            writer: DataWriter
+                DataWriter to output the final clusters, raise Error if not defined and if output_cluster is True
         """
 
-        output_model = kwargs.get('output_model', False)
-        output_result = kwargs.get('output_result', None)
-        loc = kwargs.get('loc', None)
+        Tools.save_model(save_model, path, self)
 
-        if output_model == True:
-            from Tools import save_model
-            save_model.output_model(self, f'two_layer_model_{self.clustering_year}', loc)
+        if output_clusters:
+            if writer:
+                # Convert dict to DataFrame
+                clusters = pd.DataFrame.from_dict(self.labels_second_layer)
+                clusters.columns = ['main_cluster', 'sub_cluster']
+                clusters = clusters.reset_index().rename(columns={'index':'fundNo'})
+                # Save it with writer
+                db_name, table_name = 'fund_clustering', 'clustering_output'
+                writer.update_raw_data(db_name, table_name, clusters)
 
-        if output_result:
-
-            from Tools import output_result
-            first_layer_result = self.first_layer.output_result(
-                output_cluster=True,
-                save_result=False
-            )
-            output = output_result.output_result_two_layer(
-                self.clustering_year,
-                first_layer_result,
-                self.labels_second_layer,
-                self.labels_first_layer,
-                save_result_method = output_result,
-                loc = loc
-            )
-
-
-            return output
+            else:
+                raise ValueError("Should give writer when trying to save results of clustering.")

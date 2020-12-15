@@ -24,7 +24,7 @@ class HoldingDataMainClustering(FundClusterBased):
 
     def set_up(self, **kwargs):
         """Function to setup any private variable for the allocator"""
-        
+
         self.label = None
         self.k = None
 
@@ -221,50 +221,15 @@ class HoldingDataMainClustering(FundClusterBased):
         """
         raise NotImplementedError("Subclasses should implement model_summary")
 
-    def output_result(self, **kwargs):
+    def output_result(self, save_models=False, path=None, **kwargs):
         """Function to output the model, could use pickle to cached the obj that
         has been trained, so that you could load the obj later directly later, and you could also use this function
         to output the optimal cluster, please use arguments to config what you want to output
-
         Parameters:
-            output_model: bool
-                output model to pickle container
-            output_cluster: bool
-                output cluster for each fund
+            save_model: bool
+                save the model as a pickle to loc
+            path: str
+                path to save the model, raise Error if not defined and if save_model is True
         """
-        if self.hasBeenFit == False:
-            print('Please fit the model!')
-            return 0
 
-        output_cluster = kwargs.get('output_cluster', False)
-        output_model = kwargs.get('output_model', False)
-        loc = kwargs.get('loc', None)
-        save_result = kwargs.get('save_result', True)
-
-        if output_model == True:
-            from Tools import save_model
-            save_model.output_model(self, f'first_layer_model_{self.clustering_year}', loc)
-
-        if output_cluster == True:
-            from Tools import output_result
-
-            fund_mrnstar = self.extra_data['fund_mrnstar']
-            cumul_returns = self.extra_data['cumul_returns']
-            returns = self.extra_data['returns']
-            asset_type = self.extra_data['asset_type']
-            fundno_ticker = self.extra_data['fundNo_ticker']
-
-            output = output_result.output_result_firstlayer(
-                self.clustering_year,
-                self.label,
-                self.features,
-                fund_mrnstar,
-                cumul_returns,
-                returns,
-                asset_type,
-                fundNo_ticker,
-                save_result,
-                loc,
-            )
-
-            return output
+        Tools.save_model(save_model, path, self)

@@ -8,3 +8,4 @@ from .isPrime import isPrime
 from .normal_standardization import normal_standardization
 from .organize_label import organize_label, plot_sub_result
 from .silhouette import silhouette
+from .save_model import save_model
