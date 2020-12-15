@@ -22,8 +22,8 @@ class DataReaderSQL(BaseDataReader):
     __instance = None
 
 
-    def __init__(self):
-        raise RuntimeError('Call instance() instead')
+    def __init__(self, **kwargs):
+        return DataReaderSQL.instance(**kwargs)
 
 
     @classmethod
