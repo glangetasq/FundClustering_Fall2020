@@ -78,5 +78,3 @@ class DataReaderSQL(BaseDataReader):
             df = self.c.get_dataframe_from_sql_query(request, parse_dates=parse_dates)
 
             self._insert_new_dataframe(db_name, table_name, df)
-
-            

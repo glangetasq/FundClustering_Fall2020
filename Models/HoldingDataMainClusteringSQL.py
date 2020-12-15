@@ -12,7 +12,7 @@ from sauma.core import Connection
 
 # Local Imports
 from Config import DATA_PATHS
-from DataHelper.CSVtoSQL.SQLDataHandler import SQLDataHandler
+from DataHelper.SQLDataHandler import SQLDataHandler
 from Models import HoldingDataMainClustering
 
 # Get paths
