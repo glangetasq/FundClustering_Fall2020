@@ -11,8 +11,21 @@ class DataReaderCSV(BaseDataReader):
     Nothing fancy, just to stay coherent with the SQL implementation.
     """
 
+    __instance = None
+
+
     def __init__(self):
-        super().__init__(reader_type='csv')
+        raise RuntimeError('Call instance() instead')
+
+
+    @classmethod
+    def instance(cls, **kwargs):
+
+        if cls.__instance is None:
+            cls.__instance = cls.__new__(cls)
+            super(cls, cls.__instance).__init__(reader_type='csv')
+
+        return cls.__instance
 
 
     def load_table(self, db_name, table_name, path, **kwargs):
