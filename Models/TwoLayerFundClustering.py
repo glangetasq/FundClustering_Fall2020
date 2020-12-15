@@ -42,25 +42,14 @@ class TwoLayerFundClustering(MultipleLayerModelBased):
             rmtree(self.cachedir)
 
 
-    def load_raw_data(self, source_type, **kwargs):
-        """Function to load raw data from source, should be able to support reading data from flat file or sql database. 
+    def load_raw_data(self, catcher, **kwargs):
+        """Function to load raw data from source, should be able to support reading data from flat file or sql database.
         Parameters:
-            source_type: str
-                flat file type or sql, if it is flat file, file directory or
-                path need to be passed in as argument or in the setup function
-                If it is sql, connection need to be extablished in setup function
-                please avoid any hard coded name in the class, and set global variable to define those file name
+            catcher: ClassicDataCatcher instance.
         """
-        cache = kwargs.get('cache', None)
-        if source_type == 'CustomCache' and not cache:
-            raise ValueError("Expected cache when using the Custom Cache source type.")
-        
-        # only need to load data for the first layer
-        self.first_layer.load_raw_data(self.clustering_year,
-            source_type=source_type,
-            cache=cache,
-            **kwargs
-        )
+
+        self.first_layer.load_raw_data(catcher=catcher, **kwargs)
+        self.second_layer.load_raw_data(catcher=catcher, **kwargs)
 
 
     def fit(self, **kwargs):
@@ -72,27 +61,15 @@ class TwoLayerFundClustering(MultipleLayerModelBased):
 
         # First layer
         self.first_layer.set_up()
-        first_layer_labels = self.first_layer.fit()
-        self.first_layer_labels = first_layer_labels
+        labels_first_layer = self.first_layer.fit()
+        self.labels_first_layer = labels_first_layer
 
         # Second layer
-        self.second_layer.set_up(self.first_layer.features, first_layer_labels)
-        second_layer_labels = self.second_layer.fit()
+        self.second_layer.set_up(labels_first_layer)
+        labels_second_layer = self.second_layer.fit()
+        self.labels_second_layer = labels_second_layer
 
-        """
-        keys, values = second_layer_labels.keys(), second_layer_labels.values()
-        main_clusters = [ x for x, y in values ]
-        sub_clusters = [ y for x, y in values ]
-
-        second_layer_labels = pd.DataFrame(
-            columns=keys,
-            data=[main_clusters, sub_clusters],
-            index=['Main cluster', 'Sub cluster']
-        )
-
-        return second_layer_labels.T # Transpose so that index=ticker, columns=clusters
-        """
-        return second_layer_labels
+        return labels_second_layer
 
     def predict(self, **kwargs):
         """Run prediction after fitting the model, should throw error message when the model did not run fit yet.
@@ -152,8 +129,8 @@ class TwoLayerFundClustering(MultipleLayerModelBased):
             output = output_result.output_result_two_layer(
                 self.clustering_year,
                 first_layer_result,
-                self.second_layer.cluster_subcluster_dict,
-                self.first_layer.label,
+                self.labels_second_layer,
+                self.labels_first_layer,
                 save_result_method = output_result,
                 loc = loc
             )

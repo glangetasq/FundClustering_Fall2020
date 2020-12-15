@@ -15,11 +15,10 @@ class DailyReturnsSubClustering(FundClusterBased):
         self._one_main_cluster_subclustering = OneMainClusterDailyReturnsSubClustering()
         self.hasBeenFit = False
 
-    def set_up(self, feature_first_layer, first_layer_result, **kwargs):
+    def set_up(self, first_layer_labels, **kwargs):
         """Function to setup any private variable for the allocator"""
 
-        self._features_first_layer = feature_first_layer
-        self._first_layer_labels = first_layer_result
+        self._first_layer_labels = first_layer_labels
         self._set_up_kwargs = kwargs
 
 
@@ -40,25 +39,26 @@ class DailyReturnsSubClustering(FundClusterBased):
         return self.hasBeenFit
 
 
-    def load_raw_data(self, clustering_year, first_layer_labels, source_type, **kwargs):
+    def load_raw_data(self, catcher, **kwargs):
         """Function to load raw data from source, should be able to support
         reading data from flat file or sql database. Please just implement the one using flat file now,
         later we would provide the sql python package that we would want to utilize for the database task
-        Parameters:
-            source_type: str
-                flat file type or sql, if it is flat file, file directory or
-                path need to be passed in as argument or in the setup function
-                If it is sql, connection need to be extablished in setup function
-                please avoid any hard coded name in the class, and set global variable to define those file name
+
+        Load data for every sub-clustering instance.
         """
 
-        self._one_main_cluster_subclustering.load_raw_data(
-            clustering_year,
-            first_layer_labels,
-            source_type,
-            **kwargs
-        )
-        self.clustering_year = clustering_year
+        _DATA_NEEDS = [
+            'features_first_layer',
+            'returns',
+        ]
+
+        feat_fl, ret = catcher.unpack_data(keys=_DATA_NEEDS)
+
+        self._features_first_layer = feat_fl
+        self._returns = ret
+
+        self.clustering_year = Config.CLUSTERING_YEAR
+
 
 
     def set_hyper_parameter(self, **kwargs):
@@ -85,7 +85,6 @@ class DailyReturnsSubClustering(FundClusterBased):
         TODO: Could modularize even more this function.
         """
 
-        features_first_layer = self._features_first_layer
         cluster_subcluster_dict = dict()
 
         for main_cluster in range(len(set(self._first_layer_labels))):
@@ -93,12 +92,13 @@ class DailyReturnsSubClustering(FundClusterBased):
             self._one_main_cluster_subclustering.set_up(
                 self._features_first_layer,
                 self._first_layer_labels,
+                self._returns,
                 main_cluster,
                 **self._set_up_kwargs
             )
 
             second_layer_result = self._one_main_cluster_subclustering.fit(hyper_parameters)
-            
+
 
             for fund_no, sub_cluster in second_layer_result.items():
                 cluster_subcluster_dict[fund_no] = (main_cluster, sub_cluster)

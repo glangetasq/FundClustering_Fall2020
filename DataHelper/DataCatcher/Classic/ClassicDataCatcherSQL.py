@@ -88,7 +88,8 @@ class ClassicDataCatcherSQL(BaseSQLDataCatcher):
 
         # Second layer data
         layer.append({
-
+            'features_first_layer': self.morning_star[_holding_asset_cols],
+            'returns': self.returns
         })
 
         for layer_data in layers:

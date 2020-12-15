@@ -9,6 +9,7 @@ from time import time
 
 # Local imports
 from BaseClasses import FundClusterBased
+import Config
 from DataHelper import *
 import HyperparametersHelper
 import Tools
@@ -23,16 +24,18 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
 
         self.hasBeenFit = False
 
-    def set_up(self, feature_first_layer, first_layer_result, main_cluster, **kwargs):
+    def set_up(self,
+            features_first_layer,
+            labels_first_layer,
+            returns,
+            main_cluster,
+            **kwargs):
         """Function to setup any private variable for the allocator"""
 
-        self.features = feature_first_layer
-        self.label = first_layer_result
-        self.k = len(set(self.label))
-        if main_cluster >= self.k:
-            raise ValueError('Main Cluster out of range')
-        else:
-            self.main_cluster = main_cluster
+        self._features = features_first_layer
+        self._labels = labels_first_layer
+        self._returns = returns
+        self._main_cluster = main_cluster
 
         self.hasBeenFit = False
 
@@ -52,30 +55,13 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
         """
         return self.hasBeenFit
 
-    def load_raw_data(self, clustering_year, first_layer_labels, source_type, **kwargs):
+    def load_raw_data(self):
         """Function to load raw data from source, should be able to support
         reading data from flat file or sql database. Please just implement the one using flat file now,
         later we would provide the sql python package that we would want to utilize for the database task
-        Parameters:
-            source_type: str
-                flat file type or sql, if it is flat file, file directory or
-                path need to be passed in as argument or in the setup function
-                If it is sql, connection need to be extablished in setup function
-                please avoid any hard coded name in the class, and set global variable to define those file name
         """
 
-        self.clustering_year = clustering_year
-        self.first_layer_labels = first_layer_labels
-
-        if source_type.lower() == 'csv':
-            self.data = DataHelper.get_data_cache(source='csv', clustering_year=clustering_year)
-        elif source_type.lower() == 'sql':
-            self.password = kwargs.get('password', None)
-            self.username = kwargs.get('username', None)
-            self.schema = kwargs.get('schema', None)
-            self.data = DataHelper.get_data_cache(source='sql', clusting_year=clustering_year, username = self.username, password = self.password, schema = self.schema)
-        else:
-            raise ValueError(f"The type of source '{source_type}' is not supported at the moment.")
+        raise NotImplementedError("This model is only for sub-clustering 1 maincluster.")
 
 
     def set_hyper_parameter(self, **kwargs):
@@ -103,10 +89,13 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
 
         subcluster_dict = dict()
 
-        compressed_data, fundnos = Tools.get_timeseries(ret_flag=True, val_flag=True,
-                                                                ret_data = self.data.returns,
-                                                                feature = self.features,
-                                                                label = self.label, main_cluster = self.main_cluster)
+        compressed_data, fundnos = Tools.get_timeseries(ret_flag=True,
+                val_flag=True,
+                ret_data = self._returns,
+                feature = self._features,
+                label = self._labels,
+                main_cluster = self._main_cluster
+        )
         self.new_feature = compressed_data
         self.fundnos = fundnos
 
@@ -134,8 +123,8 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
         print('Pool size = ', hyper_parameters.pool_size)
         #initialize the DTC model
         from DTC.dtc import DTC
-        hyper_parameters.n_clusters = min(15, sum(self.label==self.main_cluster)//2)
-        print('N clusters in DTC for', self.main_cluster, 'is', hyper_parameters.n_clusters)
+        hyper_parameters.n_clusters = min(15, sum(self._labels==self._main_cluster)//2)
+        print('N clusters in DTC for', self._main_cluster, 'is', hyper_parameters.n_clusters)
         dtc = DTC(n_clusters=hyper_parameters.n_clusters,
                 input_dim=compressed_data.shape[-1],
                 timesteps=compressed_data.shape[1],
@@ -197,9 +186,6 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
         self.subcluster_label = subcluster_label
         self.subcluster_k = len(set(subcluster_label))
 
-        #Plot it out to check
-        #organize_label.plot_sub_result(self.subcluster_k, self.fundnos, self.subcluster_label, self.data.cumul_returns)
-
         #Write into the dictionary
         for i in range(len(fundnos)):
             subcluster_dict[fundnos[i]] = subcluster_label[i]
@@ -246,10 +232,10 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
 
         if output_model == True:
             from Tools import save_model
-            save_model.output_model(self, f'main_cluster_{self.main_cluster}_model_{self.clustering_year}', loc)
+            save_model.output_model(self, f'main_cluster_{self._main_cluster}_model_{self.clustering_year}', loc)
 
         if output_cluster == True:
             from Tools import output_result
-            output = output_result.output_result_one_main_cluster(self.clustering_year, self.main_cluster,
+            output = output_result.output_result_one_main_cluster(self.clustering_year, self._main_cluster,
                                                                   self.subcluster_dict, save_result, loc)
             return output
