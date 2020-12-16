@@ -1,6 +1,7 @@
 
 
 # Local Imports
+import Config
 from DataHelper import DataHelper
 from .BaseDataCatcher import BaseDataCatcher
 
@@ -19,8 +20,8 @@ class BaseCSVDataCatcher(BaseDataCatcher):
         if verbose:
             print("Loading data...")
 
-        for db_name, table_name in self.DATA_NEEDS:
-            self.reader.load_table(db_name, table_name)
+        for path_key, (db_name, table_name) in self.DATA_NEEDS.items():
+            self.reader.load_table(db_name, table_name, Config.DATA_PATHS[path_key])
 
         if verbose:
             print("... Finished loading data")

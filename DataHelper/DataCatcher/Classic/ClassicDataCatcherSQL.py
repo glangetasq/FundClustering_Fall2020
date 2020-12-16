@@ -59,12 +59,12 @@ class ClassicDataCatcherSQL(BaseSQLDataCatcher):
         ticker = self.reader.get_dataframe(db_name, table_name)
         ticker = ticker.set_index('fundNo')['ticker'].to_dict()
 
+        if verbose: print("... Finished processing data")
+
         # Save dataframes to self
         self.returns = returns
         self.morning_star = morning_star
         self.ticker = ticker
-
-
 
 
     def _pack_data(self):
@@ -77,7 +77,7 @@ class ClassicDataCatcherSQL(BaseSQLDataCatcher):
         layers = list()
 
         # First layer data
-        layer.append({
+        layers.append({
             'features': self.morning_star[_holding_asset_cols],
             'returns': self.returns,
             'cumul_returns': (1+self.returns).cumprod(),
@@ -87,7 +87,7 @@ class ClassicDataCatcherSQL(BaseSQLDataCatcher):
         })
 
         # Second layer data
-        layer.append({
+        layers.append({
             'features_first_layer': self.morning_star[_holding_asset_cols],
             'returns': self.returns
         })

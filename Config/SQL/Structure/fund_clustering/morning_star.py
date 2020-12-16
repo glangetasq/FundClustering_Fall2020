@@ -37,7 +37,7 @@ REQUEST = f"""
         per_cash as cash,
         per_com + per_pref + per_eq_oth as equity,
         per_conv + per_corp + per_muni + per_govt as bond,
-        per_abs + per_mbs + per_fi_oth + per_oth as sec,
+        per_abs + per_mbs + per_fi_oth + per_oth as security,
         lipper_class_name
     FROM morning_star
     WHERE
