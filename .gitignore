@@ -2,9 +2,10 @@
 *.cpython-37.pyc
 __pycache__
 *.pyc
-env/
+p37/
 .DS_Store
 
 
 python-ingestion-package.zip
-python-ingestion-package/*
+python-ingestion-package
+*.whl

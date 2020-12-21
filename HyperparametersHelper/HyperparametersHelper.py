@@ -162,7 +162,7 @@ def parse_prm():
 def create_prm(**kwargs):
 
     parser = __make_parser()
-    args = parser.parse_args()
+    args = parser.parse_args(args=[])
 
     for key, value in kwargs.items():
 

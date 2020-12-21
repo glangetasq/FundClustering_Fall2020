@@ -10,6 +10,6 @@ class BaseLogger:
 
         print(f"Title: {title}")
 
-        from key, value in kwargs.items():
+        for key, value in kwargs.items():
 
             print(f"{key} : {value}")

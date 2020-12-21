@@ -6,7 +6,7 @@ Temporal Autoencoder (TAE)
 
 # Keras imports
 from keras.models import Model, Sequential
-from keras.layers import Input, Conv1D, LeakyReLU, MaxPool1D, LSTM, 
+from keras.layers import Input, Conv1D, LeakyReLU, MaxPool1D, LSTM
 from keras.layers import Bidirectional, TimeDistributed, Dense, Reshape
 from keras.layers import UpSampling2D, Conv2DTranspose
 # --------------------- #
