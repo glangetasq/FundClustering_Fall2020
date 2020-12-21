@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from Config import UNITTEST_SEED
 import DataHelper
-from Models import TwoLayerFundClustering
+import Models
 
 
 
@@ -12,7 +12,7 @@ class NoFundCase(unittest.TestCase):
         maker = DataHelper.get_data_maker()
         clustering_year = 2020
 
-        self.model = TwoLayerFundClustering(clustering_year)
+        self.model = Models.get_model('classic', clustering_year=clustering_year)
         self.model.load_raw_data(maker)
         self.model.fit()
 
@@ -38,7 +38,7 @@ class OneFundCase(unittest.TestCase):
         returns = pd.Series(np.random.rand(m_days), index=pd.date_range(f'{clustering_year}-10-01', periods=m_days))
         maker.add_fake_fund(mrnstar_row, returns)
 
-        self.model = TwoLayerFundClustering(clustering_year)
+        self.model = Models.get_model('classic', clustering_year=clustering_year)
         self.model.load_raw_data(maker)
         self.model.fit()
 
@@ -68,7 +68,7 @@ class TwoFundCase(unittest.TestCase):
         returns = pd.Series(np.random.rand(m_days), index=pd.date_range(f'{clustering_year}-10-01', periods=m_days))
         maker.add_fake_fund(mrnstar_row, returns)
 
-        self.model = TwoLayerFundClustering(clustering_year)
+        self.model = Models.get_model('classic', clustering_year=clustering_year)
         self.model.load_raw_data(maker)
         self.model.fit()
 
@@ -103,7 +103,7 @@ class ThreeFundCase(unittest.TestCase):
         returns = pd.Series(np.random.rand(m_days), index=pd.date_range(f'{clustering_year}-10-01', periods=m_days))
         maker.add_fake_fund(mrnstar_row, returns)
 
-        self.model = TwoLayerFundClustering(clustering_year)
+        self.model = Models.get_model('classic', clustering_year=clustering_year)
         self.model.load_raw_data(maker)
         self.model.fit()
 
@@ -132,7 +132,7 @@ class SameFundsCase(unittest.TestCase):
         returns = pd.Series(np.random.rand(m_days), index=pd.date_range(f'{clustering_year}-10-01', periods=m_days))
         maker.bulk_add_fake_fund( self.n_funds * [[ mrnstar_row, returns ]] )
 
-        self.model = TwoLayerFundClustering(clustering_year)
+        self.model = Models.get_model('classic', clustering_year=clustering_year)
         self.model.load_raw_data(maker)
         self.model.fit()
 
@@ -170,7 +170,7 @@ class MissingDataCase(unittest.TestCase):
         returns = pd.Series(np.random.rand(m_days), index=pd.date_range(f'{clustering_year}-10-01', periods=m_days))
         maker.add_fake_fund(mrnstar_row, returns)
 
-        self.model = TwoLayerFundClustering(clustering_year)
+        self.model = Models.get_model('classic', clustering_year=clustering_year)
         self.model.load_raw_data(maker)
         self.model.fit()
 
