@@ -48,8 +48,12 @@ class ClassicDataCatcherSQL(BaseSQLDataCatcher):
         morning_star = self.reader.get_dataframe(db_name, table_name)
         # Take only the latest data for each fund
         morning_star = morning_star.groupby('fundNo').apply(latest_date_in_dataframe)
-        # Only keep the funds in the returns data
-        morning_star = morning_star.loc[returns.columns]
+
+        # Merge returns and morningstar fundNo
+        merged_funds = list(set(returns.columns).intersection(morning_star.index))
+        if n_funds: merged_funds = merged_funds[:n_funds]
+        morning_star = morning_star.loc[merged_funds]
+        returns = returns[merged_funds]
 
         # Update the returns so it only has the funds with morning_star data available
         returns = returns[morning_star.index]

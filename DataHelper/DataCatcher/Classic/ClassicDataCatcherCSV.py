@@ -32,7 +32,7 @@ class ClassicDataCatcherCSV(BaseCSVDataCatcher):
 
 
 
-    def process(self, verbose=True):
+    def process(self, verbose=True, n_funds=None):
 
         super().load_data(verbose)
 
@@ -71,8 +71,10 @@ class ClassicDataCatcherCSV(BaseCSVDataCatcher):
         #morning_star.index = morning_star.index.astype(int)
 
         # Merge returns and morningstar fundNo
-        morning_star = morning_star.loc[returns.columns]
-        returns = returns[morning_star.index]
+        merged_funds = list(set(returns.columns).intersection(morning_star.index))
+        if n_funds: merged_funds = merged_funds[:n_funds]
+        morning_star = morning_star.loc[merged_funds]
+        returns = returns[merged_funds]
 
         # Ticker processing
         db_name, table_name = self.DATA_NEEDS['ticker']
