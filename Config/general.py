@@ -34,3 +34,7 @@ DEFAULT_HYPERPARAMETERS = {
     'validation' : False,
     'year' : 2019,
 }
+
+
+# Unit Test
+UNITTEST_SEED = 123
