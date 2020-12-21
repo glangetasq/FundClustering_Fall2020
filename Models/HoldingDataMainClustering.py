@@ -28,14 +28,6 @@ class HoldingDataMainClustering(FundClusterBased):
         self.label = None
         self.k = None
 
-    @property
-    def normalized_features(self):
-
-        norm_features = Tools.normal_standardization(self.features)
-        norm_features = np.round(norm_features, 4)
-
-        return norm_features
-
     def cluster_method(self):
         """This provide identifier of the clustering strategy that you are implementing."""
         return self._cluster_method_name
@@ -128,11 +120,9 @@ class HoldingDataMainClustering(FundClusterBased):
         # features
         if 'X' in kwargs:
             features = kwargs.get('X')
-            normalized_features = Tools.normal_standardization(features)
-            normalized_features = np.round(normalized_features, 4)
-        else:
-            normalized_features = Tools.normal_standardization(self.features)
-            normalized_features = np.round(norm_features, 4)
+        features = self.features
+        normalized_features = Tools.normal_standardization(self.features)
+        normalized_features = np.round(normalized_features, 4)
 
 
         k = Tools.silhouette(normalized_features, log)

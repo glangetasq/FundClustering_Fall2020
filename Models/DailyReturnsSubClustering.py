@@ -2,6 +2,7 @@
 
 # Local imports
 from BaseClasses import FundClusterBased
+import Config
 import HyperparametersHelper
 from .OneMainClusterDailyReturnsSubClustering import OneMainClusterDailyReturnsSubClustering
 

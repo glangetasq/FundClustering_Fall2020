@@ -1,5 +1,6 @@
 """Create Fake Data"""
 
+import numpy as np
 import pandas as pd
 from .DataCatcher.BaseDataCatcher import BaseDataCatcher
 
@@ -71,7 +72,18 @@ class DataMaker(BaseDataCatcher):
         Iterator that output the needed data for each layer
         """
 
+        returns = self.returns.astype(np.float64)
         mrnstar = self.mrnstar.T
+        mrnstar = mrnstar.astype(
+            dtype = {
+                'fundNo': int,
+                'cash': np.float64,
+                'equity': np.float64,
+                'bond': np.float64,
+                'security': np.float64,
+                'lipper_class_name': str,
+            }
+        )
         mrnstar['date'] = pd.to_datetime(mrnstar['date'])
 
         _holding_asset_cols = ['cash', 'equity', 'bond', 'security']
@@ -80,8 +92,8 @@ class DataMaker(BaseDataCatcher):
         # First layer data
         yield {
             'features': mrnstar[_holding_asset_cols],
-            'returns': self.returns,
-            'cumul_returns': (1+self.returns).cumprod(),
+            'returns': returns,
+            'cumul_returns': (1+returns).cumprod(),
             'asset_type': _holding_asset_cols,
             'fund_mrnstar': mrnstar[_fund_mrnstar_cols],
             'fundNo_ticker': self.fundno_ticker
@@ -90,5 +102,5 @@ class DataMaker(BaseDataCatcher):
         # Second layer data
         yield {
             'features_first_layer': mrnstar[_holding_asset_cols],
-            'returns': self.returns
+            'returns': returns
         }

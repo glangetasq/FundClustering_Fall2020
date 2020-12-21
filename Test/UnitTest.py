@@ -17,7 +17,7 @@ class NoFundCase(unittest.TestCase):
         self.model.fit()
 
     def test_first_layer_result(self):
-        self.assertTrue((self.model.first_layer.labels == np.array([])).all())
+        self.assertTrue((self.model.first_layer.label == np.array([])).all())
 
     def test_second_layer_result(self):
         self.assertEqual(self.model.second_layer.cluster_subcluster_dict, dict())
@@ -43,7 +43,7 @@ class OneFundCase(unittest.TestCase):
         self.model.fit()
 
     def test_first_layer_result(self):
-        self.assertTrue((self.model.first_layer.labels == np.array([0])).all())
+        self.assertTrue((self.model.first_layer.label == np.array([0])).all())
 
     def test_second_layer_result(self):
         self.assertEqual(self.model.second_layer.cluster_subcluster_dict, {0: (0, 0)})
@@ -108,7 +108,7 @@ class ThreeFundCase(unittest.TestCase):
         self.model.fit()
 
     def test_first_layer_result(self):
-        self.assertTrue(set(self.model.first_layer.labels) == set(np.array([0,1,2])))
+        self.assertTrue(set(self.model.first_layer.label) == set(np.array([0,1,2])))
 
     def test_second_layer_result(self):
         self.assertIsInstance(self.model.second_layer.cluster_subcluster_dict, dict)
@@ -130,7 +130,7 @@ class SameFundsCase(unittest.TestCase):
 
         mrnstar_row = [1, f'{clustering_year}-12-31', 50, 25, 12.5, 12.5, 'Class 1']
         returns = pd.Series(np.random.rand(m_days), index=pd.date_range(f'{clustering_year}-10-01', periods=m_days))
-        maker.bulk_add_fake_fund( self.n_funds * [mrnstar_row, returns] )
+        maker.bulk_add_fake_fund( self.n_funds * [[ mrnstar_row, returns ]] )
 
         self.model = TwoLayerFundClustering(clustering_year)
         self.model.load_raw_data(maker)
@@ -138,7 +138,7 @@ class SameFundsCase(unittest.TestCase):
 
 
     def test_first_layer_result(self):
-        self.assertTrue((self.model.first_layer.labels == [np.array([0])] * self.n_funds).all())
+        self.assertTrue((self.model.first_layer.label == [np.array([0])] * self.n_funds).all())
 
     def test_second_layer_result(self):
         result_dict = dict()
@@ -175,7 +175,7 @@ class MissingDataCase(unittest.TestCase):
         self.model.fit()
 
     def test_first_layer_result(self):
-        self.assertIsInstance(self.model.first_layer.labels, np.ndarray)
+        self.assertIsInstance(self.model.first_layer.label, np.ndarray)
 
     def test_second_layer_result(self):
         self.assertIsInstance(self.model.second_layer.cluster_subcluster_dict, dict)

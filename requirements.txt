@@ -1,9 +1,9 @@
 numpy
 pandas
-tensorflow==1.14
+tensorflow
+keras
 matplotlib
 seaborn
 scipy
 scikit-learn
 tslearn
-

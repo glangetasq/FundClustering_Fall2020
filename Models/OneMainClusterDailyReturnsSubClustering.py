@@ -106,7 +106,6 @@ class OneMainClusterDailyReturnsSubClustering(FundClusterBased):
             return subcluster_dict
 
         #determine the pool size
-        import Tools
         if Tools.isPrime(compressed_data.shape[1]):
             compressed_data = compressed_data[:, :compressed_data.shape[1]-1, :]
 
