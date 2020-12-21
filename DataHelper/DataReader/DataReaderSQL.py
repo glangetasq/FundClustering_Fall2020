@@ -67,7 +67,7 @@ class DataReaderSQL(BaseDataReader):
     def load_table(self, db_name, table_name, parse_dates=[]):
 
         # Load only once
-        if not(db_name in self.dataframes and table_name in self.dataframes[db_name]):
+        if not self._is_loaded(db_name, table_name):
 
             self._check_if_connected()
 

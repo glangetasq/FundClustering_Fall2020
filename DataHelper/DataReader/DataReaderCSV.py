@@ -30,5 +30,6 @@ class DataReaderCSV(BaseDataReader):
 
     def load_table(self, db_name, table_name, path, **kwargs):
 
-        df = pd.read_csv(path, **kwargs)
-        self._insert_new_dataframe(db_name, table_name, df)
+        if not self._is_loaded(db_name, table_name):
+            df = pd.read_csv(path, **kwargs)
+            self._insert_new_dataframe(db_name, table_name, df)

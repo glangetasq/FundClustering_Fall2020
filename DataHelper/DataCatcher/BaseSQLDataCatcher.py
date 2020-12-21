@@ -20,7 +20,7 @@ class BaseSQLDataCatcher(BaseDataCatcher):
         if verbose:
             print("Loading data...")
 
-        for db_name, table_name in self.DATA_NEEDS:
+        for db_name, table_name in self.DATA_NEEDS.values():
             self.reader.load_table(db_name, table_name)
 
         if verbose:

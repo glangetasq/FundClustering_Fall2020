@@ -19,6 +19,10 @@ class BaseDataReader:
         self.dataframes[db_name][table_name] = df
 
 
+    def _is_loaded(self, db_name, table_name):
+        return db_name in self.dataframes and table_name in self.dataframes[db_name]
+
+
     def get_dataframe(self, db_name, table_name):
 
         if db_name in self.dataframes and table_name in self.dataframes[db_name]:

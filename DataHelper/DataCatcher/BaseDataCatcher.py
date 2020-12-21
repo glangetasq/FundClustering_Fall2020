@@ -46,6 +46,10 @@ class BaseDataCatcher:
         if self._iterator is None:
             self._iterator = self._pack_data()
 
-        data_dict = next(self._iterator)
+        try:
+            data_dict = next(self._iterator)
+        except StopIteration:
+            self._iterator = self._pack_data()
+            data_dict = next(self._iterator)
 
         return tuple(data_dict.get(k, None) for k in keys)
