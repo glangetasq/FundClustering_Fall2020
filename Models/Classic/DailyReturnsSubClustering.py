@@ -75,7 +75,7 @@ class DailyReturnsSubClustering(FundClusterBased):
         raise NotImplementedError("Subclasses should implement print_hyper_parameter!")
 
 
-    def fit(self, hyper_parameters=HyperparametersHelper.default_prm(), **kwargs):
+    def fit(self, hyperparameters=HyperparametersHelper.default_prm(), **kwargs):
         """Function to execute training either based on the data that you load from file or passed in as argument.
         When X, Y are passed in as argument, would train the model based on the training dataset passed in, and over write
         the existing data cached in the strategy obj. If you implement some new machine learning model rather than using
@@ -98,7 +98,7 @@ class DailyReturnsSubClustering(FundClusterBased):
                 **self._set_up_kwargs
             )
 
-            second_layer_result = self._one_main_cluster_subclustering.fit(hyper_parameters)
+            second_layer_result = self._one_main_cluster_subclustering.fit(hyperparameters)
 
 
             for fund_no, sub_cluster in second_layer_result.items():

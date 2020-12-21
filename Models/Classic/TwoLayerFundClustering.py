@@ -63,12 +63,12 @@ class TwoLayerFundClustering(MultipleLayerModelBased):
 
         # First layer
         self.first_layer.set_up()
-        labels_first_layer = self.first_layer.fit()
+        labels_first_layer = self.first_layer.fit(**kwargs)
         self.labels_first_layer = labels_first_layer
 
         # Second layer
         self.second_layer.set_up(labels_first_layer)
-        labels_second_layer = self.second_layer.fit()
+        labels_second_layer = self.second_layer.fit(**kwargs)
         self.labels_second_layer = labels_second_layer
 
         return labels_second_layer
