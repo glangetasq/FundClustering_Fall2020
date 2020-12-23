@@ -8,11 +8,12 @@ import json
 from sauma.core import Connection
 
 # Local Imports
+from .BaseDataReader import BaseDataReader
 import Config
-from .SQLDataHandler import SQLDataHandler
+from DataHelper.SQLDataHandler import SQLDataHandler
 
 
-class DataWriter(SQLDataHandler):
+class DataWriter(BaseDataWriter, SQLDataHandler):
     """ Inlcude SQL Operation """
 
     def __init__(self, **kwargs):
@@ -38,7 +39,7 @@ class DataWriter(SQLDataHandler):
         self.conn.create_table(json.dumps(self.template))
 
 
-    def update_raw_data(self, db_name, table_name, dataframe, chunk_size=None):
+    def update_raw_data(self, dataframe, db_name=None, table_name=None, chunk_size=None):
         """assuming that your data source is the csv file containing all the raw data, load the raw data from csv, and update the table
         which you already setup based on your template
 

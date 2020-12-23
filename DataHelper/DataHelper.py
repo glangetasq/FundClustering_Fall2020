@@ -26,3 +26,27 @@ def get_data_writer(**kwargs):
 
 def get_data_maker(data_name=''):
     return DataMaker(data_name)
+
+
+                clusters = pd.DataFrame.from_dict(self.labels_second_layer)
+                clusters.columns = ['main_cluster', 'sub_cluster']
+                clusters = clusters.reset_index().rename(columns={'index':'fundNo'})
+                # Save it with writer
+                db_name, table_name = 'fund_clustering', 'clustering_output'
+                writer.update_raw_data(db_name, table_name, clusters)
+def output_clustering_results(source, result_dict, **kwargs):
+
+    writer = DataWriter._DATA_WRITERS[source.lower()](**kwargs)
+
+    # Convert result_dict to dataframe
+    # TODO: only assuming 2-layer models currently.
+    clusters = pd.DataFrame.from_dict(result_dict)
+    clusters.columns = ['main_cluster', 'sub_cluster']
+    clusters = clusters.reset_index().rename(columns={'index':'fundNo'})
+
+    if source.lower() == 'csv':
+        assert( 'path' in kwargs )
+    elif source.lower() == 'sql':
+        assert( 'db_name' in kwargs and 'table_name' in kwargs )
+
+    writer.update_raw_data(result_dict, **kwargs)
