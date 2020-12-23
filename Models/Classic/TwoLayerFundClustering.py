@@ -1,6 +1,7 @@
 
 # Local imports
 from BaseClasses import MultipleLayerModelBased
+import DataHelper
 from .HoldingDataMainClustering import HoldingDataMainClustering
 from .DailyReturnsSubClustering import DailyReturnsSubClustering
 import Tools
@@ -98,7 +99,7 @@ class TwoLayerFundClustering(MultipleLayerModelBased):
         """
         raise NotImplementedError("Subclasses should implement model_summary")
 
-    def output_result(self, save_model=False, path=None, output_clusters=False, writer=None, **kwargs):
+    def output_result(self, save_model=False, model_path=None, output_clustering_source=None, **kwargs):
         """Function to output the model, could use pickle to cached the obj that
         has been trained, so that you could load the obj later directly later, and you could also use this function
         to output the optimal portfolio, please use arguments to config what you want to output
@@ -106,25 +107,13 @@ class TwoLayerFundClustering(MultipleLayerModelBased):
         Parameters:
             save_model: bool
                 save the model as a pickle to loc
-            path: str
+            model_path: str
                 path to save the model, raise Error if not defined and if save_model is True
-            output_cluster: bool
-                output the final clusters to a DataWriter
-            writer: DataWriter
-                DataWriter to output the final clusters, raise Error if not defined and if output_cluster is True
+            output_clustering_source: str
+                source to which the cluster dataframe will be saved
         """
 
         Tools.save_model(save_model, path, self)
 
-        if output_clusters:
-            if writer:
-                # Convert dict to DataFrame
-                clusters = pd.DataFrame.from_dict(self.labels_second_layer)
-                clusters.columns = ['main_cluster', 'sub_cluster']
-                clusters = clusters.reset_index().rename(columns={'index':'fundNo'})
-                # Save it with writer
-                db_name, table_name = 'fund_clustering', 'clustering_output'
-                writer.update_raw_data(db_name, table_name, clusters)
-
-            else:
-                raise ValueError("Should give writer when trying to save results of clustering.")
+        if output_clustering_source:
+            DataHelper.output_clustering_results(output_clustering_source, clusters, **kwargs)
