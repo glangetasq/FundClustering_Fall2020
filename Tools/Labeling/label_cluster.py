@@ -1,4 +1,5 @@
 
+import numpy as np
 
 def label_cluster(l, data_nostd):
     k = len(np.unique(l))

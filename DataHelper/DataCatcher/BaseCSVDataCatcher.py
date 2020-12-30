@@ -2,7 +2,7 @@
 
 # Local Imports
 import Config
-from DataHelper import DataHelper
+import DataHelper
 from .BaseDataCatcher import BaseDataCatcher
 
 
@@ -10,9 +10,9 @@ class BaseCSVDataCatcher(BaseDataCatcher):
 
     def __init__(self, **kwargs):
 
-        csv_reader = DataHelper.get_data_reader(source='csv')
+        self.reader = DataHelper.get_data_reader(source='csv')
 
-        super().__init__(csv_reader)
+        super().__init__(self.reader)
 
 
     def load_data(self, verbose=True, **kwargs):

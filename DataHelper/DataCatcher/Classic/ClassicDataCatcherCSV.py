@@ -97,30 +97,25 @@ class ClassicDataCatcherCSV(BaseCSVDataCatcher):
         self.ticker = ticker
 
 
-    def _pack_data(self):
+    def _pack_data(self,keys):
         """
         Iterator that output the needed data for each layer
         """
 
         _holding_asset_cols = ['cash', 'equity', 'bond', 'security']
         _fund_mrnstar_cols = ['fundNo', 'date', 'lipper_class_name']
-        layers = list()
+        layers = dict()
 
         # First layer data
-        layers.append({
-            'features': self.morning_star[_holding_asset_cols],
-            'returns': self.returns,
-            'cumul_returns': (1+self.returns).cumprod(),
-            'asset_type': _holding_asset_cols,
-            'fund_mrnstar': self.morning_star[_fund_mrnstar_cols],
-            'fundNo_ticker': self.ticker
-        })
+        layers['features'] = self.morning_star[_holding_asset_cols]
+        layers['returns'] = self.returns
+        layers['cumul_returns'] = (1+self.returns).cumprod()
+        layers['asset_type'] = _holding_asset_cols
+        layers['fund_mrnstar'] = self.morning_star[_fund_mrnstar_cols]
+        layers['fundNo_ticker'] = self.ticker
 
         # Second layer data
-        layers.append({
-            'features_first_layer': self.morning_star[_holding_asset_cols],
-            'returns': self.returns
-        })
+        layers['features_first_layer'] = self.morning_star[_holding_asset_cols]
 
-        for layer_data in layers:
-            yield layer_data
+        for key in keys:
+            yield layers[key]

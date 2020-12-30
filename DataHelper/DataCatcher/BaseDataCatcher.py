@@ -33,7 +33,7 @@ class BaseDataCatcher:
         self.data[k].join(clusters)
 
 
-    def _pack_data(self):
+    def _pack_data(self, keys):
         # Must be an iterator
         raise NotImplementedError("DataCatcher subclasses must implement _pack_data.")
 
@@ -44,12 +44,12 @@ class BaseDataCatcher:
         """
 
         if self._iterator is None:
-            self._iterator = self._pack_data()
+            self._iterator = self._pack_data(keys)
 
         try:
             data_dict = next(self._iterator)
         except StopIteration:
-            self._iterator = self._pack_data()
+            self._iterator = self._pack_data(keys)
             data_dict = next(self._iterator)
 
         return tuple(data_dict.get(k, None) for k in keys)

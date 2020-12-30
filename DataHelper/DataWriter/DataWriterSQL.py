@@ -8,12 +8,12 @@ import json
 from sauma.core import Connection
 
 # Local Imports
-from .BaseDataReader import BaseDataReader
+from .BaseDataWriter import BaseDataWriter
 import Config
 from DataHelper.SQLDataHandler import SQLDataHandler
 
 
-class DataWriter(BaseDataWriter, SQLDataHandler):
+class DataWriterSQL(BaseDataWriter, SQLDataHandler):
     """ Inlcude SQL Operation """
 
     def __init__(self, **kwargs):

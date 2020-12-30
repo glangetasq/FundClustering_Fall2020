@@ -65,7 +65,7 @@ class HoldingDataMainClustering(FundClusterBased):
             'features', 'returns', 'cumul_returns', 'asset_type', 'fund_mrnstar', 'fundNo_ticker'
         ]
 
-        feat, ret, c_ret, asset_type, mrnstar, fundNo_ticker = catcher.unpack_data(keys=_DATA_NEEDS)
+        feat, ret, c_ret, asset_type, mrnstar, fundNo_ticker = catcher._pack_data(keys = _DATA_NEEDS)
 
         self.features = feat
 
@@ -211,7 +211,7 @@ class HoldingDataMainClustering(FundClusterBased):
         """
         raise NotImplementedError("Subclasses should implement model_summary")
 
-    def output_result(self, save_models=False, path=None, **kwargs):
+    def output_result(self, save_model=False, path=None, **kwargs):
         """Function to output the model, could use pickle to cached the obj that
         has been trained, so that you could load the obj later directly later, and you could also use this function
         to output the optimal cluster, please use arguments to config what you want to output

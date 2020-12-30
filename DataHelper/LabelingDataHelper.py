@@ -3,8 +3,9 @@ import os
 import numpy as np
 import pandas as pd
 from Tools import get_features
+from Config import paths
 
-data_path = "~/Desktop/Columbia/E4742 Deep Learning/FundClustering_Fall2020/Summer20Project/Final delivery/Clustering Model/Data"
+data_path = paths._DATA_PATH
 
 
 def LabelingDataHelper(year):

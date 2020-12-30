@@ -1,7 +1,8 @@
 # Data Helper
 
+import pandas as pd
 from .DataMaker import DataMaker
-from .DataWriter import DataWriter
+import DataHelper.DataWriter as DataWriter
 import DataHelper.DataReader as DataReader
 import DataHelper.DataCatcher as DataCatcher
 
@@ -28,12 +29,7 @@ def get_data_maker(data_name=''):
     return DataMaker(data_name)
 
 
-                clusters = pd.DataFrame.from_dict(self.labels_second_layer)
-                clusters.columns = ['main_cluster', 'sub_cluster']
-                clusters = clusters.reset_index().rename(columns={'index':'fundNo'})
-                # Save it with writer
-                db_name, table_name = 'fund_clustering', 'clustering_output'
-                writer.update_raw_data(db_name, table_name, clusters)
+
 def output_clustering_results(source, result_dict, **kwargs):
 
     writer = DataWriter._DATA_WRITERS[source.lower()](**kwargs)
